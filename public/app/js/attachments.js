@@ -72,7 +72,7 @@ async function uploadAttachments() {
 
     let uploadRes = await axios({
         method: "post",
-        url: "/upload",
+        url: "/api/upload",
         data: fileData,
         headers: {
             "Content-Type": "multipart/form-data",

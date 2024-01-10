@@ -26,7 +26,7 @@ export function chatMessage(username, color, id, offline, content, timestamp, at
 
         attachmentEle.classList.add("clickable");
         attachmentEle.addEventListener("click", () => {
-            window.open(`${location.origin}/${path}`, "_blank");
+            window.open(`${location.origin}/api/${path}`, "_blank");
         });
 
         attachmentsContainer.appendChild(attachmentEle);
