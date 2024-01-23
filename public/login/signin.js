@@ -3,6 +3,7 @@ import * as cryption from "../cryption.js";
 import { delay } from "https://debutter.dev/x/js/utils.js@1.2";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 
+const homeserverEle = document.getElementById("homeserver");
 const usernameEle = document.getElementById("username");
 const publicKeyEle = document.getElementById("public-key");
 const privateKeyEle = document.getElementById("private-key");
@@ -18,12 +19,19 @@ const privateKeyField = document.getElementById("private-key-field");
 const submitBtn = document.getElementById("submit");
 const errorMessageEle = document.getElementById("error-message");
 
+tippy(homeserverEle, {
+    content: "<p style=\"text-align: center; margin: 0px;\">The server you will be connected to<br>(also where your data will be stored)</p>",
+    allowHTML: true,
+    delay: [500, 0]
+});
+
 tippy(usernameEle, {
     content: "<p style=\"text-align: center; margin: 0px;\">What you will go by</p>",
     allowHTML: true,
     delay: [500, 0]
 });
 
+let initialHomeserver = await binForage.get("homeserver");
 let initialKeyPair = await binForage.get("login[keyPair]");
 let initialUsername = await binForage.get("login[username]");
 
@@ -48,6 +56,7 @@ if (initialKeyPair !== null) {
     let query = new URLSearchParams(location.search);
 
     if (query.has("refresh")) {
+        homeserverEle.value = initialHomeserver.namespace;
         usernameEle.value = initialUsername;
         restore();
         let valid = updateSubmitButton();
@@ -98,10 +107,21 @@ async function authenticate(speed = 500) {
     let ogText = submitBtn.innerText;
 
     submitBtn.disabled = true;
+    homeserverEle.disabled = true;
     usernameEle.disabled = true;
     privateKeyEle.disabled = true;
     publicKeyEle.disabled = true;
     errorMessageEle.innerText = "";
+
+    const restoreInputs = () => {
+        submitBtn.disabled = false;
+        homeserverEle.disabled = false;
+        usernameEle.disabled = false;
+        privateKeyEle.disabled = false;
+        publicKeyEle.disabled = false;
+
+        submitBtn.innerText = ogText;
+    };
 
     let keyPair = {
         publicKey: publicKeyEle.value,
@@ -114,49 +134,58 @@ async function authenticate(speed = 500) {
     await binForage.set("login[keyPair]", keyPair);
     await binForage.set("login[username]", usernameEle.value);
 
-    submitBtn.innerText = "Authorizing";
+    submitBtn.innerText = "Locating";
     await delay(speed);
 
-    axios.post(`${location.origin}/api/auth/login`, {
-        username: usernameEle.value,
-        publicKey: keyPair.publicKey
-    }).then(async (res) => {
-        let { id, message } = res.data;
-        
-        submitBtn.innerText = "Verifying";
+    axios.get(`https://${homeserverEle.value}/.well-known/wonk`).then(async (res) => {
+        let { homeserver } = res.data;
+
+        await binForage.set("homeserver", {
+            namespace: homeserverEle.value,
+            baseUrl: homeserver.base_url
+        });
+
+        submitBtn.innerText = "Authorizing";
         await delay(speed);
 
-        let decrypted = await cryption.decrypt(message, keyPair.privateKey);
+        axios.post(`${homeserver.base_url}/auth/login`, {
+            username: usernameEle.value,
+            publicKey: keyPair.publicKey
+        }).then(async (res) => {
+            let { id, message } = res.data;
+            
+            submitBtn.innerText = "Verifying";
+            await delay(speed);
 
-        axios.post(`${location.origin}/api/auth/verify/${id}`, {
-            message: decrypted
-        }).then((res) => {
-            let { id, token } = res.data;
-            
-            cookies.set("token", token, { expires: 365 });
-            cookies.set("session", id); // Create session cookie
-            
-            location.href = "/app/";
+            let decrypted = await cryption.decrypt(message, keyPair.privateKey);
+
+            axios.post(`${homeserver.base_url}/auth/verify/${id}`, {
+                message: decrypted
+            }).then((res) => {
+                let { id, token } = res.data;
+                
+                cookies.set("token", token, { expires: 365 });
+                cookies.set("session", id); // Create session cookie
+                
+                location.href = "/app/";
+            }).catch(err => {
+                if (typeof err?.response?.data == "object") {
+                    errorMessageEle.innerText = err?.response?.data?.message;
+                } else {
+                    errorMessageEle.innerText = "Something went wrong while verifying";
+                }
+
+                restoreInputs();
+            });
         }).catch(err => {
             if (typeof err?.response?.data == "object") {
                 errorMessageEle.innerText = err?.response?.data?.message;
             } else {
-                errorMessageEle.innerText = "Something went wrong while verifying";
+                errorMessageEle.innerText = "Something went wrong while authorizing";
             }
+
+            restoreInputs();
         });
-    }).catch(err => {
-        if (typeof err?.response?.data == "object") {
-            errorMessageEle.innerText = err?.response?.data?.message;
-        } else {
-            errorMessageEle.innerText = "Something went wrong while authorizing";
-        }
-
-        submitBtn.disabled = false;
-        usernameEle.disabled = false;
-        privateKeyEle.disabled = false;
-        publicKeyEle.disabled = false;
-
-        submitBtn.innerText = ogText;
     });
 }
 

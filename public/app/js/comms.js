@@ -1,9 +1,12 @@
 import cookies from "https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/+esm";
 import EventSource from "https://cdn.jsdelivr.net/npm/eventsource@2.0.2/+esm";
+import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import { debugMode, client } from "./client.js";
 import * as cryption from "../../cryption.js";
 
-export const gatewayUrl = `${location.origin}/api`;
+let homeserver = await binForage.get("homeserver");
+
+export const gatewayUrl = homeserver.baseUrl;
 export let stream = null;
 
 let earlyEvents = {};
@@ -88,7 +91,11 @@ export function registerEvent(type, callback) {
 
 export function makeRequest(options) {
     return new Promise((resolve, reject) => {
-        axios(options).then((res) => {
+        axios(Object.assign({
+            headers: {
+                Authorization: cookies.get("token")
+            }
+        }, options)).then((res) => {
             resolve(res);
         }).catch(error => {
             if (typeof error?.response == "object") {
