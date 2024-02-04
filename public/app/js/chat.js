@@ -30,7 +30,7 @@ import {
     debugMode,
     getUsers
 } from "./client.js";
-import { makeRequest, gatewayUrl, parseData, registerEvent, isStreamOpen } from "./comms.js";
+import { makeRequest, parseData, registerEvent, isStreamOpen } from "./comms.js";
 import showAlert from "./alert.js";
 import * as cryption from "../../cryption.js";
 
@@ -64,7 +64,7 @@ export function isChatLocked() {
 export async function joinRoom(roomname, suppressAlert = false) {
     let joinRes = await makeRequest({
         method: "post",
-        url: `${gatewayUrl}/rooms/${roomname}/join`
+        url: `${client.homeserver.baseUrl}/rooms/${roomname}/join`
     });
 
     if (joinRes.status === 200) {
@@ -88,7 +88,7 @@ export async function createRoom(roomname, suppressAlert = false) {
 
     let createRes = await makeRequest({
         method: "post",
-        url: `${gatewayUrl}/rooms/${roomname}/create`
+        url: `${client.homeserver.baseUrl}/rooms/${roomname}/create`
     });
 
     if (!(createRes.status === 200 && createRes.data.success)) {
@@ -119,7 +119,7 @@ export async function joinedRoomHandler(data) {
     
     let membersRes = await makeRequest({
         method: "get",
-        url: `${gatewayUrl}/rooms/${data.name}/members`
+        url: `${client.homeserver.baseUrl}/rooms/${data.name}/members`
     });
 
     setMembers(data.name, membersRes.data.members);
@@ -134,7 +134,7 @@ export async function openDirectMessage(id) {
 export async function leaveRoom(roomname) {
     let leaveRes = await makeRequest({
         method: "post",
-        url: `${gatewayUrl}/rooms/${roomname}/leave`
+        url: `${client.homeserver.baseUrl}/rooms/${roomname}/leave`
     });
 
     if (!(leaveRes.status === 200 && leaveRes.data.success)) return showAlert("Failed to leave room", 2500);
@@ -275,7 +275,7 @@ async function sendMessage() {
 
     let messageRes = await makeRequest({
         method: "post",
-        url: `${gatewayUrl}/rooms/${client.currentRoom}/message`,
+        url: `${client.homeserver.baseUrl}/rooms/${client.currentRoom}/message`,
         data: {
             message: await cryption.encrypt(JSON.stringify({
                 content: content,

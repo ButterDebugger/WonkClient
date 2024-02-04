@@ -6,7 +6,7 @@ import {
     joinedRoomHandler,
     updateChatLock
 } from "./chat.js";
-import { makeRequest, gatewayUrl, parseData, registerEvent, init as initComms } from "./comms.js";
+import { makeRequest, parseData, registerEvent, init as initComms } from "./comms.js";
 import showAlert from "./alert.js";
 import { userDisplay } from "./components.js";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
@@ -19,8 +19,15 @@ export let client = {
     currentRoom: null,
     rooms: new Map(),
     attachments: [],
-    keyPair: await binForage.get("keyPair")
+    keyPair: await binForage.get("keyPair"),
+    homeserver: await binForage.get("homeserver")
 };
+
+if (client.keyPair == null || client.homeserver == null) {
+    setTimeout(() => {
+        location.href = "/login";
+    }, 500);
+}
 
 initComms();
 
@@ -41,7 +48,7 @@ registerEvent("close", () => {
 async function syncClient() {
     let syncRes = await makeRequest({
         method: "get",
-        url: `${gatewayUrl}/sync/client`
+        url: `${client.homeserver.baseUrl}/sync/client`
     });
 
     if (syncRes.status !== 200) return showAlert("Failed to sync client", 2500);
@@ -60,7 +67,7 @@ async function syncClient() {
 async function syncMemory() {
     let syncRes = await makeRequest({
         method: "get",
-        url: `${gatewayUrl}/sync/memory`
+        url: `${client.homeserver.baseUrl}/sync/memory`
     });
 
     if (syncRes.status !== 200) return showAlert("Failed to sync memory", 2500);
@@ -107,7 +114,7 @@ export async function getUsers(...ids) {
     if (unknowns.length > 0) {
         let usersRes = await makeRequest({
             method: "get",
-            url: `${gatewayUrl}/users/?subscribe=yes&ids=${unknowns.join(",")}`
+            url: `${client.homeserver.baseUrl}/users/?subscribe=yes&ids=${unknowns.join(",")}`
         });
 
         if (usersRes.status == 200) {

@@ -1,19 +1,15 @@
 import cookies from "https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/+esm";
 import EventSource from "https://cdn.jsdelivr.net/npm/eventsource@2.0.2/+esm";
-import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import { debugMode, client } from "./client.js";
 import * as cryption from "../../cryption.js";
 
-let homeserver = await binForage.get("homeserver");
-
-export const gatewayUrl = homeserver.baseUrl;
 export let stream = null;
 
 let earlyEvents = {};
 let streamOpen = false;
 
 export function init() {
-    stream = new EventSource(`${gatewayUrl}/stream`, {
+    stream = new EventSource(`${client.homeserver.baseUrl}/stream`, {
         headers: {
             Authorization: cookies.get("token")
         }
@@ -29,7 +25,7 @@ export function init() {
         if (debugMode) console.error("An error has occurred with the event stream", event);
 
         setTimeout(() => {
-            window.location.href = "/login";
+            location.href = "/login";
         }, 500);
     });
 

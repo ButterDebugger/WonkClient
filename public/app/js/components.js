@@ -1,6 +1,6 @@
 import { isNil, dom, domParser } from "https://debutter.dev/x/js/utils.js@1.2";
 import { openDirectMessage } from "./chat.js";
-import { gatewayUrl } from "./comms.js";
+import { client } from "./client.js";
 
 export function chatMessage(username, color, id, offline, content, timestamp, attachments = []) {
     let msgContainer = document.createElement("div");
@@ -27,7 +27,7 @@ export function chatMessage(username, color, id, offline, content, timestamp, at
 
         attachmentEle.classList.add("clickable");
         attachmentEle.addEventListener("click", () => {
-            window.open(`${gatewayUrl}/${path}`, "_blank");
+            window.open(`${client.homeserver.baseUrl}/${path}`, "_blank");
         });
 
         attachmentsContainer.appendChild(attachmentEle);
