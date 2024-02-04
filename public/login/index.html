@@ -20,66 +20,93 @@
   </head>
   <body>
     <div class="container">
+      <h5 class="step-indicator">Step <span id="step-number">1</span> of 2</h5>
       <h1 class="header">Login</h1>
       <h5 id="error-message"></h5>
       
-      <fieldset class="input-field">
-				<input
-					type="text"
-					name="homeserver"
-					id="homeserver"
-					value="debutter.dev"
-          required
-				/>
-        <legend class="required">Homeserver</legend>
-      </fieldset>
+      <div id="step-one">
+        <div class="input-container">
+          <span class="field-label">Sign into</span>
+          <input
+            type="text"
+            name="homeserver"
+            id="homeserver"
+            value="debutter.dev"
+            placeholder="Homeserver"
+            spellcheck="false"
+            required
+          />
+        </div>
 
-      <fieldset class="input-field">
-        <input
-          type="text"
-          name="username"
-          id="username"
-          minlength="3"
-          maxlength="16"
-          pattern="^(?! )[\x20-\x7E]{3,16}(?<! )$"
-          autocomplete="username"
-          spellcheck="false"
-          required
-        />
-        <legend class="required">Username</legend>
-      </fieldset>
+        <div class="input-container">
+          <span class="field-label">Account</span>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            minlength="3"
+            maxlength="16"
+            pattern="^(?! )[\x20-\x7E]{3,16}(?<! )$"
+            autocomplete="username"
+            placeholder="Username"
+            spellcheck="false"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            minlength="3"
+            autocomplete="current-password"
+            placeholder="Password"
+            spellcheck="false"
+            required
+          />
+        </div>
 
-      <fieldset id="key-pair-field" class="input-field">
-        <button id="restore-key-pair" class="hidden">Restore last used</button>
-        <button id="generate-key-pair">Generate one for me</button>
-        <button id="has-key-pair">I have my own</button>
+        <button id="next-step" disabled>Next</button>
+      </div>
 
-        <legend class="required">PGP Key Pair <img src="" alt=""></legend>
-      </fieldset>
+      <div id="step-two" class="hidden">
+        <div class="input-container">
+          <span class="field-label">Generate Key Pair</span>
 
-      <fieldset id="public-key-field" class="input-field hidden">
-        <textarea
-          name="public-key"
-          id="public-key"
-          rows="4"
-          spellcheck="false"
-          required
-        ></textarea>
-        <legend class="required">Public Key</legend>
-      </fieldset>
+          <div class="field-group stretch">
+            <select id="key-size">
+              <option value="1024">1024 bits</option>
+              <option value="2048" selected>2048 bits</option>
+              <option value="4096">4096 bits</option>
+            </select>
+            
+            <button id="generate-key-pair">Generate</button>
+          </div>
+        </div>
 
-      <fieldset id="private-key-field" class="input-field hidden">
-        <textarea
-          name="private-key"
-          id="private-key"
-          rows="4"
-          spellcheck="false"
-          required
-        ></textarea>
-        <legend class="required">Private Key</legend>
-      </fieldset>
+        <div class="input-container">
+          <span class="field-label">Encryption Key Pair</span>
+          <textarea
+            name="public-key"
+            id="public-key"
+            rows="3"
+            spellcheck="false"
+            placeholder="Public Key"
+            required
+          ></textarea>
+          <textarea
+            name="private-key"
+            id="private-key"
+            rows="3"
+            spellcheck="false"
+            placeholder="Private Key"
+            required
+          ></textarea>
+        </div>
       
-      <button id="submit" disabled>Submit</button>
+        <div class="field-group">
+          <button id="previous-step">Back</button>
+          <button id="submit" disabled>Submit</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>

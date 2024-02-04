@@ -19,7 +19,7 @@ export let client = {
     currentRoom: null,
     rooms: new Map(),
     attachments: [],
-    keyPair: await binForage.get("login[keyPair]")
+    keyPair: await binForage.get("keyPair")
 };
 
 initComms();

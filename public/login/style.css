@@ -5,7 +5,6 @@ body {
 .container {
     display: flex;
     flex-direction: column;
-    gap: 16px;
 
     margin: auto;
     padding: 48px 36px;
@@ -13,56 +12,20 @@ body {
     min-width: 260px;
     border-radius: 8px;
     background-color: var(--container-color);
-    box-shadow: rgba(127, 127, 127, 0.2) 0px 0px 6px 1px;
+    box-shadow: rgba(127, 127, 127, 0.05) 0px 0px 20px 10px;
 }
 
-.input-field {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+.step-indicator {
+    align-self: center;
 
-    padding: 2px 8px 8px 8px;
-    border-radius: 12px;
-    border: 1px solid rgba(127, 127, 127, 0.2);
+    color: var(--secondary-text-color);
+    margin: 0px 0px 4px 0px;
 }
-
-#homeserver, #username, #public-key, #private-key {
-    padding: 6px;
-    border-radius: 8px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
-    width: -webkit-fill-available;
-    width: -moz-available;
-    width: fill-available;
-}
-#homeserver:invalid, #username:invalid, #public-key:invalid, #private-key:invalid {
-    border-color: var(--warning-color);
-    border-style: dashed;
-}
-#private-key {
-    transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
-}
-#private-key:not(:focus) {
-    color: transparent;
-    text-shadow: 0px 0px 8px var(--text-color);
-}
-
-legend.required::after {
-    content: ' *';
-    color: var(--warning-color);
-}
-
-#restore-key-pair.highlight:not(:hover) {
-    border-color: var(--secondary-color);
-}
-#generate-key-pair.highlight:not(:hover) {
-    border-color: var(--secondary-color);
-}
-
-#public-key, #private-key {
-    border-radius: 8px;
-    resize: none;
+.header {
+    align-self: center;
+    
+    font-size: 30px;
+    margin: 0px 0px 16px;
 }
 
 #error-message {
@@ -75,20 +38,70 @@ legend.required::after {
     display: none;
 }
 
-.header {
+.input-container {
+    display: flex;
+    flex-direction: column;
+}
+.field-group {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5ch;
-
-    font-size: 30px;
-    margin: 0px;
+    justify-content: space-between;
+    gap: 8px;
+}
+.field-group.stretch > *:first-child {
+    flex: 1;
+}
+.field-label {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0px 0px 4px 0px;
 }
 
+#step-one, #step-two {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+#previous-step {
+    align-self: flex-start;
+}
+#next-step {
+    align-self: flex-end;
+}
 #submit {
-    align-self: center;
+    align-self: flex-end;
+}
 
-    margin: 12px 0px 0px;
-    width: fit-content;
+#homeserver, #username, #password, #public-key, #private-key {
+    padding: 6px;
+    font-size: 17px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    width: fill-available;
+}
+#public-key, #private-key {
+    resize: none;
+}
+#private-key {
+    transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+}
+#private-key:not(:focus):not(:placeholder-shown) {
+    color: transparent;
+    text-shadow: 0px 0px 8px var(--text-color);
+}
+
+#username, #public-key {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom: none;
+}
+#password, #private-key {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+#generate-key-pair.highlight:not(:hover) {
+    border-color: var(--secondary-color);
 }

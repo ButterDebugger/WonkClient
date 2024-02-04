@@ -24,10 +24,10 @@ export async function readMessage() {
     }
 }
 
-export async function generateKeyPair(name) {
+export async function generateKeyPair(name, rsaBits = 2048) {
     let { publicKey, privateKey } = await openpgp.generateKey({
         type: 'rsa',
-        rsaBits: 2048,
+        rsaBits: rsaBits,
         userIDs: [{
             name: name
         }]
