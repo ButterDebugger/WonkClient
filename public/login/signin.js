@@ -159,23 +159,22 @@ async function authenticate(speed = 500) {
 
         axios.post(`${homeserver.base_url}/auth/login`, {
             username: usernameEle.value,
-            password: passwordEle.value,
-            publicKey: keyPair.publicKey
+            password: passwordEle.value
         }).then(async (res) => {
-            let { id, message } = res.data;
+            let { nonce } = res.data;
             
             submitBtn.innerText = "Verifying";
             await delay(speed);
 
-            let decrypted = await cryption.decrypt(message, keyPair.privateKey);
+            let signedNonce = await cryption.sign(nonce, keyPair.privateKey);
 
-            axios.post(`${homeserver.base_url}/auth/verify/${id}`, {
-                message: decrypted
+            axios.post(`${homeserver.base_url}/auth/verify`, {
+                signedNonce: signedNonce,
+                publicKey: keyPair.publicKey
             }).then((res) => {
-                let { id, token } = res.data;
+                let { token } = res.data;
                 
                 cookies.set("token", token, { expires: 365 });
-                cookies.set("session", id); // Create session cookie
                 
                 location.href = "/app/";
             }).catch(err => requestErrorHandler(err, "Something went wrong whilst verifying"));

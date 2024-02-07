@@ -16,6 +16,13 @@ export async function encrypt(message, publicKey) {
     });
 }
 
+export async function sign(message, privateKey) {
+    return await openpgp.sign({
+        message: await openpgp.createMessage({ text: message }),
+        signingKeys: await openpgp.readKey({ armoredKey: privateKey })
+    });
+}
+
 export async function readMessage() {
     try {
         return await openpgp.readMessage({ armoredMessage: message });

@@ -7,8 +7,18 @@ export let stream = null;
 
 let earlyEvents = {};
 let streamOpen = false;
+let requestInstance = null;
 
 export function init() {
+    // Initialize the request instance
+    requestInstance = axios.create({
+        baseURL: client.homeserver.baseUrl,
+        headers: {
+            Authorization: cookies.get("token")
+        }
+    });
+
+    // Initialize the event stream
     stream = new EventSource(`${client.homeserver.baseUrl}/stream`, {
         headers: {
             Authorization: cookies.get("token")
@@ -87,11 +97,7 @@ export function registerEvent(type, callback) {
 
 export function makeRequest(options) {
     return new Promise((resolve, reject) => {
-        axios(Object.assign({
-            headers: {
-                Authorization: cookies.get("token")
-            }
-        }, options)).then((res) => {
+        requestInstance.request(options).then((res) => {
             resolve(res);
         }).catch(error => {
             if (typeof error?.response == "object") {

@@ -2,14 +2,14 @@ import { isNil, dom, domParser } from "https://debutter.dev/x/js/utils.js@1.2";
 import { openDirectMessage } from "./chat.js";
 import { client } from "./client.js";
 
-export function chatMessage(username, color, id, offline, content, timestamp, attachments = []) {
+export function chatMessage(username, color, offline, content, timestamp, attachments = []) {
     let msgContainer = document.createElement("div");
     msgContainer.classList.add("message-container");
     
     let msgEle = document.createElement("div");
     msgEle.classList.add("message");
     msgEle.appendChild(timestampComponent(timestamp));
-    msgEle.appendChild(userDisplay(username, color, id, offline));
+    msgEle.appendChild(userDisplay(username, color, offline));
 
     let contEle = document.createElement("span");
     contEle.classList.add("content");
@@ -23,12 +23,7 @@ export function chatMessage(username, color, id, offline, content, timestamp, at
 
     attachments.forEach(path => {
         let filename = path.split("/").pop();
-        let attachmentEle = attachmentComponent(filename);
-
-        attachmentEle.classList.add("clickable");
-        attachmentEle.addEventListener("click", () => {
-            window.open(`${client.homeserver.baseUrl}/${path}`, "_blank");
-        });
+        let attachmentEle = attachmentLinkComponent(filename, `${client.homeserver.baseUrl}/${path}`);
 
         attachmentsContainer.appendChild(attachmentEle);
     });
@@ -38,12 +33,12 @@ export function chatMessage(username, color, id, offline, content, timestamp, at
     return msgContainer;
 }
 
-export function joinRoomMessage(username, color, id, offline, timestamp = Date.now()) {
+export function joinRoomMessage(username, color, offline, timestamp = Date.now()) {
     let msgContainer = document.createElement("div");
     msgContainer.classList.add("message");
 
     msgContainer.appendChild(timestampComponent(timestamp));
-    msgContainer.appendChild(userDisplay(username, color, id, offline));
+    msgContainer.appendChild(userDisplay(username, color, offline));
 
     let contEle = document.createElement("span");
     contEle.classList.add("notification");
@@ -53,12 +48,12 @@ export function joinRoomMessage(username, color, id, offline, timestamp = Date.n
     return msgContainer;
 }
 
-export function leaveRoomMessage(username, color, id, offline, timestamp = Date.now()) {
+export function leaveRoomMessage(username, color, offline, timestamp = Date.now()) {
     let msgContainer = document.createElement("div");
     msgContainer.classList.add("message");
 
     msgContainer.appendChild(timestampComponent(timestamp));
-    msgContainer.appendChild(userDisplay(username, color, id, offline));
+    msgContainer.appendChild(userDisplay(username, color, offline));
 
     let contEle = document.createElement("span");
     contEle.classList.add("notification");
@@ -68,16 +63,16 @@ export function leaveRoomMessage(username, color, id, offline, timestamp = Date.
     return msgContainer;
 }
 
-export function userDisplay(username, color, id, offline = false) {
+export function userDisplay(username, color, offline = false) {
     let nameEle = document.createElement("span");
     nameEle.classList.add("username");
     if (offline) nameEle.classList.add("offline");
-    nameEle.setAttribute("data-id", id);
+    nameEle.setAttribute("data-username", username);
     nameEle.innerText = `${username}`;
     nameEle.style.color = color;
 
     nameEle.addEventListener("click", () => {
-        openDirectMessage(id);
+        openDirectMessage(username);
     });
 
     return nameEle;
@@ -104,6 +99,17 @@ export function attachmentComponent(name) {
 
     attachmentEle.classList.add("attachment");
     attachmentEle.innerText = name;
+
+    return attachmentEle;
+}
+
+export function attachmentLinkComponent(name, href) {
+    let attachmentEle = document.createElement("a");
+
+    attachmentEle.classList.add("attachment", "clickable");
+    attachmentEle.innerText = name;
+    attachmentEle.href = href;
+    attachmentEle.target = "_blank";
 
     return attachmentEle;
 }

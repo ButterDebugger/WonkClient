@@ -15,7 +15,6 @@ import { getAllMemberWrappers } from "./members.js";
 export let userCache = new Map();
 export let debugMode = false;
 export let client = {
-    id: null,
     currentRoom: null,
     rooms: new Map(),
     attachments: [],
@@ -55,7 +54,7 @@ async function syncClient() {
 
     if (debugMode) console.log("sync client", syncRes.data);
 
-    client.id = syncRes.data.you.id;
+    client.username = syncRes.data.you.username;
     client.rooms.clear();
 
     for (let room of syncRes.data.rooms) {
@@ -79,51 +78,51 @@ registerEvent("updateUser", ({ data }) => {
     data = parseData(data);
     if (typeof data == "undefined") return;
 
-    let cacheTime = userCache.get(data.id)?.cacheTime ?? 0;
+    let cacheTime = userCache.get(data.username)?.cacheTime ?? 0;
 
     if (data.timestamp > cacheTime) {
-        userCache.set(data.id, Object.assign(data.data, {
+        userCache.set(data.username, Object.assign(data.data, {
             cacheTime: data.timestamp
         }));
         
         // Dynamically update all elements
-        updateUserDynamically(data.data.username, data.data.color, data.data.id, data.data.offline);
+        updateUserDynamically(data.data.username, data.data.color, data.data.offline);
     }
 });
 
-function updateUserDynamically(username, color, id, offline) {
+function updateUserDynamically(username, color, offline) {
     [document, getAllChannelWrappers(), getAllMemberWrappers()].flat().forEach(ele => {
-        ele.querySelectorAll(`.username[data-id="${id}"]`).forEach((ele) => {
-            ele.replaceWith(userDisplay(username, color, id, offline));
+        ele.querySelectorAll(`.username[data-username="${username}"]`).forEach((ele) => {
+            ele.replaceWith(userDisplay(username, color, offline));
         });
     });
 }
 
-export async function getUsers(...ids) {
+export async function getUsers(...usernames) {
     let users = [];
     let unknowns = [];
 
-    ids.forEach(id => {
-        if (userCache.has(id)) {
-            users.push(userCache.get(id));
+    usernames.forEach(username => {
+        if (userCache.has(username)) {
+            users.push(userCache.get(username));
         } else {
-            unknowns.push(id);
+            unknowns.push(username);
         }
     });
 
     if (unknowns.length > 0) {
         let usersRes = await makeRequest({
             method: "get",
-            url: `${client.homeserver.baseUrl}/users/?subscribe=yes&ids=${unknowns.join(",")}`
+            url: `${client.homeserver.baseUrl}/users/?subscribe=yes&usernames=${unknowns.join(",")}`
         });
 
         if (usersRes.status == 200) {
             usersRes.data.users.forEach(user => {
                 users.push(user);
-                userCache.set(user.id, Object.assign(user, {
+                userCache.set(user.username, Object.assign(user, {
                     cacheTime: Date.now()
                 }));
-                updateUserDynamically(user.username, user.color, user.id, user.offline);
+                updateUserDynamically(user.username, user.color, user.offline);
             });
         }
     }

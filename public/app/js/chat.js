@@ -70,11 +70,11 @@ export async function joinRoom(roomname, suppressAlert = false) {
     if (joinRes.status === 200) {
         await joinedRoomHandler(joinRes.data);
         
-        let user = await getUsers(client.id);
-        user = user.find(u => u.id === client.id) ?? null;
+        let user = await getUsers(client.username);
+        user = user.find(u => u.username === client.username) ?? null;
 
         if (user !== null) {
-            addChatElement(joinRoomMessage(user.username, user.color, user.id, user.offline), joinRes.data.name);
+            addChatElement(joinRoomMessage(user.username, user.color, user.offline), joinRes.data.name);
         }
     } else {
         if (!suppressAlert) showAlert("Failed to join room", 2500);
@@ -127,7 +127,7 @@ export async function joinedRoomHandler(data) {
     switchRooms(data.name);
 }
 
-export async function openDirectMessage(id) {
+export async function openDirectMessage(username) {
     showAlert("This has not been implemented yet.");
 }
 
@@ -298,7 +298,6 @@ registerEvent("message", ({ data }) => {
     let ele = chatMessage(
         data.author.username,
         data.author.color,
-        data.author.id,
         data.author.offline,
         data.content,
         data.timestamp,

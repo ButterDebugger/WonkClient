@@ -36,26 +36,26 @@ registerEvent("updateMember", async ({ data }) => {
 
     switch (data.state) {
         case "join": {
-            let user = await getUsers(data.id);
-            user = user.find(u => u.id === data.id) ?? null;
+            let user = await getUsers(data.username);
+            user = user.find(u => u.username === data.username) ?? null;
 
             if (user !== null) {
-                addChatElement(joinRoomMessage(user.username, user.color, user.id, user.offline, data.timestamp), data.room);
+                addChatElement(joinRoomMessage(user.username, user.color, user.offline, data.timestamp), data.room);
             }
     
-            membersCache.add(data.id);
+            membersCache.add(data.username);
             setMembers(data.room, Array.from(membersCache));
             break;
         }
         case "leave": {
-            let user = await getUsers(data.id);
-            user = user.find(u => u.id === data.id) ?? null;
+            let user = await getUsers(data.username);
+            user = user.find(u => u.username === data.username) ?? null;
             
             if (user !== null) {
-                addChatElement(leaveRoomMessage(user.username, user.color, user.id, user.offline, data.timestamp), data.room);
+                addChatElement(leaveRoomMessage(user.username, user.color, user.offline, data.timestamp), data.room);
             }
     
-            membersCache.delete(data.id);
+            membersCache.delete(data.username);
             setMembers(data.room, Array.from(membersCache));
             break;
         }
@@ -77,7 +77,7 @@ export async function setMembers(roomname, ids) {
     }
 
     members.forEach(user => {
-        let userEle = userDisplay(user.username, user.color, user.id, user.offline);
+        let userEle = userDisplay(user.username, user.color, user.offline);
         membersContainer.appendChild(userEle);
     });
 };

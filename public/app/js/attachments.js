@@ -12,6 +12,7 @@ import {
 } from "./chat.js";
 import { attachmentComponent } from "./components.js";
 import showAlert from "./alert.js";
+import { makeRequest } from "./comms.js";
 
 let isUploading = false;
 let fileData = new FormData();
@@ -70,14 +71,14 @@ async function uploadAttachments() {
     attachBtn.classList.add("loading");
     updateChatLock();
 
-    let uploadRes = await axios({
+    let uploadRes = await makeRequest({
         method: "post",
-        url: "/api/upload",
+        url: `${client.homeserver.baseUrl}/upload`,
         data: fileData,
         headers: {
             "Content-Type": "multipart/form-data",
             "Accept": "application/json"
-        },
+        }
     });
 
     for (let key of fileData.keys()) { // Clear form data
