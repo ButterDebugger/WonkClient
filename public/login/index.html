@@ -19,94 +19,27 @@
     <script defer type="module" src="./signin.js"></script>
   </head>
   <body>
-    <div class="container">
-      <h5 class="step-indicator">Step <span id="step-number">1</span> of 2</h5>
-      <h1 class="header">Login</h1>
-      <h5 id="error-message"></h5>
-      
-      <div id="step-one">
-        <div class="input-container">
-          <span class="field-label">Sign into</span>
-          <input
-            type="text"
-            name="homeserver"
-            id="homeserver"
-            value="debutter.dev"
-            placeholder="Homeserver"
-            spellcheck="false"
-            required
-          />
-        </div>
-
-        <div class="input-container">
-          <span class="field-label">Account</span>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            minlength="3"
-            maxlength="16"
-            pattern="^(?! )[\x20-\x7E]{3,16}(?<! )$"
-            autocomplete="username"
-            placeholder="Username"
-            spellcheck="false"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            id="password"
-            minlength="6"
-            autocomplete="current-password"
-            placeholder="Password"
-            spellcheck="false"
-            required
-          />
-        </div>
-
-        <button id="next-step" disabled>Next</button>
-      </div>
-
-      <div id="step-two" class="hidden">
-        <div class="input-container">
-          <span class="field-label">Generate Key Pair</span>
-
-          <div class="field-group stretch">
-            <select id="key-size">
-              <option value="1024">1024 bits</option>
-              <option value="2048" selected>2048 bits</option>
-              <option value="4096">4096 bits</option>
-            </select>
-            
-            <button id="generate-key-pair">Generate</button>
+    <div id="root">
+      <main>
+        <div class="container">
+          <h1 class="header">Login</h1>
+          <h5 id="error-message"></h5>
+          
+          <div class="auth-form">
+            <label for="homeserver">Sign into</label>
+            <input
+              type="text"
+              name="homeserver"
+              id="homeserver"
+              value="debutter.dev"
+              placeholder="Homeserver"
+              spellcheck="false"
+              required
+            />
+            <button id="auth-btn">Authorize</button>
           </div>
         </div>
-
-        <div class="input-container">
-          <span class="field-label">Encryption Key Pair</span>
-          <textarea
-            name="public-key"
-            id="public-key"
-            rows="3"
-            spellcheck="false"
-            placeholder="Public Key"
-            required
-          ></textarea>
-          <textarea
-            name="private-key"
-            id="private-key"
-            rows="3"
-            spellcheck="false"
-            placeholder="Private Key"
-            required
-          ></textarea>
-        </div>
-      
-        <div class="field-group">
-          <button id="previous-step">Back</button>
-          <button id="submit" disabled>Submit</button>
-        </div>
-      </div>
+      </main>
     </div>
   </body>
 </html>

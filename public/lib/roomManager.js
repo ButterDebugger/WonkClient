@@ -7,22 +7,22 @@ export default class RoomManager {
 
 		this.cache = new Map();
 		
-		client.on("roomMemberJoin", (userId, roomName) => {
+		client.on("roomMemberJoin", (username, roomName) => {
 			if (!this.cache.has(roomName)) return;
 
-			this.cache.get(roomName).members.add(userId);
+			this.cache.get(roomName).members.add(username);
 		});
-		client.on("roomMemberLeave", (userId, roomName) => {
+		client.on("roomMemberLeave", (username, roomName) => {
 			if (!this.cache.has(roomName)) return;
 
-			this.cache.get(roomName).members.delete(userId);
+			this.cache.get(roomName).members.delete(username);
 		});
 	}
 
 	join(roomName) {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.post(`/api/rooms/${roomName}/join`)
+				.post(`/rooms/${roomName}/join`)
 				.then(async (res) => {
 					const { name, description, key, members } = res.data;
 
@@ -37,7 +37,7 @@ export default class RoomManager {
 	leave(roomName) {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.post(`/api/rooms/${roomName}/leave`)
+				.post(`/rooms/${roomName}/leave`)
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
 
@@ -50,7 +50,7 @@ export default class RoomManager {
 	create(roomName) {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.post(`/api/rooms/${roomName}/create`)
+				.post(`/rooms/${roomName}/create`)
 				.then((res) => {
 					resolve(res.data);
 				})
@@ -78,7 +78,7 @@ export class Room {
 
 		return new Promise(async (resolve, reject) => {
 			this.client.request
-				.post(`/api/rooms/${this.name}/message`, {
+				.post(`/rooms/${this.name}/message`, {
 					message: await encryptMessage(JSON.stringify({
 						content: options.text,
 						attachments: attachments
@@ -94,7 +94,7 @@ export class Room {
 	refresh() {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.get(`/api/rooms/${this.name}/info`)
+				.get(`/rooms/${this.name}/info`)
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
 
