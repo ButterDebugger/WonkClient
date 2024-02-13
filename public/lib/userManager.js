@@ -6,12 +6,12 @@ export default class UserManager {
 
 		this.cache = new Map();
 
-		this.client.on("userUpdate", (id, data) => this.update(id, data));
+		this.client.on("userUpdate", (username, data) => this.update(username, data));
 	}
 
-	update(userId, data) {
-		if (this.cache.has(userId)) {
-			let cachedUser = this.cache.get(userId);
+	update(username, data) {
+		if (this.cache.has(username)) {
+			let cachedUser = this.cache.get(username);
 
 			if (cachedUser.cacheTime >= data.timestamp) return; // Don't cache
 
@@ -19,40 +19,40 @@ export default class UserManager {
 			cachedUser.offline = data.offline;
 			cachedUser.username = data.username;
 		} else {
-			this.users.cache.set(id, new User(this.client, data.id, data.username, data.color, data.offline, data.timestamp));
+			this.users.cache.set(username, new User(this.client, data.username, data.color, data.offline, data.timestamp));
 		}
 	}
 
-	subscribe(userId) {
+	subscribe(username) {
 		return new Promise((resolve) => {
 			this.client.request
-				.post(`/api/users/${userId}/subscribe`)
+				.post(`/users/${username}/subscribe`)
 				.then(async () => {
 					resolve(true);
 				})
 				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
 		});
 	}
-	unsubscribe(userId) {
+	unsubscribe(username) {
 		return new Promise((resolve) => {
 			this.client.request
-				.post(`/api/users/${userId}/unsubscribe`)
+				.post(`/users/${username}/unsubscribe`)
 				.then(async () => {
 					resolve(true);
 				})
 				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
 		});
 	}
-	fetch(userId) {
+	fetch(username) {
 		return new Promise((resolve) => {
 			this.client.request
-				.get(`/api/users/${userId}/fetch`)
+				.get(`/users/${username}/fetch`)
 				.then(async (res) => {
-					let { id, data } = res.data;
+					let { username, data } = res.data;
 
-					this.update(id, data);
+					this.update(username, data);
 					
-					resolve(this.cache.get(id));
+					resolve(this.cache.get(username));
 				})
 				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
 		});
@@ -60,10 +60,9 @@ export default class UserManager {
 }
 
 export class User {
-	constructor(client, id, username, color, offline, timestamp = Date.now()) {
+	constructor(client, username, color, offline, timestamp = Date.now()) {
 		Object.defineProperty(this, "client", { value: client });
 
-		this.id = id;
 		this.username = username;
 		this.color = color;
 		this.offline = offline;
@@ -75,13 +74,5 @@ export class User {
 	}
 	set online(value) {
 		this.offline = !value;
-	}
-}
-
-export class ClientUser extends User { // TODO: why do we need this
-	constructor(client, id, username) {
-		super(client, id, username);
-
-		client.users.cache.set(id, this);
 	}
 }

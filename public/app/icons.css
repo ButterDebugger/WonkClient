@@ -1,0 +1,154 @@
+:root {
+    --ic-large: 32px;
+    --ic-normal: 24px;
+    --ic-small: 20px;
+    --ic-extra-small: 16px;
+}
+
+/* Icon images */
+.ic-plus {
+    -webkit-mask-image: url("/assets/plus-solid.svg");
+    mask-image: url("/assets/plus-solid.svg");
+}
+.ic-at {
+    -webkit-mask-image: url("/assets/at-solid.svg");
+    mask-image: url("/assets/at-solid.svg");
+}
+.ic-hashtag {
+    -webkit-mask-image: url("/assets/hashtag-solid.svg");
+    mask-image: url("/assets/hashtag-solid.svg");
+}
+.ic-user {
+    -webkit-mask-image: url("/assets/user-large-solid.svg");
+    mask-image: url("/assets/user-large-solid.svg");
+}
+.ic-compass {
+    -webkit-mask-image: url("/assets/compass-solid.svg");
+    mask-image: url("/assets/compass-solid.svg");
+}
+.ic-gear {
+    -webkit-mask-image: url("/assets/gear-solid.svg");
+    mask-image: url("/assets/gear-solid.svg");
+}
+.ic-magnifying-glass {
+    -webkit-mask-image: url("/assets/magnifying-glass-solid.svg");
+    mask-image: url("/assets/magnifying-glass-solid.svg");
+}
+.ic-filter {
+    -webkit-mask-image: url("/assets/filter-solid.svg");
+    mask-image: url("/assets/filter-solid.svg");
+}
+.ic-arrow-up {
+    -webkit-mask-image: url("/assets/arrow-up-solid.svg");
+    mask-image: url("/assets/arrow-up-solid.svg");
+}
+.ic-chevron-left {
+    -webkit-mask-image: url("/assets/chevron-left-solid.svg");
+    mask-image: url("/assets/chevron-left-solid.svg");
+}
+.ic-gear {
+    mask-image: url("/assets/gear-solid.svg");
+    mask-image: url("/assets/gear-solid.svg");
+}
+.ic-right-arrow-bracket {
+    -webkit-mask-image: url("/assets/right-to-bracket-solid.svg");
+    mask-image: url("/assets/right-to-bracket-solid.svg");
+}
+.ic-ellipsis {
+    -webkit-mask-image: url("/assets/ellipsis-solid.svg");
+    mask-image: url("/assets/ellipsis-solid.svg");
+}
+
+/* Icon sizes */
+.ic-large {
+    width: var(--ic-large);
+    height: var(--ic-large);
+}
+.ic-normal {
+    width: var(--ic-normal);
+    height: var(--ic-normal);
+}
+.ic-small {
+    width: var(--ic-small);
+    height: var(--ic-small);
+}
+.ic-extra-small {
+    width: var(--ic-extra-small);
+    height: var(--ic-extra-small);
+}
+.ic-text-size {
+    width: 1em;
+    height: 1em;
+}
+
+/* Default icon style */
+.ic-raw {
+    display: inline-block;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: cover;
+    mask-size: cover;
+    background-color: var(--text-color);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+/* Icon button containers */
+.ic-large-container {
+    --container-size: var(--ic-large);
+}
+.ic-normal-container {
+    --container-size: var(--ic-normal);
+}
+.ic-small-container {
+    --container-size: var(--ic-small);
+}
+.ic-extra-small-container {
+    --container-size: var(--ic-extra-small);
+}
+.ic-text-size-container {
+    --container-size: 1em;
+}
+
+.ic-large-container,
+.ic-normal-container,
+.ic-small-container,
+.ic-extra-small-container,
+.ic-text-size-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 33px;
+    padding: 8px;
+    width: calc(var(--ic-container-size) + 16px);
+    height: calc(var(--ic-container-size) + 16px);
+    cursor: pointer;
+}
+
+.ic-large-container:hover,
+.ic-normal-container:hover,
+.ic-small-container:hover,
+.ic-extra-small-container:hover,
+.ic-text-size-container:hover {
+    background-color: var(--hover-color);
+}
+
+.ic-large-container:active,
+.ic-normal-container:active,
+.ic-small-container:active,
+.ic-extra-small-container:active,
+.ic-text-size-container:active {
+    background-color: var(--active-color);
+}
+
+/* Reveal background color on mobile */
+@media screen and (max-width: 1024px) {
+    .ic-large-container,
+    .ic-normal-container,
+    .ic-small-container,
+    .ic-extra-small-container,
+    .ic-text-size-container {
+        background-color: var(--hover-color);
+    }
+}
