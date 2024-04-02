@@ -21,33 +21,19 @@ function updateAuthorizeButton() {
 
 homeserverEle.addEventListener("input", () => updateAuthorizeButton());
 
-function openCenteredPopup(url, title, width, height) {
-	const dualScreenLeft = window.screenLeft || window.screenX;
-	const dualScreenTop = window.screenTop || window.screenY;
+function openCenteredPopup(url, title) {
+	const popupWidth = window.outerWidth * 0.5;
+	const popupHeight = window.outerHeight * 0.5;
 
-	const screenWidth =
-		window.innerWidth ||
-		document.documentElement.clientWidth ||
-		screen.width;
-	const screenHeight =
-		window.innerHeight ||
-		document.documentElement.clientHeight ||
-		screen.height;
-
-	const systemZoom = screenWidth / window.screen.availWidth;
-
-	const popupWidth = width / systemZoom;
-	const popupHeight = height / systemZoom;
-
-	const left = (screenWidth - popupWidth) / 2 + dualScreenLeft;
-	const top = (screenHeight - popupHeight) / 2 + dualScreenTop;
+	const left = (window.outerWidth - popupWidth) / 2 + screenLeft;
+	const top = (window.outerHeight - popupHeight) / 2 + screenTop;
 
 	const popupFeatures = `
         scrollbars=yes,
         width=${popupWidth},
         height=${popupHeight},
-        top=${top},
-        left=${left}
+        left=${left},
+        top=${top}
     `;
 
 	window.open(url, title, popupFeatures);
@@ -110,9 +96,7 @@ async function authenticate() {
 
 			openCenteredPopup(
 				`${homeserver.base_url}/auth/signin`,
-				"Authorize Wonk Chat",
-				450,
-				600
+				"Authorize Wonk Chat"
 			);
 		})
 		.catch((err) => requestErrorHandler(err, "Something went wrong whilst locating"));
