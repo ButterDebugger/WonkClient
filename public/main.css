@@ -18,6 +18,18 @@
     --secondary-color: #f74185;
     --warning-color: #d93025;
     --valid-color: #35c76d;
+    --bubble-roundness: 16px;
+    --bubble-gap: 8px;
+    --bubble-padding: 12px;
+}
+
+/* Desktop design */
+@media screen and (min-width: 1024px) {
+    :root {
+        --bubble-roundness: 24px;
+        --bubble-gap: 16px;
+        --bubble-padding: 16px;
+    }
 }
 
 html, body {

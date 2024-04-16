@@ -1,3 +1,9 @@
+:root {
+    --bubble-roundness: 33px;
+    --bubble-padding: 20px;
+    --bubble-gap: 48px;
+}
+
 html {
     height: 100%;
 }
@@ -17,27 +23,27 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 48px;
+    gap: var(--bubble-gap);
 
     margin: 0px auto 0px auto;
-    padding: 16px;
+    padding: var(--bubble-padding);
     max-width: 1260px;
 }
 
 .page-content {
     display: flex;
     flex-direction: column;
-    gap: 150px;
+    gap: var(--bubble-gap);
 
-    padding: 20px;
+    padding: var(--bubble-padding);
     text-align: center;
     flex: 1;
 }
 
 header, footer {
     background-color: var(--container-color);
-    border-radius: 33px;
-    padding: 20px;
+    border-radius: var(--bubble-roundness);
+    padding: var(--bubble-padding);
 }
 
 footer {
@@ -121,7 +127,7 @@ p, li {
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: space-evenly;
-    gap: 0px 120px;
+    gap: 0px var(--bubble-gap);
 }
 .feature-container > div {
     max-width: 260px;
