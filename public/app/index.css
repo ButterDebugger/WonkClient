@@ -39,9 +39,15 @@ body {
     align-items: center;
     gap: 16px;
 
-    padding: var(--bubble-padding);
+    padding: calc(var(--bubble-padding) / 2);
     border-radius: var(--bubble-roundness);
     background-color: var(--container-color);
+}
+.drawer > .header > span:first-child {
+    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
+}
+.drawer > .header > span:last-child {
+    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
 }
 .drawer > .header > .title {
     font-size: 24px;
