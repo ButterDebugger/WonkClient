@@ -74,15 +74,7 @@
     border-radius: 5px;
 }
 
-/* Footer styles */
-.footer.room {
-    display: flex;
-    flex-direction: row;
-
-    padding: var(--bubble-padding);
-    background-color: var(--dark-container-color);
-}
-
+/* Message box styles */
 .message-box {
     display: flex;
     align-items: center;

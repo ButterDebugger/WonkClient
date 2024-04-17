@@ -133,7 +133,7 @@ body {
     display: flex;
     flex-direction: row;
 
-    padding: var(--bubble-gap);
+    padding: calc(var(--bubble-padding) / 2);
     border-radius: var(--bubble-roundness);
     background-color: var(--dark-container-color);
 }
