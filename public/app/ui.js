@@ -13,6 +13,8 @@ const navRoomsBtn = document.getElementById("nav-rooms");
 const navMessagesBtn = document.getElementById("nav-messages");
 const navYouBtn = document.getElementById("nav-you");
 
+const logoutBtn = document.getElementById("logout-btn");
+
 navExploreBtn.addEventListener("click", () => {
     switchDrawer("explore");
 });
@@ -24,6 +26,10 @@ navMessagesBtn.addEventListener("click", () => {
 });
 navYouBtn.addEventListener("click", () => {
     switchDrawer("you");
+});
+
+logoutBtn.addEventListener("click", () => {
+    location.href = "/login";
 });
 
 export function switchDrawer(drawerName) {
@@ -69,7 +75,7 @@ export function updateRoomTabs() {
             // Scroll to the bottom
             wrapper.content.scrollTop = wrapper.content.scrollHeight;
         });
-        
+
         roomsContainer.appendChild(ele);
     }
 
