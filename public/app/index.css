@@ -65,13 +65,18 @@ body {
 }
 
 /* Drawer content */
+#rooms-drawer > .content, #messages-drawer > .content {
+    gap: calc(var(--bubble-padding) / 2);
+    padding: calc(var(--bubble-padding) / 2);
+}
+
 .channel-tab {
     display: flex;
     gap: 0.5ch;
     align-items: center;
 
     cursor: pointer;
-    padding: 8px;
+    padding: calc(var(--bubble-padding) / 2);
     border-radius: 33px;
 }
 .channel-tab:hover {
