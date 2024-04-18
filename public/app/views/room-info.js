@@ -10,9 +10,9 @@ export function getOrCreateRoomInfoWrapper(room) {
 
     let wrapper = getOrCreateWrapper(infoKey);
 
-    wrapper.header.classList.add("room-info");
-    wrapper.content.classList.add("room-info");
-    wrapper.footer.classList.add("room-info");
+    wrapper.header.classList.add("bubble", "bb-half-padding");
+    wrapper.content.classList.add("bubble")
+    wrapper.footer.classList.add("hidden");
 
     // Add header elements
     let backIcon = domParser(

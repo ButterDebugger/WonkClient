@@ -11,9 +11,9 @@ export function getOrCreateRoomWrapper(room) {
 
     let wrapper = getOrCreateWrapper(roomKey);
 
-    wrapper.header.classList.add("room");
-    wrapper.content.classList.add("room");
-    wrapper.footer.classList.add("room");
+    wrapper.header.classList.add("room", "bubble", "bb-half-padding");
+    wrapper.content.classList.add("room", "bubble");
+    wrapper.footer.classList.add("room", "bubble", "bb-half-padding", "bb-dark");
 
     // Append footer message box
     let messageBox = domParser(

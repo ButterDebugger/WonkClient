@@ -1,3 +1,7 @@
+:root {
+    --bubble-padding: 36px;
+}
+
 html {
     height: 100%;
 }
@@ -26,13 +30,8 @@ main {
 
 /* Generic styles */
 .container {
-    display: flex;
     flex-direction: column;
     flex: 1;
-
-    padding: 48px 36px;
-    border-radius: 8px;
-    background-color: var(--container-color);
 }
 
 .step-indicator {

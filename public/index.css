@@ -40,12 +40,6 @@ main {
     flex: 1;
 }
 
-header, footer {
-    background-color: var(--container-color);
-    border-radius: var(--bubble-roundness);
-    padding: var(--bubble-padding);
-}
-
 footer {
     display: flex;
     justify-content: space-evenly;

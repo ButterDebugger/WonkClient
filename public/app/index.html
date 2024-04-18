@@ -18,7 +18,6 @@
 		<link rel="stylesheet" href="./icons.css">
 		<link rel="stylesheet" href="./index.css" />
 		<link rel="stylesheet" href="./view-drawer.css" />
-		<link rel="stylesheet" href="./views/room-info.css" />
 		<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
 		<script src="https://unpkg.com/@popperjs/core@2"></script>
 		<script src="https://unpkg.com/tippy.js@6"></script>
@@ -29,8 +28,9 @@
 		<div id="root">
 			<div id="app">
 				<div id="explore-drawer" class="drawer">
-					<div class="header">
+					<div class="header bubble bb-half-padding">
 						<span class="title">Explore</span>
+						<div class="flex-spacer"></div>
 
 						<!-- <div class="search-container">
 							<div id="search-btn">
@@ -46,27 +46,29 @@
 							<span id="start-search-btn" class="ic-raw ic-small ic-magnifying-glass"></span>
 						</div>
 					</div>
-					<div class="content no-select"></div>
+					<div class="content bubble no-select"></div>
 				</div>
 
 				<div id="rooms-drawer" class="drawer hidden">
-					<div class="header">
+					<div class="header bubble bb-half-padding">
 						<span class="title">Rooms</span>
+						<div class="flex-spacer"></div>
 						<div class="ic-small-container">
 							<span id="join-room-btn" class="ic-raw ic-small ic-plus"></span>
 						</div>
 					</div>
-					<div class="content no-select"></div>
+					<div class="content bubble no-select"></div>
 				</div>
 
 				<div id="messages-drawer" class="drawer hidden">
-					<div class="header">
+					<div class="header bubble bb-half-padding">
 						<span class="title">Messages</span>
+						<div class="flex-spacer"></div>
 						<div class="ic-small-container">
 							<span id="start-convo-btn" class="ic-raw ic-small ic-plus"></span>
 						</div>
 					</div>
-					<div class="content no-select">
+					<div class="content bubble no-select">
 						<div class="channel-tab">
 							<span class="ic-raw ic-text-size ic-at"></span>
 							<span>Debutter</span>
@@ -83,7 +85,7 @@
 				</div>
 
 				<div id="you-drawer" class="drawer hidden">
-					<div class="header">
+					<div class="header bubble bb-half-padding">
 						<span class="title">You</span>
 						<div class="flex-spacer"></div>
 						<div class="ic-small-container">
@@ -93,7 +95,7 @@
 							<span id="settings-btn" class="ic-raw ic-small ic-gear"></span>
 						</div>
 					</div>
-					<div class="content no-select"></div>
+					<div class="content bubble no-select"></div>
 				</div>
 
 				<div id="view-wrapper" class="drawer hidden">
@@ -102,7 +104,7 @@
 					<div class="footer"></div>
 				</div>
 
-				<div id="navbar" class="no-select">
+				<div id="navbar" class="bubble bb-dark bb-half-padding no-select">
 					<div id="nav-explore" class="nav-item active">
 						<span class="nav-icon ic-raw ic-compass"></span>
 						<span class="nav-text">Explore</span>

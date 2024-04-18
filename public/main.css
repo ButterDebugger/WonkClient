@@ -126,3 +126,24 @@ option {
 input:focus, button:focus, a.button:focus, select:focus, textarea:focus {
     border-color: var(--primary-color);
 }
+
+/* Bubble styles */
+.bubble {
+    display: flex;
+
+    padding: var(--bubble-padding);
+    border-radius: var(--bubble-roundness);
+    background-color: var(--container-color);
+}
+.bubble.bb-dark {
+    background-color: var(--dark-container-color);
+}
+.bubble.bb-half-padding {
+    padding: calc(var(--bubble-padding) / 2);
+}
+.bubble.bb-half-padding > span:first-child {
+    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
+}
+.bubble.bb-half-padding > span:last-child {
+    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
+}

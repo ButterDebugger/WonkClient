@@ -33,35 +33,15 @@ body {
     height: 100%;
 }
 
-.drawer > .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-
-    padding: calc(var(--bubble-padding) / 2);
-    border-radius: var(--bubble-roundness);
-    background-color: var(--container-color);
-}
-.drawer > .header > span:first-child {
-    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
-}
-.drawer > .header > span:last-child {
-    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
-}
 .drawer > .header > .title {
     font-size: 24px;
     font-weight: bold;
 }
 .drawer > .content {
-    display: flex;
     flex-direction: column;
 
     flex: 1;
     overflow-y: auto;
-    padding: var(--bubble-padding);
-    border-radius: var(--bubble-roundness);
-    background-color: var(--container-color);
 }
 
 /* Drawer content */
@@ -133,14 +113,9 @@ body {
     gap: 8px;
 }
 
-/* Navbar and footer styles */
-#navbar, .drawer > .footer {
-    display: flex;
+/* Navbar styles */
+#navbar {
     flex-direction: row;
-
-    padding: calc(var(--bubble-padding) / 2);
-    border-radius: var(--bubble-roundness);
-    background-color: var(--dark-container-color);
 }
 #navbar {
     justify-content: space-evenly;
