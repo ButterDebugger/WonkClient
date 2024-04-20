@@ -115,10 +115,8 @@ body {
 
 /* Navbar styles */
 #navbar {
-    flex-direction: row;
-}
-#navbar {
     justify-content: space-evenly;
+    flex-direction: row;
 
     position: relative;
     padding: calc(var(--bubble-padding) / 2);
