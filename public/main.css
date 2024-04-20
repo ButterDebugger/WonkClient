@@ -96,6 +96,9 @@ button, a.button {
     border-radius: 33px;
     transition: transform 0.1s ease, border-color 0.15s ease-in-out, opacity 0.15s ease-in-out;
 }
+button.highlight, a.button.highlight {
+    border-color: var(--secondary-color);
+}
 button:hover, a.button:hover {
     border-color: var(--primary-color);
 }

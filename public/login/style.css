@@ -28,63 +28,54 @@ main {
     margin: auto;
 }
 
-/* Generic styles */
-.container {
+/* Header styles */
+.header-group {
+    display: flex;
     flex-direction: column;
-    flex: 1;
-}
 
-.step-indicator {
-    align-self: center;
-
-    color: var(--secondary-text-color);
-    margin: 0px 0px 4px 0px;
+    margin: 0px 0px 16px;
 }
 .header {
     align-self: center;
 
     font-size: 30px;
-    margin: 0px 0px 16px;
+    margin: 0px;
 }
+#error-message, .continue-message {
+    align-self: center;
 
+    margin: 0px;
+    font-weight: normal;
+    color: var(--secondary-text-color);
+}
 #error-message {
-    margin: 0px 0px 10px;
-    font-size: 12px;
-    text-align: center;
     color: var(--warning-color);
 }
 #error-message:empty {
     display: none;
 }
+#username {
+    font-weight: bold;
+    color: var(--text-color);
+}
 
-.input-container {
-    display: flex;
+/* Form styles */
+.container {
     flex-direction: column;
 }
-.field-gap {
-    height: 4px;
-}
-.field-group {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 8px;
-}
-.field-group.stretch > *:first-child {
-    flex: 1;
-}
+
 label {
     font-size: 14px;
     font-weight: 700;
 }
 
-.auth-form {
+.gapped-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-#homeserver, #username, #password, #public-key, #private-key {
+#homeserver {
     padding: 6px;
     font-size: 17px;
     padding: 10px 12px;
@@ -93,38 +84,13 @@ label {
     width: -moz-available;
     width: fill-available;
 }
-#public-key, #private-key {
-    resize: none;
-}
-#private-key {
-    transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
-}
-#private-key:not(:focus):not(:placeholder-shown) {
-    color: transparent;
-    text-shadow: 0px 0px 8px var(--text-color);
-}
-
-/* #username, #public-key {
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-bottom-width: 1px;
-}
-#password, #private-key {
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-    border-top-width: 1px;
-} */
-
-#generate-key-pair.highlight:not(:hover) {
-    border-color: var(--secondary-color);
-}
 
 /* Desktop design */
 @media screen and (min-width: 1024px) {
-    .container {
+    /* .container {
         margin: auto;
         min-width: 260px;
         border-radius: 24px;
         flex: none;
-    }
+    } */
 }
