@@ -7,52 +7,40 @@
 
 /* Icon images */
 .ic-plus {
-    -webkit-mask-image: url("/assets/plus-solid.svg");
-    mask-image: url("/assets/plus-solid.svg");
+    --ic-url: url("/assets/plus-solid.svg");
 }
 .ic-at {
-    -webkit-mask-image: url("/assets/at-solid.svg");
-    mask-image: url("/assets/at-solid.svg");
+    --ic-url: url("/assets/at-solid.svg");
 }
 .ic-hashtag {
-    -webkit-mask-image: url("/assets/hashtag-solid.svg");
-    mask-image: url("/assets/hashtag-solid.svg");
+    --ic-url: url("/assets/hashtag-solid.svg");
 }
 .ic-user {
-    -webkit-mask-image: url("/assets/user-large-solid.svg");
-    mask-image: url("/assets/user-large-solid.svg");
+    --ic-url: url("/assets/user-large-solid.svg");
 }
 .ic-compass {
-    -webkit-mask-image: url("/assets/compass-solid.svg");
-    mask-image: url("/assets/compass-solid.svg");
+    --ic-url: url("/assets/compass-solid.svg");
 }
 .ic-gear {
-    -webkit-mask-image: url("/assets/gear-solid.svg");
-    mask-image: url("/assets/gear-solid.svg");
+    --ic-url: url("/assets/gear-solid.svg");
 }
 .ic-magnifying-glass {
-    -webkit-mask-image: url("/assets/magnifying-glass-solid.svg");
-    mask-image: url("/assets/magnifying-glass-solid.svg");
+    --ic-url: url("/assets/magnifying-glass-solid.svg");
 }
 .ic-filter {
-    -webkit-mask-image: url("/assets/filter-solid.svg");
-    mask-image: url("/assets/filter-solid.svg");
+    --ic-url: url("/assets/filter-solid.svg");
 }
 .ic-arrow-up {
-    -webkit-mask-image: url("/assets/arrow-up-solid.svg");
-    mask-image: url("/assets/arrow-up-solid.svg");
+    --ic-url: url("/assets/arrow-up-solid.svg");
 }
 .ic-chevron-left {
-    -webkit-mask-image: url("/assets/chevron-left-solid.svg");
-    mask-image: url("/assets/chevron-left-solid.svg");
+    --ic-url: url("/assets/chevron-left-solid.svg");
 }
 .ic-right-arrow-bracket {
-    -webkit-mask-image: url("/assets/right-to-bracket-solid.svg");
-    mask-image: url("/assets/right-to-bracket-solid.svg");
+    --ic-url: url("/assets/right-to-bracket-solid.svg");
 }
 .ic-ellipsis {
-    -webkit-mask-image: url("/assets/ellipsis-solid.svg");
-    mask-image: url("/assets/ellipsis-solid.svg");
+    --ic-url: url("/assets/ellipsis-solid.svg");
 }
 
 /* Icon sizes */
@@ -80,6 +68,8 @@
 /* Default icon style */
 .ic-raw {
     display: inline-block;
+    -webkit-mask-image: var(--ic-url);
+    mask-image: var(--ic-url);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-size: cover;
