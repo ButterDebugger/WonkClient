@@ -129,7 +129,7 @@ async function authenticate() {
 			authBtn.innerText = "Authorizing";
 
 			let popup = openCenteredPopup(
-				`${homeserver.base_url}/auth/signin`,
+				`${homeserver.base_url}/auth/signin/?origin=${location.origin}`,
 				"Authorize Wonk Chat"
 			);
 
