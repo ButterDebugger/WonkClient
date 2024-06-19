@@ -12,7 +12,7 @@ let keyPair = await binForage.get("keyPair");
 await client.login(token, keyPair?.publicKey, keyPair?.privateKey).catch((err) => {
     console.error(err);
 
-    location.href = "/login";
+    location.href = "/login/";
 });
 
 client.on("ready", async () => {

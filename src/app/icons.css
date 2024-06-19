@@ -107,8 +107,8 @@
 
     border-radius: 33px;
     padding: 8px;
-    width: calc(var(--ic-container-size) + 16px);
-    height: calc(var(--ic-container-size) + 16px);
+    width: calc(var(--container-size) + 16px);
+    height: calc(var(--container-size) + 16px);
     cursor: pointer;
 }
 
