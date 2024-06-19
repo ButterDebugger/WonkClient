@@ -29,7 +29,7 @@ navYouBtn.addEventListener("click", () => {
 });
 
 logoutBtn.addEventListener("click", () => {
-    location.href = "/login";
+    location.href = "/login/";
 });
 
 export function switchDrawer(drawerName) {

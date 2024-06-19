@@ -36,12 +36,12 @@ function openCenteredPopup(url, title) {
 	const top = (window.outerHeight - popupHeight) / 2 + screenTop;
 
 	const popupFeatures = `
-        scrollbars=yes,
-        width=${popupWidth},
-        height=${popupHeight},
-        left=${left},
-        top=${top}
-    `;
+		scrollbars=yes,
+		width=${popupWidth},
+		height=${popupHeight},
+		left=${left},
+		top=${top}
+	`;
 
 	return window.open(url, title, popupFeatures);
 }
