@@ -33,7 +33,10 @@ body {
     height: 100%;
 }
 
-.drawer > .header > .title {
+.drawer > .header {
+    align-items: center;
+}
+.drawer > .header .title {
     font-size: 24px;
     font-weight: bold;
 }

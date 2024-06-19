@@ -18,18 +18,9 @@
     --secondary-color: #f74185;
     --warning-color: #d93025;
     --valid-color: #35c76d;
-    --bubble-roundness: 16px;
-    --bubble-gap: 8px;
-    --bubble-padding: 12px;
-}
-
-/* Desktop design */
-@media screen and (min-width: 1024px) {
-    :root {
-        --bubble-roundness: 24px;
-        --bubble-gap: 16px;
-        --bubble-padding: 16px;
-    }
+    --bubble-roundness: 24px;
+    --bubble-gap: 16px;
+    --bubble-padding: 16px;
 }
 
 html, body {
@@ -145,8 +136,8 @@ input:focus, button:focus, a.button:focus, select:focus, textarea:focus {
     padding: calc(var(--bubble-padding) / 2);
 }
 .bubble.bb-half-padding > span:first-child {
-    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
+    padding-left: calc(var(--bubble-padding) / 2);
 }
 .bubble.bb-half-padding > span:last-child {
-    padding: calc(var(--bubble-padding) / 2) 0px calc(var(--bubble-padding) / 2) calc(var(--bubble-padding) / 2);
+    padding-right: calc(var(--bubble-padding) / 2);
 }

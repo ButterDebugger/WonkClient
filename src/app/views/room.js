@@ -61,15 +61,16 @@ export function getOrCreateRoomWrapper(room) {
     });
     wrapper.header.appendChild(backIcon);
 
-    // Append room name to wrapper header
-    let title = domParser(`<span class="title"></span>`);
-    title.innerText = room.name;
-    wrapper.header.appendChild(title);
-
-    // Append room description to wrapper header
-    let description = domParser(`<span class="description"></span>`);
-    description.innerText = room.description;
-    wrapper.header.appendChild(description);
+    // Append room label to wrapper header
+    let label = domParser(`
+        <div class="label">
+            <span class="title"></span>
+            <span class="description"></span>
+        </div>
+    `);
+    label.querySelector(".title").innerText = room.name;
+    label.querySelector(".description").innerText = room.description;
+    wrapper.header.appendChild(label);
 
     // Append flex spacer
     let spacer = domParser(`<div class="flex-spacer"></div>`);
