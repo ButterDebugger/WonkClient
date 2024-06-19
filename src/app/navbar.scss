@@ -1,0 +1,128 @@
+#navbar {
+    @include bubble(true);
+
+    justify-content: space-evenly;
+    flex-direction: row;
+
+    position: relative;
+    padding: calc(var(--bubble-padding) / 2);
+
+    /* Desktop design */
+    @media screen and (min-width: 1024px) {
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: calc(var(--bubble-padding) / 2);
+    }
+}
+#navbar > .nav-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1;
+    flex: 1;
+    border-radius: 33px;
+    padding: calc(var(--bubble-padding) / 2);
+    cursor: pointer;
+
+    /* Desktop design */
+    @media screen and (min-width: 1024px) {
+        justify-content: flex-start;
+        flex: 0;
+    }
+
+    > .nav-icon {
+        width: var(--ic-normal);
+        height: var(--ic-normal);
+        background-color: var(--secondary-text-color);
+        transition: background-color 0.2s ease-in-out;
+
+        /* Desktop design */
+        @media screen and (min-width: 1024px) {
+            width: var(--ic-small);
+            height: var(--ic-small);
+            background-color: var(--text-color);
+        }
+    }
+    > .nav-text {
+        font-size: 12px;
+        color: var(--secondary-text-color);
+        display: none;
+        margin-left: 1ch;
+        white-space: nowrap;
+        overflow: hidden;
+
+        /* Desktop design */
+        @media screen and (min-width: 1024px) {
+            font-size: 14px;
+            color: var(--text-color);
+            display: initial;
+        }
+    }
+}
+
+#navbar > .nav-item.active,
+#navbar > .nav-item:hover {
+    > .nav-icon {
+        background-color: var(--text-color);
+    }
+    > .nav-text {
+        color: var(--text-color);
+        display: initial;
+    }
+
+    /* Desktop design */
+    @media screen and (min-width: 1024px) {
+        background-color: var(--hover-color);
+    }
+}
+#navbar > .nav-item:active {
+    /* Desktop design */
+    @media screen and (min-width: 1024px) {
+        background-color: var(--active-color);
+    }
+}
+
+#navbar > .flex-spacer {
+    display: none;
+
+    /* Desktop design */
+    @media screen and (min-width: 1024px) {
+        display: initial;
+        border-bottom: 1px solid var(--hover-color);
+    }
+}
+
+#nav-lavalamp {
+    --ll-scale: calc((100% - var(--bubble-padding)));
+    position: absolute;
+    height: calc(var(--ic-normal) + var(--bubble-padding));
+    width: calc(var(--ll-scale) * 0.25);
+    top: calc(var(--bubble-padding) / 2);
+    z-index: 0;
+    transition: all 0.35s ease 0s;
+    border-radius: 33px;
+
+    /* Desktop design */
+    @media screen and (min-width: 1024px) {
+        display: none;
+    }
+}
+
+#nav-explore.active ~ #nav-lavalamp {
+    left: calc(0% + 8px);
+    background-color: var(--hover-color);
+}
+#nav-rooms.active ~ #nav-lavalamp {
+    left: calc(var(--ll-scale) * 0.25 + 8px);
+    background-color: var(--hover-color);
+}
+#nav-messages.active ~ #nav-lavalamp {
+    left: calc(var(--ll-scale) * 0.5 + 8px);
+    background-color: var(--hover-color);
+}
+#nav-you.active ~ #nav-lavalamp {
+    left: calc(var(--ll-scale) * 0.75 + 8px);
+    background-color: var(--hover-color);
+}

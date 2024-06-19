@@ -1,22 +1,23 @@
 {
-  "name": "wonk-client",
-  "version": "1.1.0",
-  "description": "wonk chat frontend",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build --emptyOutDir",
-    "start": "vite build --emptyOutDir && node server.js",
-    "preview": "vite preview"
-  },
-  "author": "ButterDebugger",
-  "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "glob": "^10.4.2"
-  },
-  "devDependencies": {
-    "vite": "^5.2.0"
-  }
+	"name": "wonk-client",
+	"version": "1.1.0",
+	"description": "wonk chat frontend",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build --emptyOutDir",
+		"start": "vite build --emptyOutDir && node server.js",
+		"preview": "vite preview"
+	},
+	"author": "ButterDebugger",
+	"license": "MIT",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.19.2"
+	},
+	"devDependencies": {
+		"glob": "^10.4.2",
+		"sass": "^1.77.6",
+		"vite": "^5.2.0"
+	}
 }

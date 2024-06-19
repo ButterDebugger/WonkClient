@@ -3,7 +3,10 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta
+			name="viewport"
+			content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
 		<meta
 			name="description"
 			content="Welcome to the chat app for wonky fellows like you."
@@ -14,10 +17,7 @@
 		<meta property="og:site_name" content="Wonk Chat" />
 		<meta property="og:type" content="website" />
 		<title>Wonk Chat</title>
-		<link rel="stylesheet" href="../main.css" />
-		<link rel="stylesheet" href="./icons.css">
-		<link rel="stylesheet" href="./index.css" />
-		<link rel="stylesheet" href="./view-drawer.css" />
+		<link rel="stylesheet" href="./style.scss" />
 		<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
 		<script src="https://unpkg.com/@popperjs/core@2"></script>
 		<script src="https://unpkg.com/tippy.js@6"></script>
@@ -28,7 +28,7 @@
 		<div id="root">
 			<div id="app">
 				<div id="explore-drawer" class="drawer">
-					<div class="header bubble bb-half-padding">
+					<div class="header">
 						<span class="title">Explore</span>
 						<div class="flex-spacer"></div>
 
@@ -43,32 +43,41 @@
 						</div> -->
 
 						<div class="ic-small-container">
-							<span id="start-search-btn" class="ic-raw ic-small ic-magnifying-glass"></span>
+							<span
+								id="start-search-btn"
+								class="ic-raw ic-small ic-magnifying-glass"
+							></span>
 						</div>
 					</div>
-					<div class="content bubble no-select"></div>
+					<div class="content no-select"></div>
 				</div>
 
 				<div id="rooms-drawer" class="drawer hidden">
-					<div class="header bubble bb-half-padding">
+					<div class="header">
 						<span class="title">Rooms</span>
 						<div class="flex-spacer"></div>
 						<div class="ic-small-container">
-							<span id="join-room-btn" class="ic-raw ic-small ic-plus"></span>
+							<span
+								id="join-room-btn"
+								class="ic-raw ic-small ic-plus"
+							></span>
 						</div>
 					</div>
-					<div class="content bubble no-select"></div>
+					<div class="content no-select"></div>
 				</div>
 
 				<div id="messages-drawer" class="drawer hidden">
-					<div class="header bubble bb-half-padding">
+					<div class="header">
 						<span class="title">Messages</span>
 						<div class="flex-spacer"></div>
 						<div class="ic-small-container">
-							<span id="start-convo-btn" class="ic-raw ic-small ic-plus"></span>
+							<span
+								id="start-convo-btn"
+								class="ic-raw ic-small ic-plus"
+							></span>
 						</div>
 					</div>
-					<div class="content bubble no-select">
+					<div class="content no-select">
 						<div class="channel-tab">
 							<span class="ic-raw ic-text-size ic-at"></span>
 							<span>Debutter</span>
@@ -85,17 +94,23 @@
 				</div>
 
 				<div id="you-drawer" class="drawer hidden">
-					<div class="header bubble bb-half-padding">
+					<div class="header">
 						<span class="title">You</span>
 						<div class="flex-spacer"></div>
 						<div class="ic-small-container">
-							<span id="logout-btn" class="ic-raw ic-small ic-right-arrow-bracket"></span>
+							<span
+								id="logout-btn"
+								class="ic-raw ic-small ic-right-arrow-bracket"
+							></span>
 						</div>
 						<div class="ic-small-container">
-							<span id="settings-btn" class="ic-raw ic-small ic-gear"></span>
+							<span
+								id="settings-btn"
+								class="ic-raw ic-small ic-gear"
+							></span>
 						</div>
 					</div>
-					<div class="content bubble no-select"></div>
+					<div class="content no-select"></div>
 				</div>
 
 				<div id="view-wrapper" class="drawer hidden">
@@ -104,7 +119,7 @@
 					<div class="footer"></div>
 				</div>
 
-				<div id="navbar" class="bubble bb-dark bb-half-padding no-select">
+				<div id="navbar" class="no-select">
 					<div id="nav-explore" class="nav-item active">
 						<span class="nav-icon ic-raw ic-compass"></span>
 						<span class="nav-text">Explore</span>
@@ -126,5 +141,5 @@
 				</div>
 			</div>
 		</div>
-    </body>
+	</body>
 </html>

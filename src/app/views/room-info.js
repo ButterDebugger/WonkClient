@@ -4,53 +4,45 @@ import { changeViewDrawer, switchDrawer } from "../ui.js";
 import { leaveRoom } from "../main.js";
 
 export function getOrCreateRoomInfoWrapper(room) {
-    let roomKey = `#${room.name}`;
-    let infoKey = `i#${room.name}`;
-    if (hasWrapper(infoKey)) return getWrapper(infoKey);
+	let roomKey = `#${room.name}`;
+	let infoKey = `i#${room.name}`;
+	if (hasWrapper(infoKey)) return getWrapper(infoKey);
 
-    let wrapper = getOrCreateWrapper(infoKey);
+	let wrapper = getOrCreateWrapper(infoKey);
 
-    wrapper.header.classList.add("bubble", "bb-half-padding");
-    wrapper.content.classList.add("bubble")
-    wrapper.footer.classList.add("hidden");
+	wrapper.footer.classList.add("hidden");
 
-    // Add header elements
-    let backIcon = domParser(
-        `<div class="ic-small-container">
+	// Add header elements
+	let backIcon = domParser(
+		`<div class="ic-small-container">
             <span class="ic-raw ic-small ic-chevron-left"></span>
         </div>`
-    );
-    backIcon.addEventListener("click", () => {
-        switchDrawer("view");
+	);
+	backIcon.addEventListener("click", () => {
+		switchDrawer("view");
 
-        // Change view drawer to room
-        let wrapper = getWrapper(roomKey);
-        changeViewDrawer(wrapper);
-    });
-    wrapper.header.appendChild(backIcon);
+		// Change view drawer to room
+		let wrapper = getWrapper(roomKey);
+		changeViewDrawer(wrapper);
+	});
+	wrapper.header.appendChild(backIcon);
 
-    // Add leave room button
-    let leaveRoomBtn = domParser(
-        `<button>Leave</button>`
-    );
-    leaveRoomBtn.addEventListener("click", async () => {
-        let success = await leaveRoom(room.name);
+	// Add leave room button
+	let leaveRoomBtn = domParser(`<button>Leave</button>`);
+	leaveRoomBtn.addEventListener("click", async () => {
+		let success = await leaveRoom(room.name);
 
-        if (success) {
-            switchDrawer("rooms");
-        } else {
-            console.error("Failed to leave room"); // TODO: make fancier
-        }
-    });
-    wrapper.content.appendChild(leaveRoomBtn);
+		if (success) {
+			switchDrawer("rooms");
+		} else {
+			console.error("Failed to leave room"); // TODO: make fancier
+		}
+	});
+	wrapper.content.appendChild(leaveRoomBtn);
 
-    return wrapper;
+	return wrapper;
 }
 
-export function updateMemberJoin(userId, roomName, timestamp) {
+export function updateMemberJoin(userId, roomName, timestamp) {}
 
-}
-
-export function updateMemberLeave(userId, roomName, timestamp) {
-
-}
+export function updateMemberLeave(userId, roomName, timestamp) {}

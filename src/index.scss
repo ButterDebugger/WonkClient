@@ -1,3 +1,5 @@
+@import "./main.scss";
+
 html {
 	height: 100%;
 }
@@ -37,6 +39,8 @@ main {
 }
 
 footer {
+	@include bubble;
+
 	display: flex;
 	justify-content: space-evenly;
 	flex-direction: row;
@@ -64,17 +68,15 @@ footer {
 }
 
 .motto-gradient {
-	background: -webkit-linear-gradient(
-		-90deg,
-		var(--primary-color),
-		var(--secondary-color)
-	);
+	background: -webkit-linear-gradient(-90deg, var(--primary-color), var(--secondary-color));
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
 header {
+	@include bubble;
+
 	display: flex;
 	align-items: center;
 }
@@ -113,7 +115,6 @@ li {
 }
 
 .open-app {
-	/* font-size: 14px; */
 	font-weight: 700;
 }
 

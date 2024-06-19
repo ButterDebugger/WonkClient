@@ -1,3 +1,5 @@
+@import "../main.scss";
+
 html {
 	height: 100%;
 }
@@ -60,6 +62,8 @@ main {
 
 /* Form styles */
 .container {
+	@include bubble;
+
 	flex-direction: column;
 }
 
@@ -79,7 +83,5 @@ label {
 	font-size: 17px;
 	padding: 10px 12px;
 	border-radius: 8px;
-	width: -webkit-fill-available;
-	width: -moz-available;
-	width: fill-available;
+	width: var(--fill-available);
 }
