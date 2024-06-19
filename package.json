@@ -5,11 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --emptyOutDir",
+    "start": "vite build --emptyOutDir && node server.js",
     "preview": "vite preview"
   },
   "author": "ButterDebugger",
   "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "glob": "^10.4.2"
+  },
   "devDependencies": {
     "vite": "^5.2.0"
   }
