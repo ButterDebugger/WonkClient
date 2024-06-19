@@ -69,13 +69,15 @@
     }
     > .nav-text {
         color: var(--text-color);
-        display: initial;
     }
 
     /* Desktop design */
     @media screen and (min-width: 1024px) {
         background-color: var(--hover-color);
     }
+}
+#navbar > .nav-item.active > .nav-text {
+    display: initial;
 }
 #navbar > .nav-item:active {
     /* Desktop design */
