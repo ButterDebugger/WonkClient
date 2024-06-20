@@ -65,7 +65,6 @@ export function changeViewDrawer(wrapper) {
 	viewDrawer.querySelector(".header").replaceWith(wrapper.header);
 	viewDrawer.querySelector(".content").replaceWith(wrapper.content);
 	viewDrawer.querySelector(".footer").replaceWith(wrapper.footer);
-	viewDrawer.classList[wrapper.doubled ? "add" : "remove"]("doubled");
 
 	if (wrapper.backAction !== null)
 		viewDrawer
@@ -103,8 +102,4 @@ export function updateRoomTabs() {
 	for (let tab of oldTabs) {
 		tab.remove();
 	}
-}
-
-export function labelDoubled(state = true) {
-	navbarEle.classList.add("-bottom");
 }

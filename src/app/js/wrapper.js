@@ -21,7 +21,6 @@ export function getOrCreateWrapper(key) {
 		header: headerEle,
 		content: contentEle,
 		footer: footerEle,
-		doubled: false,
 		backAction: null
 	};
 

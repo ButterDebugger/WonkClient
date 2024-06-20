@@ -85,7 +85,7 @@ body {
 
 /* Hide the navbar on mobile */
 @media screen and (max-width: $mobile-threshold) {
-	#view-wrapper.doubled:not(.hidden) ~ #navbar {
+	#view-wrapper:not(.hidden) ~ #navbar {
 		display: none;
 	}
 }

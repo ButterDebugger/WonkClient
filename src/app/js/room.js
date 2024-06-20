@@ -14,7 +14,6 @@ export function getOrCreateRoomWrapper(room) {
 	wrapper.header.classList.add("room");
 	wrapper.content.classList.add("room");
 	wrapper.footer.classList.add("room");
-	wrapper.doubled = true;
 	wrapper.backAction = function () {
 		switchDrawer("rooms");
 	};
