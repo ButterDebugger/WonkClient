@@ -1,6 +1,15 @@
 {
-    "workbench.iconTheme": "vs-seti",
-    "cSpell.words": [
-        "homeserver"
-    ]
+	"workbench.iconTheme": "vs-seti",
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"prettier.tabWidth": 4,
+	"prettier.endOfLine": "auto",
+	"prettier.useTabs": true,
+	"prettier.trailingComma": "none",
+	"cSpell.words": [
+		"homeserver"
+	],
+	"[scss]": {
+		"editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
+	}
 }
