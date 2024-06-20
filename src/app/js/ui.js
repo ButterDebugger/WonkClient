@@ -66,6 +66,11 @@ export function changeViewDrawer(wrapper) {
 	viewDrawer.querySelector(".content").replaceWith(wrapper.content);
 	viewDrawer.querySelector(".footer").replaceWith(wrapper.footer);
 	viewDrawer.classList[wrapper.doubled ? "add" : "remove"]("doubled");
+
+	if (wrapper.backAction !== null)
+		viewDrawer
+			.querySelector("#back-btn")
+			.addEventListener("click", () => wrapper.backAction());
 }
 
 export function updateRoomTabs() {

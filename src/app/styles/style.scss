@@ -45,7 +45,20 @@ body {
 	height: 100%;
 }
 
-.drawer > .header {
+.drawer > .head {
+	display: flex;
+	gap: var(--bubble-gap);
+
+	.back-container {
+		@include bubble;
+	}
+
+	.header {
+		flex: 1;
+	}
+}
+
+.drawer .header {
 	@include bubble;
 
 	align-items: center;
@@ -55,6 +68,7 @@ body {
 		font-weight: bold;
 	}
 }
+
 .drawer > .content {
 	@include bubble;
 

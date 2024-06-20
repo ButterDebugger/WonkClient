@@ -1,4 +1,4 @@
-import { domParser } from "https://debutter.dev/x/js/utils.js@1.2";
+import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { getOrCreateWrapper, getWrapper, hasWrapper } from "./wrapper.js";
 import { changeViewDrawer, switchDrawer } from "./ui.js";
 import { leaveRoom } from "./main.js";
@@ -11,34 +11,26 @@ export function getOrCreateRoomInfoWrapper(room) {
 	let wrapper = getOrCreateWrapper(infoKey);
 
 	wrapper.footer.classList.add("hidden");
-
-	// Add header elements
-	let backIcon = domParser(
-		`<div class="ic-small-container">
-            <span class="ic-raw ic-small ic-chevron-left"></span>
-        </div>`
-	);
-	backIcon.addEventListener("click", () => {
+	wrapper.backAction = function () {
 		switchDrawer("view");
 
 		// Change view drawer to room
 		let wrapper = getWrapper(roomKey);
 		changeViewDrawer(wrapper);
-	});
-	wrapper.header.appendChild(backIcon);
+	};
 
 	// Add leave room button
-	let leaveRoomBtn = domParser(`<button>Leave</button>`);
-	leaveRoomBtn.addEventListener("click", async () => {
-		let success = await leaveRoom(room.name);
+	dom(wrapper.content).append(
+		dom(`<button>Leave</button>`).on("click", async () => {
+			let success = await leaveRoom(room.name);
 
-		if (success) {
-			switchDrawer("rooms");
-		} else {
-			console.error("Failed to leave room"); // TODO: make fancier
-		}
-	});
-	wrapper.content.appendChild(leaveRoomBtn);
+			if (success) {
+				switchDrawer("rooms");
+			} else {
+				console.error("Failed to leave room"); // TODO: make fancier
+			}
+		})
+	);
 
 	return wrapper;
 }

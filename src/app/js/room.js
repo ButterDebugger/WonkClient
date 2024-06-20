@@ -15,6 +15,9 @@ export function getOrCreateRoomWrapper(room) {
 	wrapper.content.classList.add("room");
 	wrapper.footer.classList.add("room");
 	wrapper.doubled = true;
+	wrapper.backAction = function () {
+		switchDrawer("rooms");
+	};
 
 	// Create message input field
 	let $messageInput = dom(
@@ -63,13 +66,6 @@ export function getOrCreateRoomWrapper(room) {
 
 	// Append header content
 	dom(wrapper.header).append(
-		// Append back icon to wrapper header
-		dom(
-			`<div class="ic-small-container">
-				<span class="ic-raw ic-small ic-chevron-left"></span>
-			</div>`
-		).on("click", () => switchDrawer("rooms")),
-
 		// Append room label to wrapper header
 		dom(`<div class="label"></div>`).append(
 			dom(`<span class="title"></span>`).text(room.name),
