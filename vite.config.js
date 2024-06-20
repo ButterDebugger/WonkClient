@@ -2,6 +2,14 @@ import { basename, dirname, resolve } from "node:path";
 import { glob } from "glob";
 import { defineConfig } from "vite";
 
+const alwaysFullReload = {
+	name: "always-full-reload",
+	handleHotUpdate({ server }) {
+		server.ws.send({ type: "full-reload" });
+		return [];
+	}
+};
+
 export default defineConfig({
 	server: {
 		port: process.env.PORT ?? 4030
@@ -21,5 +29,6 @@ export default defineConfig({
 	},
 	publicDir: resolve(process.cwd(), "public"),
 	root: resolve(process.cwd(), "src"),
-	appType: "mpa"
+	appType: "mpa",
+	plugins: [alwaysFullReload]
 });
