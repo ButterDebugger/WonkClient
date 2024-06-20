@@ -1,7 +1,7 @@
 import { domParser } from "https://debutter.dev/x/js/utils.js@1.2";
 import { getOrCreateWrapper, getWrapper, hasWrapper } from "./wrapper.js";
-import { changeViewDrawer, switchDrawer } from "../ui.js";
-import { leaveRoom } from "../main.js";
+import { changeViewDrawer, switchDrawer } from "./ui.js";
+import { leaveRoom } from "./main.js";
 
 export function getOrCreateRoomInfoWrapper(room) {
 	let roomKey = `#${room.name}`;

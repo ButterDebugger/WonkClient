@@ -1,7 +1,7 @@
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
-import { createMessage } from "../components.js";
-import { changeViewDrawer, switchDrawer } from "../ui.js";
-import { sendMessage } from "../main.js";
+import { createMessage } from "./components.js";
+import { changeViewDrawer, switchDrawer } from "./ui.js";
+import { sendMessage } from "./main.js";
 import { hasWrapper, getOrCreateWrapper, getWrapper } from "./wrapper.js";
 import { getOrCreateRoomInfoWrapper } from "./room-info.js";
 

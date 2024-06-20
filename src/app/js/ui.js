@@ -1,6 +1,6 @@
 import { createRoomTab } from "./components.js";
 import { client } from "./main.js";
-import { getOrCreateRoomWrapper } from "./views/room.js";
+import { getOrCreateRoomWrapper } from "./room.js";
 
 const exploreDrawer = document.getElementById("explore-drawer");
 const roomsDrawer = document.getElementById("rooms-drawer");
@@ -66,9 +66,6 @@ export function changeViewDrawer(wrapper) {
 	viewDrawer.querySelector(".content").replaceWith(wrapper.content);
 	viewDrawer.querySelector(".footer").replaceWith(wrapper.footer);
 	viewDrawer.classList[wrapper.doubled ? "add" : "remove"]("doubled");
-
-	// Call switch on handler
-	wrapper.switchOn();
 }
 
 export function updateRoomTabs() {
