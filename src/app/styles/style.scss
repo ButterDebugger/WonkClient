@@ -35,50 +35,52 @@ body {
 	}
 }
 
-/* Drawer content */
-.drawer {
+/* Drawers */
+#explore-drawer,
+#rooms-drawer,
+#messages-drawer,
+#you-drawer,
+#view-wrapper {
 	display: flex;
 	flex-direction: column;
 	gap: var(--bubble-gap);
 
 	flex: 1;
 	height: 100%;
-}
 
-.drawer > .head {
-	display: flex;
-	gap: var(--bubble-gap);
+	.head {
+		display: flex;
+		gap: var(--bubble-gap);
 
-	.back-container {
-		@include bubble;
+		.back-container {
+			@include bubble;
+		}
+
+		.header {
+			flex: 1;
+		}
 	}
-
 	.header {
+		@include bubble;
+
+		align-items: center;
+
+		.title {
+			font-size: 24px;
+			font-weight: bold;
+		}
+	}
+	.content {
+		@include bubble;
+
+		flex-direction: column;
+
 		flex: 1;
+		overflow-y: auto;
 	}
-}
-
-.drawer .header {
-	@include bubble;
-
-	align-items: center;
-
-	.title {
-		font-size: 24px;
-		font-weight: bold;
+	.footer {
+		@include bubble(true);
 	}
-}
-
-.drawer > .content {
-	@include bubble;
-
-	flex-direction: column;
-
-	flex: 1;
-	overflow-y: auto;
-}
-.drawer > .footer {
-	@include bubble(true);
 }
 
 /* Hide the navbar on mobile */
