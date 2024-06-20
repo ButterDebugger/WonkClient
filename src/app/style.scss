@@ -1,6 +1,6 @@
 @import "../main.scss";
 @import "./icons.scss";
-@import "./view-drawer.scss";
+@import "./room.scss";
 @import "./navbar.scss";
 
 html {
@@ -30,7 +30,7 @@ body {
 	padding: var(--bubble-gap);
 
 	/* Desktop design */
-	@media screen and (min-width: 1024px) {
+	@media screen and (min-width: $mobile-threshold) {
 		flex-direction: row-reverse;
 	}
 }
@@ -49,10 +49,11 @@ body {
 	@include bubble;
 
 	align-items: center;
-}
-.drawer > .header .title {
-	font-size: 24px;
-	font-weight: bold;
+
+	.title {
+		font-size: 24px;
+		font-weight: bold;
+	}
 }
 .drawer > .content {
 	@include bubble;
@@ -64,6 +65,13 @@ body {
 }
 .drawer > .footer {
 	@include bubble(true);
+}
+
+/* Hide the navbar on mobile */
+@media screen and (max-width: $mobile-threshold) {
+	#view-wrapper.doubled:not(.hidden) ~ #navbar {
+		display: none;
+	}
 }
 
 /* Drawer content */
@@ -80,12 +88,13 @@ body {
 	cursor: pointer;
 	padding: calc(var(--bubble-padding) / 2);
 	border-radius: 33px;
-}
-.channel-tab:hover {
-	background-color: var(--hover-color);
-}
-.channel-tab:active {
-	background-color: var(--active-color);
+
+	&:hover {
+		background-color: var(--hover-color);
+	}
+	&:active {
+		background-color: var(--active-color);
+	}
 }
 
 /* Explore drawer content */

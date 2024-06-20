@@ -8,6 +8,7 @@ const messagesDrawer = document.getElementById("messages-drawer");
 const youDrawer = document.getElementById("you-drawer");
 const viewDrawer = document.getElementById("view-wrapper");
 
+const navbarEle = document.getElementById("navbar");
 const navExploreBtn = document.getElementById("nav-explore");
 const navRoomsBtn = document.getElementById("nav-rooms");
 const navMessagesBtn = document.getElementById("nav-messages");
@@ -16,71 +17,92 @@ const navYouBtn = document.getElementById("nav-you");
 const logoutBtn = document.getElementById("logout-btn");
 
 navExploreBtn.addEventListener("click", () => {
-    switchDrawer("explore");
+	switchDrawer("explore");
 });
 navRoomsBtn.addEventListener("click", () => {
-    switchDrawer("rooms");
+	switchDrawer("rooms");
 });
 navMessagesBtn.addEventListener("click", () => {
-    switchDrawer("messages");
+	switchDrawer("messages");
 });
 navYouBtn.addEventListener("click", () => {
-    switchDrawer("you");
+	switchDrawer("you");
 });
 
 logoutBtn.addEventListener("click", () => {
-    location.href = "/login/";
+	location.href = "/login/";
 });
 
 export function switchDrawer(drawerName) {
-    // Show / hide drawers
-    messagesDrawer.classList [drawerName == "messages" ? "remove" : "add"]("hidden");
-    roomsDrawer.classList    [drawerName == "rooms"    ? "remove" : "add"]("hidden");
-    exploreDrawer.classList  [drawerName == "explore"  ? "remove" : "add"]("hidden");
-    youDrawer.classList      [drawerName == "you"      ? "remove" : "add"]("hidden");
-    viewDrawer.classList     [drawerName == "view"     ? "remove" : "add"]("hidden");
+	// Show / hide drawers
+	messagesDrawer.classList[drawerName == "messages" ? "remove" : "add"](
+		"hidden"
+	);
+	roomsDrawer.classList[drawerName == "rooms" ? "remove" : "add"]("hidden");
+	exploreDrawer.classList[drawerName == "explore" ? "remove" : "add"](
+		"hidden"
+	);
+	youDrawer.classList[drawerName == "you" ? "remove" : "add"]("hidden");
+	viewDrawer.classList[drawerName == "view" ? "remove" : "add"]("hidden");
 
-    // Only change the active button if a it can be switched
-    if (["messages", "rooms", "explore", "you"].includes(drawerName)) {
-        navMessagesBtn.classList[drawerName == "messages" ? "add" : "remove"]("active");
-        navRoomsBtn.classList   [drawerName == "rooms"    ? "add" : "remove"]("active");
-        navExploreBtn.classList [drawerName == "explore"  ? "add" : "remove"]("active");
-        navYouBtn.classList     [drawerName == "you"      ? "add" : "remove"]("active");
-    }
+	// Only change the active button if a it can be switched
+	if (["messages", "rooms", "explore", "you"].includes(drawerName)) {
+		navMessagesBtn.classList[drawerName == "messages" ? "add" : "remove"](
+			"active"
+		);
+		navRoomsBtn.classList[drawerName == "rooms" ? "add" : "remove"](
+			"active"
+		);
+		navExploreBtn.classList[drawerName == "explore" ? "add" : "remove"](
+			"active"
+		);
+		navYouBtn.classList[drawerName == "you" ? "add" : "remove"]("active");
+	}
 }
 
 export function changeViewDrawer(wrapper) {
-    viewDrawer.querySelector(".header").replaceWith(wrapper.header);
-    viewDrawer.querySelector(".content").replaceWith(wrapper.content);
-    viewDrawer.querySelector(".footer").replaceWith(wrapper.footer);
+	// Change view drawer
+	viewDrawer.querySelector(".header").replaceWith(wrapper.header);
+	viewDrawer.querySelector(".content").replaceWith(wrapper.content);
+	viewDrawer.querySelector(".footer").replaceWith(wrapper.footer);
+	viewDrawer.classList[wrapper.doubled ? "add" : "remove"]("doubled");
+
+	// Call switch on handler
+	wrapper.switchOn();
 }
 
 export function updateRoomTabs() {
-    let roomsContainer = roomsDrawer.querySelector(".content");
-    let oldTabs = Array.from(roomsContainer.querySelectorAll(".channel-tab"));
+	let roomsContainer = roomsDrawer.querySelector(".content");
+	let oldTabs = Array.from(roomsContainer.querySelectorAll(".channel-tab"));
 
-    for (let room of client.rooms.cache.values()) {
-        let ele = createRoomTab(room.name);
-        getOrCreateRoomWrapper(room);
+	for (let room of client.rooms.cache.values()) {
+		let ele = createRoomTab(room.name);
+		getOrCreateRoomWrapper(room);
 
-        // Remove room tab from list of old tabs
-        oldTabs = oldTabs.filter(tab => tab.getAttribute("data-channel-id") != room.name);
+		// Remove room tab from list of old tabs
+		oldTabs = oldTabs.filter(
+			(tab) => tab.getAttribute("data-channel-id") != room.name
+		);
 
-        ele.addEventListener("click", () => {
-            switchDrawer("view");
+		ele.addEventListener("click", () => {
+			switchDrawer("view");
 
-            let wrapper = getOrCreateRoomWrapper(room);
-            changeViewDrawer(wrapper);
+			let wrapper = getOrCreateRoomWrapper(room);
+			changeViewDrawer(wrapper);
 
-            // Scroll to the bottom
-            wrapper.content.scrollTop = wrapper.content.scrollHeight;
-        });
+			// Scroll to the bottom
+			wrapper.content.scrollTop = wrapper.content.scrollHeight;
+		});
 
-        roomsContainer.appendChild(ele);
-    }
+		roomsContainer.appendChild(ele);
+	}
 
-    // Remove any remaining old tabs
-    for (let tab of oldTabs) {
-        tab.remove();
-    }
+	// Remove any remaining old tabs
+	for (let tab of oldTabs) {
+		tab.remove();
+	}
+}
+
+export function labelDoubled(state = true) {
+	navbarEle.classList.add("-bottom");
 }

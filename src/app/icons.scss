@@ -112,7 +112,7 @@
 	cursor: pointer;
 
 	/* Reveal background color on mobile */
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: $mobile-threshold) {
 		background-color: var(--hover-color);
 	}
 }

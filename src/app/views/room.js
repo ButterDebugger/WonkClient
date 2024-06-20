@@ -1,4 +1,4 @@
-import { domParser } from "https://debutter.dev/x/js/utils.js@1.2";
+import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { createMessage } from "../components.js";
 import { changeViewDrawer, switchDrawer } from "../ui.js";
 import { sendMessage } from "../main.js";
@@ -6,102 +6,104 @@ import { hasWrapper, getOrCreateWrapper, getWrapper } from "./wrapper.js";
 import { getOrCreateRoomInfoWrapper } from "./room-info.js";
 
 export function getOrCreateRoomWrapper(room) {
-    let roomKey = `#${room.name}`;
-    if (hasWrapper(roomKey)) return getWrapper(roomKey);
+	let roomKey = `#${room.name}`;
+	if (hasWrapper(roomKey)) return getWrapper(roomKey);
 
-    let wrapper = getOrCreateWrapper(roomKey);
+	let wrapper = getOrCreateWrapper(roomKey);
 
-    wrapper.header.classList.add("room", "bubble", "bb-half-padding");
-    wrapper.content.classList.add("room", "bubble");
-    wrapper.footer.classList.add("room", "bubble", "bb-half-padding", "bb-dark");
+	wrapper.header.classList.add("room");
+	wrapper.content.classList.add("room");
+	wrapper.footer.classList.add("room");
+	wrapper.doubled = true;
 
-    // Append footer message box
-    let messageBox = domParser(
-        `<div class="message-box">
-            <div class="ic-normal-container">
-                <span name="attach-button" class="message-box-icon ic-raw ic-normal ic-plus"></span>
-            </div>
-            <input type="text" name="message-input" maxlength="1000">
-            <div class="ic-normal-container">
-                <span name="send-button" class="message-box-icon ic-raw ic-normal ic-arrow-up"></span>
-            </div>
-        </div>`
-    );
-    messageBox.querySelector("input").placeholder = `Message #${room.name}`;
-    wrapper.footer.appendChild(messageBox);
+	// Create message input field
+	let $messageInput = dom(
+		`<input type="text" name="message-input" maxlength="1000">`
+	)
+		.on("keydown", ({ key }) => {
+			if (key === "Enter") send();
+		})
+		.prop("placeholder", `Message #${room.name}`);
 
-    // Add send message handlers
-    const send = async function() {
-        let value = messageBox.querySelector("input").value;
-        messageBox.querySelector("input").value = "";
+	// Add send message handlers
+	async function send() {
+		let value = $messageInput.prop("value");
+		$messageInput.prop("value", "");
 
-        if (value.length === 0) return;
+		if (value.length === 0) return;
 
-        let result = await sendMessage(room.name, {
-            text: value
-        });
+		let result = await sendMessage(room.name, {
+			text: value
+		});
 
-        if (!result) {
-            alert("Failed to send message"); // TODO: make fancier
-        }
-    }
-    messageBox.querySelector("input").addEventListener("keydown", ({ key }) => {
-        if (key === "Enter") send();
-    });
-    messageBox.querySelector("span[name=send-button]").addEventListener("click", send);
+		if (!result) {
+			alert("Failed to send message"); // TODO: make fancier
+		}
+	}
 
-    // Append back icon to wrapper header
-    let backIcon = domParser(
-        `<div class="ic-small-container">
-            <span class="ic-raw ic-small ic-chevron-left"></span>
-        </div>`
-    );
-    backIcon.addEventListener("click", () => {
-        switchDrawer("rooms");
-    });
-    wrapper.header.appendChild(backIcon);
+	// Append footer message box
+	dom(wrapper.footer).append(
+		// Add attach icon to wrapper footer
+		dom(
+			`<div class="ic-normal-container">
+				<span name="attach-button" class="ic-raw ic-normal ic-plus"></span>
+			</div>`
+		),
 
-    // Append room label to wrapper header
-    let label = domParser(`
-        <div class="label">
-            <span class="title"></span>
-            <span class="description"></span>
-        </div>
-    `);
-    label.querySelector(".title").innerText = room.name;
-    label.querySelector(".description").innerText = room.description;
-    wrapper.header.appendChild(label);
+		// Add message input
+		$messageInput,
 
-    // Append flex spacer
-    let spacer = domParser(`<div class="flex-spacer"></div>`);
-    wrapper.header.appendChild(spacer);
+		// Add send icon to wrapper footer
+		dom(
+			`<div class="ic-normal-container">
+                <span name="send-button" class="ic-raw ic-normal ic-arrow-up"></span>
+            </div>`
+		).on("click", () => send())
+	);
 
-    // Append more icon to wrapper header
-    let moreIcon = domParser(
-        `<div class="ic-small-container">
-            <span class="ic-raw ic-small ic-ellipsis"></span>
-        </div>`
-    );
-    moreIcon.addEventListener("click", () => {
-        switchDrawer("view");
+	// Append header content
+	dom(wrapper.header).append(
+		// Append back icon to wrapper header
+		dom(
+			`<div class="ic-small-container">
+				<span class="ic-raw ic-small ic-chevron-left"></span>
+			</div>`
+		).on("click", () => switchDrawer("rooms")),
 
-        let wrapper = getOrCreateRoomInfoWrapper(room);
-        changeViewDrawer(wrapper);
-    });
-    wrapper.header.appendChild(moreIcon);
+		// Append room label to wrapper header
+		dom(`<div class="label"></div>`).append(
+			dom(`<span class="title"></span>`).text(room.name),
+			dom(`<span class="description"></span>`).text(room.description)
+		),
 
-    return wrapper;
+		// Append flex spacer
+		`<div class="flex-spacer"></div>`,
+
+		// Append more icon to wrapper header
+		dom(
+			`<div class="ic-small-container">
+				<span class="ic-raw ic-small ic-ellipsis"></span>
+			</div>`
+		).on("click", () => {
+			switchDrawer("view");
+			changeViewDrawer(getOrCreateRoomInfoWrapper(room));
+		})
+	);
+
+	return wrapper;
 }
 
 export function appendMessage(message) {
-    let wrapper = getOrCreateWrapper(`#${message.room.name}`);
-    let scroll = wrapper.content.scrollHeight - Math.ceil(wrapper.content.scrollTop) <= wrapper.content.clientHeight;
-    let messageEle = createMessage(message);
-    wrapper.content.appendChild(messageEle);
+	let wrapper = getOrCreateWrapper(`#${message.room.name}`);
+	let canScroll =
+		wrapper.content.scrollHeight - Math.ceil(wrapper.content.scrollTop) <=
+		wrapper.content.clientHeight;
+	let messageEle = createMessage(message);
+	wrapper.content.appendChild(messageEle);
 
-    if (scroll) {
-        wrapper.content.style["scroll-behavior"] = "unset";
-        messageEle.scrollIntoView();
-        wrapper.content.style["scroll-behavior"] = "";
-    }
+	if (canScroll) {
+		wrapper.content.style["scroll-behavior"] = "unset";
+		messageEle.scrollIntoView();
+		wrapper.content.style["scroll-behavior"] = "";
+	}
 }

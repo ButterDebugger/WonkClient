@@ -8,7 +8,7 @@
     padding: calc(var(--bubble-padding) / 2);
 
     /* Desktop design */
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: $mobile-threshold) {
         flex-direction: column;
         justify-content: flex-start;
         gap: calc(var(--bubble-padding) / 2);
@@ -27,7 +27,7 @@
     cursor: pointer;
 
     /* Desktop design */
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: $mobile-threshold) {
         justify-content: flex-start;
         flex: 0;
     }
@@ -39,7 +39,7 @@
         transition: background-color 0.2s ease-in-out;
 
         /* Desktop design */
-        @media screen and (min-width: 1024px) {
+        @media screen and (min-width: $mobile-threshold) {
             width: var(--ic-small);
             height: var(--ic-small);
             background-color: var(--text-color);
@@ -54,7 +54,7 @@
         overflow: hidden;
 
         /* Desktop design */
-        @media screen and (min-width: 1024px) {
+        @media screen and (min-width: $mobile-threshold) {
             font-size: 14px;
             color: var(--text-color);
             display: initial;
@@ -72,7 +72,7 @@
     }
 
     /* Desktop design */
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: $mobile-threshold) {
         background-color: var(--hover-color);
     }
 }
@@ -81,7 +81,7 @@
 }
 #navbar > .nav-item:active {
     /* Desktop design */
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: $mobile-threshold) {
         background-color: var(--active-color);
     }
 }
@@ -90,7 +90,7 @@
     display: none;
 
     /* Desktop design */
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: $mobile-threshold) {
         display: initial;
         border-bottom: 1px solid var(--hover-color);
     }
@@ -107,7 +107,7 @@
     border-radius: 33px;
 
     /* Desktop design */
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: $mobile-threshold) {
         display: none;
     }
 }
