@@ -81,6 +81,7 @@
 		display: flex;
 		align-items: center;
 		gap: calc(var(--bubble-padding) / 2);
+		padding: calc(var(--bubble-padding) / 2);
 
 		input[name="message-input"] {
 			flex: 1;
