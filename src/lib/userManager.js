@@ -43,8 +43,10 @@ export default class UserManager {
 				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
 		});
 	}
-	fetch(username) {
+	fetch(username, ignoreCache = false) {
 		return new Promise((resolve) => {
+			if (!ignoreCache && this.cache.has(username)) return resolve(this.cache.get(username));
+
 			this.client.request
 				.get(`/users/${username}/fetch`)
 				.then(async (res) => {

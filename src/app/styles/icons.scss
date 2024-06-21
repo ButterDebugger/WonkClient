@@ -5,42 +5,109 @@
 	--ic-extra-small: 16px;
 }
 
-/* Icon images */
+/* Icons */
+@mixin icon($colored: false) {
+	display: inline-block;
+	background-size: cover;
+	background-repeat: no-repeat;
+
+	@if $colored {
+		background-image: var(--ic-url);
+	} @else {
+		background-color: var(--text-color);
+		-webkit-mask-image: var(--ic-url);
+		mask-image: var(--ic-url);
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-size: cover;
+		mask-size: cover;
+	}
+}
+
 .ic-plus {
+	@include icon(false);
+
 	--ic-url: url("/assets/plus-solid.svg");
 }
 .ic-at {
+	@include icon(false);
+
 	--ic-url: url("/assets/at-solid.svg");
 }
 .ic-hashtag {
+	@include icon(false);
+
 	--ic-url: url("/assets/hashtag-solid.svg");
 }
 .ic-user {
+	@include icon(false);
+
 	--ic-url: url("/assets/user-large-solid.svg");
 }
 .ic-compass {
+	@include icon(false);
+
 	--ic-url: url("/assets/compass-solid.svg");
 }
 .ic-gear {
+	@include icon(false);
+
 	--ic-url: url("/assets/gear-solid.svg");
 }
 .ic-magnifying-glass {
+	@include icon(false);
+
 	--ic-url: url("/assets/magnifying-glass-solid.svg");
 }
 .ic-filter {
+	@include icon(false);
+
 	--ic-url: url("/assets/filter-solid.svg");
 }
 .ic-arrow-up {
+	@include icon(false);
+
 	--ic-url: url("/assets/arrow-up-solid.svg");
 }
 .ic-chevron-left {
+	@include icon(false);
+
 	--ic-url: url("/assets/chevron-left-solid.svg");
 }
 .ic-right-arrow-bracket {
+	@include icon(false);
+
 	--ic-url: url("/assets/right-to-bracket-solid.svg");
 }
 .ic-ellipsis {
+	@include icon(false);
+
 	--ic-url: url("/assets/ellipsis-solid.svg");
+}
+.ic-blue-dot {
+	@include icon(true);
+
+	--ic-url: url("/assets/dot/blue.svg");
+}
+.ic-gray-dot {
+	@include icon(true);
+
+	--ic-url: url("/assets/dot/gray.svg");
+}
+.ic-green-dot {
+	@include icon(true);
+
+	--ic-url: url("/assets/dot/green.svg");
+}
+.ic-red-dot {
+	@include icon(true);
+
+	--ic-url: url("/assets/dot/red.svg");
+}
+.ic-yellow-dot {
+	@include icon(true);
+
+	--ic-url: url("/assets/dot/yellow.svg");
 }
 
 /* Icon sizes */
@@ -65,21 +132,7 @@
 	height: 1em;
 }
 
-/* Default icon style */
-.ic-raw {
-	display: inline-block;
-	-webkit-mask-image: var(--ic-url);
-	mask-image: var(--ic-url);
-	-webkit-mask-repeat: no-repeat;
-	mask-repeat: no-repeat;
-	-webkit-mask-size: cover;
-	mask-size: cover;
-	background-color: var(--text-color);
-	background-size: cover;
-	background-repeat: no-repeat;
-}
-
-/* Icon button containers */
+/* Icon container sizes */
 .ic-large-container {
 	--container-size: var(--ic-large);
 }
@@ -96,6 +149,7 @@
 	--container-size: 1em;
 }
 
+/* Icon container */
 .ic-large-container,
 .ic-normal-container,
 .ic-small-container,
@@ -105,30 +159,21 @@
 	justify-content: center;
 	align-items: center;
 
-	border-radius: 33px;
+	border-radius: 9999px;
 	padding: 8px;
 	width: calc(var(--container-size) + 16px);
 	height: calc(var(--container-size) + 16px);
 	cursor: pointer;
 
+	&:hover {
+		background-color: var(--hover-color);
+	}
+	&:active {
+		background-color: var(--active-color);
+	}
+
 	/* Reveal background color on mobile */
 	@media screen and (max-width: $mobile-threshold) {
 		background-color: var(--hover-color);
 	}
-}
-
-.ic-large-container:hover,
-.ic-normal-container:hover,
-.ic-small-container:hover,
-.ic-extra-small-container:hover,
-.ic-text-size-container:hover {
-	background-color: var(--hover-color);
-}
-
-.ic-large-container:active,
-.ic-normal-container:active,
-.ic-small-container:active,
-.ic-extra-small-container:active,
-.ic-text-size-container:active {
-	background-color: var(--active-color);
 }

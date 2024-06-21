@@ -3,7 +3,7 @@ import { createMessage } from "./components.js";
 import { changeViewDrawer, switchDrawer } from "./ui.js";
 import { sendMessage } from "./main.js";
 import { hasWrapper, getOrCreateWrapper, getWrapper } from "./wrapper.js";
-import { getOrCreateRoomInfoWrapper } from "./room-info.js";
+import { getOrCreateRoomInfoWrapper } from "./roomInfo.js";
 
 export function getOrCreateRoomWrapper(room) {
 	let roomKey = `#${room.name}`;
@@ -48,7 +48,7 @@ export function getOrCreateRoomWrapper(room) {
 		// Add attach icon to wrapper footer
 		dom(
 			`<div class="ic-normal-container">
-				<span name="attach-button" class="ic-raw ic-normal ic-plus"></span>
+				<span name="attach-button" class="ic-normal ic-plus"></span>
 			</div>`
 		),
 
@@ -58,7 +58,7 @@ export function getOrCreateRoomWrapper(room) {
 		// Add send icon to wrapper footer
 		dom(
 			`<div class="ic-normal-container">
-                <span name="send-button" class="ic-raw ic-normal ic-arrow-up"></span>
+                <span name="send-button" class="ic-normal ic-arrow-up"></span>
             </div>`
 		).on("click", () => send())
 	);
@@ -77,7 +77,7 @@ export function getOrCreateRoomWrapper(room) {
 		// Append more icon to wrapper header
 		dom(
 			`<div class="ic-small-container">
-				<span class="ic-raw ic-small ic-ellipsis"></span>
+				<span class="ic-small ic-ellipsis"></span>
 			</div>`
 		).on("click", () => {
 			switchDrawer("view");

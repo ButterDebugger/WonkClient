@@ -22,7 +22,7 @@
 
     z-index: 1;
     flex: 1;
-    border-radius: 33px;
+    border-radius: 9999px;
     padding: calc(var(--bubble-padding) / 2);
     cursor: pointer;
 
@@ -104,7 +104,7 @@
     top: calc(var(--bubble-padding) / 2);
     z-index: 0;
     transition: all 0.35s ease 0s;
-    border-radius: 33px;
+    border-radius: 9999px;
 
     /* Desktop design */
     @media screen and (min-width: $mobile-threshold) {

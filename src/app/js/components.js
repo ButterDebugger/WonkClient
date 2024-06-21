@@ -1,56 +1,52 @@
-import { domParser } from "https://debutter.dev/x/js/utils.js@1.2";
+import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 
 export function createRoomTab(name) {
-	let ele = domParser(
-		`<div class="channel-tab">
-            <span class="ic-raw ic-text-size ic-hashtag"></span>
-            <span name="channel-name"></span>
-        </div>`
-	);
-
-    ele.setAttribute("data-channel-id", name); // NOTE: is name is not always going to be the id
-    ele.querySelector("[name='channel-name']").innerText = name;
-
-    return ele;
+	return dom(`<div class="channel-tab"></div>`)
+		.prop("data-channel-id", name) // NOTE: is name is not always going to be the id
+		.append(
+			`<span class="ic-text-size ic-hashtag"></span>`,
+			dom(`<span name="channel-name"></span>`).text(name)
+		).element;
 }
 
-export function createMessageTab(userId, username) { // NOTE: unfinished
-	let ele = domParser(
-		`<div class="channel-tab">
-            <span class="ic-raw ic-text-size ic-at"></span>
-            <span name="channel-name"></span>
-        </div>`
+export function createUserTag(name, color) {
+	return dom(`<span class="user-tag"></span>`)
+		.text(name)
+		.style("color", color).element;
+}
+
+export function createUserChip(name, color, online = true) {
+	let tagEle = createUserTag(name, color);
+
+	if (!online) tagEle.classList.add("offline");
+
+	return dom(`<div class="user-chip"></div>`).append(
+		`<span class="ic-text-size ic-${
+			online ? "green" : "gray"
+		}-dot"></span>`,
+		tagEle
 	);
-
-    ele.querySelector("[name='channel-name']").innerText = username;
-
-    return ele;
 }
 
 export function createMessage(message) {
-    let ele = domParser(
-        `<div class="message">
-            <div class="message-header">
-                <span class="message-author"></span>
-                <span class="message-timestamp"></span>
-            </div>
-            <div class="message-content">
-                <div class="message-body"></div>
-                <div class="message-attachments"></div>
-            </div>
-        </div>`
-    );
+	// Create timestamp element with tippy
+	let timestampEle = dom(`<span class="message-timestamp"></span>`).text(
+		moment(message.timestamp).format("LT")
+	).element;
 
-    // Set message text content
-    ele.querySelector(".message-author").innerText = message.author.username;
-    ele.querySelector(".message-author").style.color = message.author.color;
-    ele.querySelector(".message-timestamp").innerText = moment(message.timestamp).format("LT");
-    ele.querySelector(".message-body").innerText = message.content;
+	tippy(timestampEle, {
+		content: moment(message.timestamp).format("LLLL")
+	});
 
-    // Add tippy to the message timestamp
-    tippy(ele.querySelector(".message-timestamp"), {
-        content: moment(message.timestamp).format("LLLL"),
-    });
-
-    return ele;
+	// Return full component
+	return dom(`<div class="message"></div>`).append(
+		dom(`<div class="message-header"></div>`).append(
+			createUserTag(message.author.username, message.author.color),
+			timestampEle
+		),
+		dom(`<div class="message-content"></div>`).append(
+			dom(`<div class="message-body"></div>`).text(message.content),
+			dom(`<div class="message-attachments"></div>`)
+		)
+	).element;
 }

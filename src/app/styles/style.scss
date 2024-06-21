@@ -103,7 +103,7 @@ body {
 	align-items: center;
 	cursor: pointer;
 	padding: calc(var(--bubble-padding) / 2);
-	border-radius: 33px;
+	border-radius: 9999px;
 
 	&:hover {
 		background-color: var(--hover-color);
@@ -134,12 +134,12 @@ body {
 }
 #search-btn {
 	padding: 8px 8px 8px 12px;
-	border-radius: 33px 0px 0px 33px;
+	border-radius: 9999px 0px 0px 9999px;
 	border-right: none;
 }
 #filter-btn {
 	padding: 8px 12px 8px 8px;
-	border-radius: 0px 33px 33px 0px;
+	border-radius: 0px 9999px 9999px 0px;
 	border-left: none;
 }
 #search-btn:hover,
