@@ -1,6 +1,7 @@
 import { basename, dirname, resolve } from "node:path";
 import { glob } from "glob";
 import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 const alwaysFullReload = {
 	name: "always-full-reload",
@@ -30,5 +31,26 @@ export default defineConfig({
 	publicDir: resolve(process.cwd(), "public"),
 	root: resolve(process.cwd(), "src"),
 	appType: "mpa",
-	plugins: [alwaysFullReload]
+	plugins: [
+		alwaysFullReload,
+		VitePWA({
+			registerType: "autoUpdate",
+			manifestFilename: "manifest.json",
+			manifest: {
+				name: "Wonk Chat",
+				short_name: "Wonk Chat",
+				start_url: "/app/",
+				orientation: "portrait",
+				theme_color: "#5841f7",
+				background_color: "#000000",
+				icons: [
+					{
+						src: "icon.png",
+						sizes: "512x512",
+						type: "image/png"
+					}
+				]
+			}
+		})
+	]
 });
