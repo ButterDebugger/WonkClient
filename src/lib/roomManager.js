@@ -6,7 +6,7 @@ export default class RoomManager {
 		Object.defineProperty(this, "client", { value: client });
 
 		this.cache = new Map();
-		
+
 		client.on("roomMemberJoin", (username, roomName) => {
 			if (!this.cache.has(roomName)) return;
 
@@ -22,39 +22,63 @@ export default class RoomManager {
 	join(roomName) {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.post(`/rooms/${roomName}/join`)
+				.post(`/room/${roomName}/join`)
 				.then(async (res) => {
 					const { name, description, key, members } = res.data;
 
-					let room = new Room(this.client, name, description, key, members);
+					let room = new Room(
+						this.client,
+						name,
+						description,
+						key,
+						members
+					);
 					this.cache.set(name, room);
 
 					resolve(room);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 	leave(roomName) {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.post(`/rooms/${roomName}/leave`)
+				.post(`/room/${roomName}/leave`)
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
 
 					this.cache.delete(roomName);
 					resolve(true);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 	create(roomName) {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.post(`/rooms/${roomName}/create`)
+				.post(`/room/${roomName}/create`)
 				.then((res) => {
 					resolve(res.data);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 }
@@ -74,27 +98,38 @@ export class Room {
 			options = { text: options };
 		}
 
-		let attachments = (options.attachments ?? []).filter(attach => attach.uploaded).map(attach => attach.path);
+		let attachments = (options.attachments ?? [])
+			.filter((attach) => attach.uploaded)
+			.map((attach) => attach.path);
 
 		return new Promise(async (resolve, reject) => {
 			this.client.request
-				.post(`/rooms/${this.name}/message`, {
-					message: await encryptMessage(JSON.stringify({
-						content: options.text,
-						attachments: attachments
-					}), this.publicKey)
+				.post(`/room/${this.name}/message`, {
+					message: await encryptMessage(
+						JSON.stringify({
+							content: options.text,
+							attachments: attachments
+						}),
+						this.publicKey
+					)
 				})
 				.then((res) => {
 					resolve(res.data);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 
 	refresh() {
 		return new Promise((resolve, reject) => {
 			this.client.request
-				.get(`/rooms/${this.name}/info`)
+				.get(`/room/${this.name}/info`)
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
 
@@ -103,7 +138,13 @@ export class Room {
 					this.members = new Set(res.data.members);
 					resolve(true);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 }
