@@ -36,6 +36,23 @@ export default defineConfig({
 		VitePWA({
 			registerType: "autoUpdate",
 			manifestFilename: "manifest.json",
+			workbox: {
+				navigateFallbackDenylist: [/^\/login/],
+				runtimeCaching: [
+					{
+						urlPattern:
+							/^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "google-fonts",
+							expiration: {
+								maxEntries: 4,
+								maxAgeSeconds: 24 * 60 * 60 // 24 hours
+							}
+						}
+					}
+				]
+			},
 			manifest: {
 				name: "Wonk Chat",
 				short_name: "Wonk Chat",
