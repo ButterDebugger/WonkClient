@@ -47,7 +47,19 @@ export default defineConfig({
 							cacheName: "google-fonts",
 							expiration: {
 								maxEntries: 4,
-								maxAgeSeconds: 24 * 60 * 60 // 24 hours
+								maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
+							}
+						}
+					},
+					{
+						urlPattern:
+							/^https:\/\/(?:cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|debutter\.dev\/x)\/.*/i,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "third-party-libraries",
+							expiration: {
+								maxEntries: 4,
+								maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
 							}
 						}
 					},
