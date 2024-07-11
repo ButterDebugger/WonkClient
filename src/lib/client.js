@@ -1,7 +1,7 @@
 import axios from "https://cdn.jsdelivr.net/npm/axios@1.6.2/+esm";
 import eventemitter3 from "https://cdn.jsdelivr.net/npm/eventemitter3@5.0.1/+esm";
 import EventSource from "https://cdn.jsdelivr.net/npm/eventsource@2.0.2/+esm";
-import { decryptMessage, generateKeyPair } from "./cryption.js";
+import { decryptMessage, generateKeyPair, signMessage } from "./cryption.js";
 import RoomManager, { Room } from "./roomManager.js";
 import UserManager, { User } from "./userManager.js";
 import { ClientError } from "./builtinErrors.js";
@@ -12,11 +12,13 @@ export { generateKeyPair };
 export class Client extends eventemitter3 {
 	static baseUrl = "https://wonk.debutter.dev";
 
+	#token;
+	#request;
+
 	constructor() {
 		super();
 
 		this.stream = null;
-		this.token = null;
 		this.user = null;
 		this.keyPair = {
 			publicKey: null,
@@ -25,11 +27,37 @@ export class Client extends eventemitter3 {
 		this.rooms = new RoomManager(this);
 		this.users = new UserManager(this);
 		this.attachments = new AttachmentManager(this);
-		
-		this.request = axios.create({
+
+		this.#request = axios.create({
 			baseURL: Client.baseUrl,
 			headers: {}
 		});
+	}
+
+	get request() {
+		return this.#request;
+	}
+
+	/**
+	 * @param {String} value
+	 */
+	set token(value) {
+		if (this.authorized) throw new Error("Client already has a token");
+
+		this.#token = value;
+		this.#request = axios.create({
+			baseURL: Client.baseUrl,
+			headers: {
+				Authorization: value
+			}
+		});
+	}
+	get token() {
+		return this.#token;
+	}
+
+	get authorized() {
+		return typeof this.#token !== "undefined";
 	}
 
 	async syncClient() {
@@ -48,26 +76,50 @@ export class Client extends eventemitter3 {
 							cachedRoom.key = room.key;
 							cachedRoom.members = new Set(room.members);
 						} else {
-							this.rooms.cache.set(room.name, new Room(this, room.name, room.description, room.key, room.members));
+							this.rooms.cache.set(
+								room.name,
+								new Room(
+									this,
+									room.name,
+									room.description,
+									room.key,
+									room.members
+								)
+							);
 						}
 					}
 
 					// Update the users cache
 					for (let user of users) {
 						if (this.users.cache.has(user.username)) {
-							let cachedUser = this.users.cache.get(user.username);
+							let cachedUser = this.users.cache.get(
+								user.username
+							);
 
 							cachedUser.username = user.username;
 							cachedUser.color = user.color;
 							cachedUser.offline = user.offline;
 						} else {
-							this.users.cache.set(user.username, new User(this, user.username, user.color, user.offline));
+							this.users.cache.set(
+								user.username,
+								new User(
+									this,
+									user.username,
+									user.color,
+									user.offline
+								)
+							);
 						}
 					}
 
 					// Update the client users cache
 					if (this.user === null) {
-						this.user = new User(this, you.username, you.color, you.offline);
+						this.user = new User(
+							this,
+							you.username,
+							you.color,
+							you.offline
+						);
 						this.users.cache.set(you.username, this.user);
 					} else {
 						this.user.username = you.username;
@@ -77,7 +129,13 @@ export class Client extends eventemitter3 {
 
 					resolve(true);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 
@@ -85,24 +143,64 @@ export class Client extends eventemitter3 {
 		return new Promise((resolve) => {
 			this.request
 				.get(`/sync/memory`)
-				.then(async () => {
-					resolve(true);
+				.then(() => resolve(true))
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
+		});
+	}
+
+	async setKeyPair(publicKey, privateKey) {
+		return new Promise((resolve, reject) => {
+			if (!this.authorized) return resolve(false); // TODO: throw an error
+
+			this.keyPair = {
+				publicKey,
+				privateKey
+			};
+
+			this.request
+				.get("/keys/nonce")
+				.then(async (res) => {
+					let { nonce } = res.data;
+
+					let signedNonce = await signMessage(
+						nonce,
+						this.keyPair.privateKey
+					);
+
+					this.request
+						.post("/keys/verify", {
+							signedNonce: signedNonce,
+							publicKey: this.keyPair.publicKey
+						})
+						.then(() => resolve(true))
+						.catch((err) =>
+							reject(
+								typeof err?.response == "object"
+									? new ClientError(err.response.data, err)
+									: err
+							)
+						);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 
 	async login(token, publicKey, privateKey) {
 		this.token = token;
-		this.keyPair.publicKey = publicKey;
-		this.keyPair.privateKey = privateKey;
-		
-		this.request = axios.create({
-			baseURL: Client.baseUrl,
-			headers: {
-				Authorization: this.token
-			}
-		});
+
+		await this.setKeyPair(publicKey, privateKey);
 
 		await this.syncClient();
 
@@ -116,7 +214,7 @@ export class Client extends eventemitter3 {
 		// Add stream event listeners
 		this.stream.once("connect", () => {
 			this.emit("ready");
-			
+
 			this.syncMemory();
 		});
 		this.stream.on("ping", async ({ data }) => {
@@ -126,13 +224,23 @@ export class Client extends eventemitter3 {
 		});
 		this.stream.on("updateMember", async ({ data }) => {
 			data = await parseStreamData(data, this.keyPair.privateKey);
-			
+
 			switch (data.state) {
 				case "join":
-					this.emit("roomMemberJoin", data.username, data.room, data.timestamp);
+					this.emit(
+						"roomMemberJoin",
+						data.username,
+						data.room,
+						data.timestamp
+					);
 					break;
 				case "leave":
-					this.emit("roomMemberLeave", data.username, data.room, data.timestamp);
+					this.emit(
+						"roomMemberLeave",
+						data.username,
+						data.room,
+						data.timestamp
+					);
 					break;
 				default:
 					// TODO: Throw out of date client error
@@ -154,7 +262,12 @@ export class Client extends eventemitter3 {
 				timestamp: data.timestamp
 			};
 			this.users.update(data.author.username, authorData);
-			let message = new RoomMessage(this, data.author.username, data.room, data);
+			let message = new RoomMessage(
+				this,
+				data.author.username,
+				data.room,
+				data
+			);
 
 			this.emit("roomMemberMessage", message);
 		});

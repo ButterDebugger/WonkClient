@@ -6,85 +6,129 @@ const homeserverLabelEle = document.querySelector("label[for=homeserver]");
 const authBtn = document.getElementById("auth-btn");
 const continueBtn = document.getElementById("continue-btn");
 const logoutBtn = document.getElementById("logout-btn");
+const accessStage = document.getElementById("access-stage");
 const loginStage = document.getElementById("login-stage");
 const continueStage = document.getElementById("continue-stage");
 const usernameEle = document.getElementById("username");
 
 let ogAuthBtnText = authBtn.innerText;
+let params = new URLSearchParams(location.search);
 
 tippy([homeserverEle, homeserverLabelEle], {
-	content: '<p style="text-align: center; margin: 0px;">The server you will be connected to<br>(also where your data will be stored)</p>',
+	content:
+		'<p style="text-align: center; margin: 0px;">The server you will be connected to<br>(also where your data will be stored)</p>',
 	allowHTML: true,
 	delay: [500, 0]
 });
 
-function updateAuthorizeButton() {
-	if (homeserverEle.validity.valid) {
-		authBtn.disabled = false;
-	} else {
-		authBtn.disabled = true;
+async function locateHomeserver(domain) {
+	try {
+		// Get the base URL of the homeserver
+		let wellKnownRes = await axios.get(
+			`https://${domain}/.well-known/wonk`
+		);
+		let {
+			homeserver: { base_url }
+		} = wellKnownRes.data;
+
+		// Get the namespace of the homeserver
+		let baseRes = await axios.get(base_url);
+		let { namespace } = baseRes.data;
+
+		// Check if the namespace matches the domain
+		if (namespace !== domain) return null; // TODO: resolve namespace conflict
+
+		// Return the namespace and base URL
+		return {
+			namespace,
+			baseUrl: base_url
+		};
+	} catch {
+		return null;
 	}
 }
 
-homeserverEle.addEventListener("input", () => updateAuthorizeButton());
-
-function openCenteredPopup(url, title) {
-	const popupWidth = window.outerWidth * 0.5;
-	const popupHeight = window.outerHeight * 0.5;
-
-	const left = (window.outerWidth - popupWidth) / 2 + screenLeft;
-	const top = (window.outerHeight - popupHeight) / 2 + screenTop;
-
-	const popupFeatures = `
-		scrollbars=yes,
-		width=${popupWidth},
-		height=${popupHeight},
-		left=${left},
-		top=${top}
-	`;
-
-	return window.open(url, title, popupFeatures);
+/** @returns The array of bytes converted to base64url */
+function encodeBase64Url(arr) {
+	return window
+		.btoa(arr.reduce((str, val) => (str += String.fromCharCode(val)), ""))
+		.replace(/\+/g, "-")
+		.replace(/\//g, "_")
+		.replace(/=/g, "");
 }
 
-window.addEventListener("message", async (event) => {
-	let { token, username, publicKey, privateKey } = event.data;
-
-	if (token && username && publicKey && privateKey) {
-		binForage.set("token", token);
-		binForage.set("username", username);
-		binForage.set("keyPair", {
-			publicKey: publicKey,
-			privateKey: privateKey
-		});
-
-		let { namespace } = await binForage.get("homeserver");
-
-		usernameEle.innerText = `@${username}@${namespace}`;
-		loginStage.classList.add("hidden");
-		continueStage.classList.remove("hidden");
-
-		restoreAuthInputs();
-	}
-});
-
-// Get last used homeserver from browser
-let initialHomeserver = await binForage.get("homeserver");
-let initialUsername = await binForage.get("username");
-let initialToken = await binForage.get("token");
-let initialKeyPair = await binForage.get("keyPair");
-
-if (initialHomeserver !== null) {
-	homeserverEle.value = initialHomeserver.namespace;
+/** @returns A random base64url encoded string */
+function randomBase64UrlString() {
+	let bytes = new Uint8Array(32);
+	window.crypto.getRandomValues(bytes);
+	return encodeBase64Url(bytes);
 }
-if (initialHomeserver !== null && initialToken !== null && initialUsername !== null && initialKeyPair !== null) {
-	usernameEle.innerText = `@${initialUsername}@${initialHomeserver.namespace}`;
-	loginStage.classList.add("hidden");
+
+async function generateCode() {
+	// Generate the state
+	let state = randomBase64UrlString();
+
+	// Generate the code verifier
+	let bytes = new Uint8Array(32);
+	window.crypto.getRandomValues(bytes);
+	let verifier = encodeBase64Url(bytes);
+
+	// Generate the code challenge
+	let encoder = new TextEncoder();
+	let data = encoder.encode(verifier);
+	let hash = await crypto.subtle.digest("SHA-256", data);
+	let challenge = encodeBase64Url(new Uint8Array(hash));
+
+	// Return the codes
+	return { state, verifier, challenge };
+}
+
+if ((await binForage.get("token")) !== null) {
 	continueStage.classList.remove("hidden");
+
+	whoAmI();
+} else if (params.has("state")) {
+	accessStage.classList.remove("hidden");
+
+	access();
 } else {
 	loginStage.classList.remove("hidden");
 }
 
-authBtn.addEventListener("click", () => authenticate());
+authBtn.addEventListener("click", async () => {
+	if (!homeserverEle.validity.valid) return;
+
+	let domain = homeserverEle.value;
+
+	errorMessageEle.innerText = "";
+	authBtn.innerText = "Locating";
+	authBtn.disabled = true;
+	homeserverEle.disabled = true;
+
+	let homeserver = await locateHomeserver(domain);
+
+	if (homeserver === null) {
+		errorMessageEle.innerText = "Invalid homeserver";
+		authBtn.innerText = ogAuthBtnText;
+		authBtn.disabled = false;
+		homeserverEle.disabled = false;
+		return;
+	}
+
+	authBtn.innerText = "Redirecting";
+	let { state, verifier, challenge } = await generateCode();
+	await binForage.set("verifier", verifier);
+	await binForage.set("state", state);
+	await binForage.set("homeserver", homeserver);
+
+	let params = new URLSearchParams({
+		callback: encodeURIComponent(`${location.origin}${location.pathname}`),
+		state: state,
+		challenge: challenge
+	});
+
+	location.href = `${homeserver.baseUrl}/oauth/login/?${params}`;
+});
 
 continueBtn.addEventListener("click", () => {
 	location.href = "/app/";
@@ -92,50 +136,64 @@ continueBtn.addEventListener("click", () => {
 
 logoutBtn.addEventListener("click", async () => {
 	await binForage.remove("token");
-	await binForage.remove("keyPair");
 
 	loginStage.classList.remove("hidden");
 	continueStage.classList.add("hidden");
 });
 
-function restoreAuthInputs() {
-	authBtn.disabled = false;
-	homeserverEle.disabled = false;
+async function access() {
+	let verifier = await binForage.get("verifier");
+	let homeserver = await binForage.get("homeserver");
 
-	authBtn.innerText = ogAuthBtnText;
-}
-
-async function authenticate() {
-	authBtn.disabled = true;
-	homeserverEle.disabled = true;
-	errorMessageEle.innerText = "";
-
-	function requestErrorHandler(err, defaultMessage = "Something went wrong") {
-		errorMessageEle.innerText = err?.response?.data?.message ?? defaultMessage;
-		restoreAuthInputs();
+	// Check if the state matches
+	if (params.get("state") !== (await binForage.get("state"))) {
+		errorMessageEle.innerText = "Invalid state";
+		accessStage.classList.add("hidden");
+		loginStage.classList.remove("hidden");
+		return;
 	}
 
-	authBtn.innerText = "Locating";
-
-	axios.get(`https://${homeserverEle.value}/.well-known/wonk`)
-		.then(async (res) => {
-			let { homeserver } = res.data;
-
-			await binForage.set("homeserver", {
-				namespace: homeserverEle.value,
-				baseUrl: homeserver.base_url
-			});
-
-			authBtn.innerText = "Authorizing";
-
-			let popup = openCenteredPopup(
-				`${homeserver.base_url}/auth/signin/?origin=${location.origin}`,
-				"Authorize Wonk Chat"
-			);
-
-			window.addEventListener("unload", () => {
-				popup.close();
-			});
+	// Retrieve the access token
+	axios
+		.post(`${homeserver.baseUrl}/oauth/token/`, {
+			verifier: verifier
 		})
-		.catch((err) => requestErrorHandler(err, "Something went wrong whilst locating"));
+		.then(async (res) => {
+			let { token } = res.data;
+
+			// Store the token
+			await binForage.set("token", token);
+
+			// Remove query string from url and in the process go to the continue stage
+			location.href = `${location.origin}${location.pathname}`;
+		})
+		.catch((err) => {
+			errorMessageEle.innerText = "Failed to retrieve access token";
+			accessStage.classList.add("hidden");
+			loginStage.classList.remove("hidden");
+		});
+}
+
+async function whoAmI() {
+	let token = await binForage.get("token");
+	let homeserver = await binForage.get("homeserver");
+
+	axios({
+		method: "GET",
+		url: `${homeserver.baseUrl}/sync/client/`,
+		headers: {
+			Authorization: token
+		}
+	})
+		.then(async (res) => {
+			let {
+				you: { username }
+			} = res.data;
+
+			await binForage.set("username", username);
+
+			usernameEle.innerText = `@${username}:${homeserver.namespace}`;
+			continueBtn.disabled = false;
+		})
+		.catch((err) => {});
 }

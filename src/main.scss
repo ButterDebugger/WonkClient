@@ -90,6 +90,15 @@ textarea {
 	color: var(--text-color);
 	outline: none;
 	transition: filter 0.15s ease-in-out;
+
+	&:invalid {
+		border-color: var(--warning-color);
+		border-style: dashed;
+
+		&:focus {
+			border-style: solid;
+		}
+	}
 }
 input:disabled {
 	cursor: not-allowed;
