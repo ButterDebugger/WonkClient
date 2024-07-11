@@ -50,6 +50,24 @@ export default defineConfig({
 								maxAgeSeconds: 24 * 60 * 60 // 24 hours
 							}
 						}
+					},
+					{
+						urlPattern: /(?:.*?)\.(?:ico|svg|png|jpe?g|gif)$/i,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "asset-cache",
+							expiration: {
+								maxEntries: 4,
+								maxAgeSeconds: 24 * 60 * 60 // 24 hours
+							}
+						}
+					},
+					{
+						urlPattern: /(?:.*?)\.(?:html|htm|js|ts|css|scss)$/i,
+						handler: "NetworkFirst",
+						options: {
+							cacheName: "source-cache"
+						}
 					}
 				]
 			},
