@@ -6,7 +6,9 @@ export default class UserManager {
 
 		this.cache = new Map();
 
-		this.client.on("userUpdate", (username, data) => this.update(username, data));
+		this.client.on("userUpdate", (username, data) =>
+			this.update(username, data)
+		);
 	}
 
 	update(username, data) {
@@ -19,7 +21,16 @@ export default class UserManager {
 			cachedUser.offline = data.offline;
 			cachedUser.username = data.username;
 		} else {
-			this.users.cache.set(username, new User(this.client, data.username, data.color, data.offline, data.timestamp));
+			this.cache.set(
+				username,
+				new User(
+					this.client,
+					data.username,
+					data.color,
+					data.offline,
+					data.timestamp
+				)
+			);
 		}
 	}
 
@@ -30,7 +41,13 @@ export default class UserManager {
 				.then(async () => {
 					resolve(true);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 	unsubscribe(username) {
@@ -40,12 +57,19 @@ export default class UserManager {
 				.then(async () => {
 					resolve(true);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 	fetch(username, ignoreCache = false) {
 		return new Promise((resolve) => {
-			if (!ignoreCache && this.cache.has(username)) return resolve(this.cache.get(username));
+			if (!ignoreCache && this.cache.has(username))
+				return resolve(this.cache.get(username));
 
 			this.client.request
 				.get(`/users/${username}/fetch`)
@@ -53,10 +77,16 @@ export default class UserManager {
 					let { username, data } = res.data;
 
 					this.update(username, data);
-					
+
 					resolve(this.cache.get(username));
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 }
