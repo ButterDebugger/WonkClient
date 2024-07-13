@@ -53,7 +53,7 @@ export default defineConfig({
 					},
 					{
 						urlPattern:
-							/^https:\/\/(?:cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|debutter\.dev\/x)\/.*/i,
+							/^https:\/\/(?:cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|debutter\.dev\/x|unpkg\.com)\/.*/i,
 						handler: "CacheFirst",
 						options: {
 							cacheName: "third-party-libraries",
