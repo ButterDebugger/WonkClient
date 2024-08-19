@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 
 const errorMessageEle = document.getElementById("error-message");
