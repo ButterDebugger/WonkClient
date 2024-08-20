@@ -1,6 +1,5 @@
 import axios from "axios";
 import eventemitter3 from "eventemitter3";
-import EventSource from "https://cdn.jsdelivr.net/npm/eventsource@2.0.2/+esm";
 import { decryptMessage, generateKeyPair, signMessage } from "./cryption.js";
 import RoomManager, { Room } from "./roomManager.js";
 import UserManager, { User } from "./userManager.js";
@@ -10,7 +9,7 @@ import AttachmentManager from "./attachmentManager.js";
 export { generateKeyPair };
 
 export class Client extends eventemitter3 {
-	static baseUrl = "https://wonk.debutter.dev";
+	static baseUrl = "wonk.debutter.dev";
 
 	#token;
 	#request;
@@ -29,7 +28,7 @@ export class Client extends eventemitter3 {
 		this.attachments = new AttachmentManager(this);
 
 		this.#request = axios.create({
-			baseURL: Client.baseUrl,
+			baseURL: `https://${Client.baseUrl}`,
 			headers: {}
 		});
 	}
@@ -46,9 +45,9 @@ export class Client extends eventemitter3 {
 
 		this.#token = value;
 		this.#request = axios.create({
-			baseURL: Client.baseUrl,
+			baseURL: `https://${Client.baseUrl}`,
 			headers: {
-				Authorization: value
+				Authorization: `Bearer ${value}`
 			}
 		});
 	}
@@ -205,71 +204,80 @@ export class Client extends eventemitter3 {
 		await this.syncClient();
 
 		// Connect to event stream
-		this.stream = new EventSource(`${Client.baseUrl}/stream`, {
-			headers: {
-				Authorization: this.token
-			}
-		});
+		this.stream = new WebSocket(`wss://${Client.baseUrl}/stream`, [
+			"Authorization",
+			this.token
+		]);
 
 		// Add stream event listeners
-		this.stream.once("connect", () => {
+		this.stream.addEventListener("open", () => {
 			this.emit("ready");
 
 			this.syncMemory();
 		});
-		this.stream.on("ping", async ({ data }) => {
-			data = await parseStreamData(data, this.keyPair.privateKey);
-
-			this.emit("ping", data.ping);
-		});
-		this.stream.on("updateMember", async ({ data }) => {
-			data = await parseStreamData(data, this.keyPair.privateKey);
-
-			switch (data.state) {
-				case "join":
-					this.emit(
-						"roomMemberJoin",
-						data.username,
-						data.room,
-						data.timestamp
-					);
-					break;
-				case "leave":
-					this.emit(
-						"roomMemberLeave",
-						data.username,
-						data.room,
-						data.timestamp
-					);
-					break;
-				default:
-					// TODO: Throw out of date client error
-					break;
-			}
-		});
-		this.stream.on("updateUser", async ({ data }) => {
-			data = await parseStreamData(data, this.keyPair.privateKey);
-
-			this.emit("userUpdate", data.username, data.data, data.timestamp);
-		});
-		this.stream.on("message", async ({ data }) => {
-			data = await parseStreamData(data, this.keyPair.privateKey);
-
-			let authorData = {
-				color: data.author.color,
-				offline: data.author.offline,
-				username: data.author.username,
-				timestamp: data.timestamp
-			};
-			this.users.update(data.author.username, authorData);
-			let message = new RoomMessage(
-				this,
-				data.author.username,
-				data.room,
-				data
+		this.stream.addEventListener("message", async (event) => {
+			let data = await parseStreamData(
+				event.data,
+				this.keyPair.privateKey
 			);
 
-			this.emit("roomMemberMessage", message);
+			switch (data.event) {
+				case "ping": {
+					this.emit("ping", data.ping);
+					break;
+				}
+				case "updateMember": {
+					switch (data.state) {
+						case "join":
+							this.emit(
+								"roomMemberJoin",
+								data.username,
+								data.room,
+								data.timestamp
+							);
+							break;
+						case "leave":
+							this.emit(
+								"roomMemberLeave",
+								data.username,
+								data.room,
+								data.timestamp
+							);
+							break;
+						default:
+							// TODO: Throw out of date client error
+							break;
+					}
+					break;
+				}
+				case "updateUser": {
+					this.emit(
+						"userUpdate",
+						data.username,
+						data.data,
+						data.timestamp
+					);
+					break;
+				}
+				case "message": {
+					let authorData = {
+						color: data.author.color,
+						offline: data.author.offline,
+						username: data.author.username,
+						timestamp: data.timestamp
+					};
+					this.users.update(data.author.username, authorData);
+					let message = new RoomMessage(
+						this,
+						data.author.username,
+						data.room,
+						data
+					);
+
+					this.emit("roomMemberMessage", message);
+					break;
+				}
+			}
 		});
 	}
 }

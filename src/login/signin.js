@@ -183,7 +183,7 @@ async function whoAmI() {
 		method: "GET",
 		url: `${homeserver.baseUrl}/sync/client/`,
 		headers: {
-			Authorization: token
+			Authorization: `Bearer ${token}`
 		}
 	})
 		.then(async (res) => {
