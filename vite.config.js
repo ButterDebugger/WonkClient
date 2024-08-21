@@ -92,6 +92,12 @@ export default defineConfig({
 				background_color: "#000000",
 				icons: [
 					{
+						src: "app-icon.png",
+						sizes: "128x128",
+						type: "image/png",
+						purpose: "maskable"
+					},
+					{
 						src: "icon.png",
 						sizes: "512x512",
 						type: "image/png"
