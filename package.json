@@ -15,7 +15,8 @@
 		"axios": "^1.7.4",
 		"cors": "^2.8.5",
 		"eventemitter3": "^5.0.1",
-		"express": "^4.19.2"
+		"express": "^4.19.2",
+		"moment": "^2.30.1"
 	},
 	"devDependencies": {
 		"glob": "^10.4.2",
