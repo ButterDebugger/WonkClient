@@ -21,8 +21,11 @@ export default class RoomManager {
 
 	join(roomName) {
 		return new Promise((resolve, reject) => {
-			this.client.request
-				.post(`/room/${roomName}/join`)
+			this.client
+				.request({
+					method: "post",
+					url: `/room/${roomName}/join`
+				})
 				.then(async (res) => {
 					const { name, description, key, members } = res.data;
 
@@ -48,8 +51,11 @@ export default class RoomManager {
 	}
 	leave(roomName) {
 		return new Promise((resolve, reject) => {
-			this.client.request
-				.post(`/room/${roomName}/leave`)
+			this.client
+				.request({
+					method: "post",
+					url: `/room/${roomName}/leave`
+				})
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
 
@@ -67,8 +73,11 @@ export default class RoomManager {
 	}
 	create(roomName) {
 		return new Promise((resolve, reject) => {
-			this.client.request
-				.post(`/room/${roomName}/create`)
+			this.client
+				.request({
+					method: "post",
+					url: `/room/${roomName}/create`
+				})
 				.then((res) => {
 					resolve(res.data);
 				})
@@ -103,15 +112,19 @@ export class Room {
 			.map((attach) => attach.path);
 
 		return new Promise(async (resolve, reject) => {
-			this.client.request
-				.post(`/room/${this.name}/message`, {
-					message: await encryptMessage(
-						JSON.stringify({
-							content: options.text,
-							attachments: attachments
-						}),
-						this.publicKey
-					)
+			this.client
+				.request({
+					method: "post",
+					url: `/room/${this.name}/message`,
+					data: {
+						message: await encryptMessage(
+							JSON.stringify({
+								content: options.text,
+								attachments: attachments
+							}),
+							this.publicKey
+						)
+					}
 				})
 				.then((res) => {
 					resolve(res.data);
@@ -128,8 +141,11 @@ export class Room {
 
 	refresh() {
 		return new Promise((resolve, reject) => {
-			this.client.request
-				.get(`/room/${this.name}/info`)
+			this.client
+				.request({
+					method: "get",
+					url: `/room/${this.name}/info`
+				})
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
 

@@ -1,3 +1,5 @@
+import { Client } from "./client.js";
+
 export default class AttachmentManager {
 	constructor(client) {
 		Object.defineProperty(this, "client", { value: client });
@@ -14,29 +16,39 @@ export default class AttachmentManager {
 				formData.append("files", attachment.file);
 			}
 
-			this.client.request
-				.post(`/upload`, formData, {
+			this.client
+				.request({
+					method: "post",
+					url: "/upload",
+					data: formData,
 					headers: {
-                        "Content-Type": "multipart/form-data",
-                        "Accept": "application/json"
+						"Content-Type": "multipart/form-data",
+						Accept: "application/json"
 					},
 					onUploadProgress: progress
 				})
 				.then((res) => {
-                    for (let result of res.data) {
-						let attachment = attachments.find( // TODO: implement a better way of matching attachments
+					for (let result of res.data) {
+						let attachment = attachments.find(
+							// TODO: implement a better way of matching attachments
 							(attach) =>
 								attach.file.name === result.filename &&
 								attach.file.size === result.size
 						);
 
-                        if (attachment.uploaded) continue;
-                        if (result.success) attachment.path = result.path;
-                    }
+						if (attachment.uploaded) continue;
+						if (result.success) attachment.path = result.path;
+					}
 
 					resolve(true);
 				})
-				.catch((err) => reject(typeof err?.response == "object" ? new ClientError(err.response.data, err) : err));
+				.catch((err) =>
+					reject(
+						typeof err?.response == "object"
+							? new ClientError(err.response.data, err)
+							: err
+					)
+				);
 		});
 	}
 }
@@ -49,12 +61,12 @@ export class Attachment {
 			throw new TypeError("Attachment must be a file.");
 
 		this.file = content;
-        this.path = null;
+		this.path = null;
 	}
 
-    get uploaded() {
-        return !(this.path === null);
-    }
+	get uploaded() {
+		return !(this.path === null);
+	}
 
 	async upload(progress) {
 		return this.client.attachments.upload([this], progress);

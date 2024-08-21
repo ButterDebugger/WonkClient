@@ -9,12 +9,13 @@ import AttachmentManager from "./attachmentManager.js";
 export { generateKeyPair };
 
 export class Client extends eventemitter3 {
-	static baseUrl = "wonk.debutter.dev";
-
+	#baseUrl;
 	#token;
-	#request;
 
-	constructor() {
+	/**
+	 * @param {{ http: string, ws: string }} baseUrl
+	 */
+	constructor(baseUrl) {
 		super();
 
 		this.stream = null;
@@ -27,29 +28,20 @@ export class Client extends eventemitter3 {
 		this.users = new UserManager(this);
 		this.attachments = new AttachmentManager(this);
 
-		this.#request = axios.create({
-			baseURL: `https://${Client.baseUrl}`,
-			headers: {}
-		});
+		this.#baseUrl = baseUrl;
 	}
 
-	get request() {
-		return this.#request;
+	get baseUrl() {
+		return this.#baseUrl;
 	}
 
 	/**
-	 * @param {String} value
+	 * @param {string} value
 	 */
 	set token(value) {
 		if (this.authorized) throw new Error("Client already has a token");
 
 		this.#token = value;
-		this.#request = axios.create({
-			baseURL: `https://${Client.baseUrl}`,
-			headers: {
-				Authorization: `Bearer ${value}`
-			}
-		});
 	}
 	get token() {
 		return this.#token;
@@ -59,10 +51,23 @@ export class Client extends eventemitter3 {
 		return typeof this.#token !== "undefined";
 	}
 
+	request(options) {
+		return axios
+			.create({
+				baseURL: this.baseUrl.http,
+				headers: this.authorized
+					? { Authorization: `Bearer ${this.token}` }
+					: {}
+			})
+			.request(options);
+	}
+
 	async syncClient() {
 		return new Promise((resolve, reject) => {
-			this.request
-				.get(`/sync/client`)
+			this.request({
+				method: "get",
+				url: "/sync/client"
+			})
 				.then(async (res) => {
 					let { rooms, users, you } = res.data;
 
@@ -140,8 +145,10 @@ export class Client extends eventemitter3 {
 
 	async syncMemory() {
 		return new Promise((resolve) => {
-			this.request
-				.get(`/sync/memory`)
+			this.request({
+				method: "get",
+				url: "/sync/memory"
+			})
 				.then(() => resolve(true))
 				.catch((err) =>
 					reject(
@@ -162,8 +169,10 @@ export class Client extends eventemitter3 {
 				privateKey
 			};
 
-			this.request
-				.get("/keys/nonce")
+			this.request({
+				method: "get",
+				url: "/keys/nonce"
+			})
 				.then(async (res) => {
 					let { nonce } = res.data;
 
@@ -172,11 +181,14 @@ export class Client extends eventemitter3 {
 						this.keyPair.privateKey
 					);
 
-					this.request
-						.post("/keys/verify", {
-							signedNonce: signedNonce,
+					this.request({
+						method: "post",
+						url: "/keys/verify",
+						data: {
+							signedNonce,
 							publicKey: this.keyPair.publicKey
-						})
+						}
+					})
 						.then(() => resolve(true))
 						.catch((err) =>
 							reject(
@@ -204,7 +216,7 @@ export class Client extends eventemitter3 {
 		await this.syncClient();
 
 		// Connect to event stream
-		this.stream = new WebSocket(`wss://${Client.baseUrl}/stream`, [
+		this.stream = new WebSocket(`${this.baseUrl.ws}/stream`, [
 			"Authorization",
 			this.token
 		]);
@@ -279,6 +291,40 @@ export class Client extends eventemitter3 {
 				}
 			}
 		});
+	}
+}
+
+export async function locateHomeserver(domain) {
+	try {
+		// Get the base URL of the homeserver
+		let wellKnownRes = await axios.get(
+			`https://${domain}/.well-known/wonk`
+		);
+		let {
+			homeserver: { base_url }
+		} = wellKnownRes.data;
+
+		// Get the namespace of the homeserver
+		let baseRes = await axios.get(base_url);
+		let { namespace } = baseRes.data;
+
+		// Check if the namespace matches the domain
+		if (namespace !== domain) return null; // TODO: resolve namespace conflict
+
+		// Return the namespace and base URL
+		let url = new URL(base_url);
+		let wsProtocol = url.protocol == "https:" ? "wss://" : "ws://";
+		let pathname = url.pathname.replace(/\/$/g, "");
+
+		return {
+			namespace,
+			baseUrl: {
+				http: `${url.origin}${pathname}`,
+				ws: `${wsProtocol}${url.host}${pathname}`
+			}
+		};
+	} catch {
+		return null;
 	}
 }
 

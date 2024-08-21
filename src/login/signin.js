@@ -1,4 +1,5 @@
 import axios from "axios";
+import { locateHomeserver } from "../lib/client.js";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 
 const errorMessageEle = document.getElementById("error-message");
@@ -21,33 +22,6 @@ tippy([homeserverEle, homeserverLabelEle], {
 	allowHTML: true,
 	delay: [500, 0]
 });
-
-async function locateHomeserver(domain) {
-	try {
-		// Get the base URL of the homeserver
-		let wellKnownRes = await axios.get(
-			`https://${domain}/.well-known/wonk`
-		);
-		let {
-			homeserver: { base_url }
-		} = wellKnownRes.data;
-
-		// Get the namespace of the homeserver
-		let baseRes = await axios.get(base_url);
-		let { namespace } = baseRes.data;
-
-		// Check if the namespace matches the domain
-		if (namespace !== domain) return null; // TODO: resolve namespace conflict
-
-		// Return the namespace and base URL
-		return {
-			namespace,
-			baseUrl: base_url
-		};
-	} catch {
-		return null;
-	}
-}
 
 /** @returns The array of bytes converted to base64url */
 function encodeBase64Url(arr) {
@@ -128,7 +102,7 @@ authBtn.addEventListener("click", async () => {
 		challenge: challenge
 	});
 
-	location.href = `${homeserver.baseUrl}/oauth/login/?${params}`;
+	location.href = `${homeserver.baseUrl.http}/oauth/login/?${params}`;
 });
 
 continueBtn.addEventListener("click", () => {
@@ -156,7 +130,7 @@ async function access() {
 
 	// Retrieve the access token
 	axios
-		.post(`${homeserver.baseUrl}/oauth/token/`, {
+		.post(`${homeserver.baseUrl.http}/oauth/token/`, {
 			verifier: verifier
 		})
 		.then(async (res) => {
@@ -181,7 +155,7 @@ async function whoAmI() {
 
 	axios({
 		method: "GET",
-		url: `${homeserver.baseUrl}/sync/client/`,
+		url: `${homeserver.baseUrl.http}/sync/client/`,
 		headers: {
 			Authorization: `Bearer ${token}`
 		}

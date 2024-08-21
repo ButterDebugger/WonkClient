@@ -4,11 +4,12 @@ import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import { updateRoomTabs } from "./ui.js";
 import { appendMessage } from "./room.js";
 
-export const client = new Client();
-
 let _username = await binForage.get("username");
 let token = await binForage.get("token");
 let keyPair = await binForage.get("keyPair");
+let homeserver = await binForage.get("homeserver");
+
+export const client = new Client(homeserver.baseUrl);
 
 // Save a random pgp key pair if one doesn't exist
 if (!keyPair) {

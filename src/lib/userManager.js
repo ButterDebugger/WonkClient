@@ -36,8 +36,11 @@ export default class UserManager {
 
 	subscribe(username) {
 		return new Promise((resolve) => {
-			this.client.request
-				.post(`/users/${username}/subscribe`)
+			this.client
+				.request({
+					method: "post",
+					url: `/users/${username}/subscribe`
+				})
 				.then(async () => {
 					resolve(true);
 				})
@@ -52,8 +55,11 @@ export default class UserManager {
 	}
 	unsubscribe(username) {
 		return new Promise((resolve) => {
-			this.client.request
-				.post(`/users/${username}/unsubscribe`)
+			this.client
+				.request({
+					method: "post",
+					url: `/users/${username}/unsubscribe`
+				})
 				.then(async () => {
 					resolve(true);
 				})
@@ -71,8 +77,11 @@ export default class UserManager {
 			if (!ignoreCache && this.cache.has(username))
 				return resolve(this.cache.get(username));
 
-			this.client.request
-				.get(`/users/${username}/fetch`)
+			this.client
+				.request({
+					method: "get",
+					url: `/users/${username}/fetch`
+				})
 				.then(async (res) => {
 					let { username, data } = res.data;
 
