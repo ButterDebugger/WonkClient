@@ -9,7 +9,11 @@ let token = await binForage.get("token");
 let keyPair = await binForage.get("keyPair");
 let homeserver = await binForage.get("homeserver");
 
-export const client = new Client(homeserver.baseUrl);
+if (homeserver === null) {
+	location.href = "/login/";
+}
+
+export const client = new Client(homeserver?.baseUrl);
 
 // Save a random pgp key pair if one doesn't exist
 if (!keyPair) {
