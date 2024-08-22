@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&display=swap");
 @import url("https://debutter.dev/x/css/simple.css");
+@import "tippy.js/dist/tippy.css";
 
 $mobile-threshold: 1024px;
 
@@ -15,7 +16,7 @@ $mobile-threshold: 1024px;
 	--input-border-color: #35343b;
 	--button-background-color: rgba(32, 32, 36, 0.5);
 	--button-border-color: #545559;
-	--tippy-color: #212125;
+	--tippy-color: #47484d;
 	--primary-color: #5841f7;
 	--secondary-color: #f74185;
 	--warning-color: #d93025;

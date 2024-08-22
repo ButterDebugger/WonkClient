@@ -1,3 +1,4 @@
+import tippy from "tippy.js";
 import moment from "moment";
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 
@@ -36,7 +37,8 @@ export function createMessage(message) {
 	).element;
 
 	tippy(timestampEle, {
-		content: moment(message.timestamp).format("LLLL")
+		content: moment(message.timestamp).format("LLLL"),
+		theme: "tomato"
 	});
 
 	// Return full component

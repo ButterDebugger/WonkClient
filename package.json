@@ -16,7 +16,8 @@
 		"cors": "^2.8.5",
 		"eventemitter3": "^5.0.1",
 		"express": "^4.19.2",
-		"moment": "^2.30.1"
+		"moment": "^2.30.1",
+		"tippy.js": "^6.3.7"
 	},
 	"devDependencies": {
 		"glob": "^10.4.2",
