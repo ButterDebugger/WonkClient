@@ -1,5 +1,4 @@
-import { Client } from "../../lib/client.js";
-import * as openpgp from "https://cdn.jsdelivr.net/npm/openpgp@5.10.2/+esm";
+import { Client, generateKeyPair } from "../../lib/client.js";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import { updateRoomTabs } from "./ui.js";
 import { appendMessage } from "./room.js";
@@ -17,20 +16,7 @@ export const client = new Client(homeserver?.baseUrl);
 
 // Save a random pgp key pair if one doesn't exist
 if (!keyPair) {
-	let { publicKey, privateKey } = await openpgp.generateKey({
-		type: "rsa",
-		rsaBits: 2048,
-		userIDs: [
-			{
-				name: _username
-			}
-		]
-	});
-
-	keyPair = {
-		publicKey,
-		privateKey
-	};
+	keyPair = await generateKeyPair(_username);
 
 	await binForage.set("keyPair", keyPair);
 }
