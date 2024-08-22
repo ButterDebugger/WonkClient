@@ -46,7 +46,6 @@ export default defineConfig({
 						options: {
 							cacheName: "google-fonts",
 							expiration: {
-								maxEntries: 4,
 								maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
 							}
 						}
@@ -58,7 +57,6 @@ export default defineConfig({
 						options: {
 							cacheName: "third-party-libraries",
 							expiration: {
-								maxEntries: 4,
 								maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
 							}
 						}
@@ -69,7 +67,6 @@ export default defineConfig({
 						options: {
 							cacheName: "asset-cache",
 							expiration: {
-								maxEntries: 4,
 								maxAgeSeconds: 24 * 60 * 60 // 24 hours
 							}
 						}
