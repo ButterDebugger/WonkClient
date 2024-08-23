@@ -37,14 +37,13 @@ logoutBtn.addEventListener("click", () => {
 });
 
 joinRoomBtn.addEventListener("click", () => {
-	let $container = dom(`<div class="container"></div>`);
+	let $container = dom(`<div class="container join-room"></div>`);
 	let $input = dom(
 		`<input type="text" placeholder="Name" required minlength="3">`
 	);
 	let $joinBtn = dom(`<button disabled>Join</button>`);
 
 	$input.on("input", () => {
-		console.log("hiii", $input.element.validity.valid);
 		if ($input.element.validity.valid) {
 			$joinBtn.prop("disabled", false);
 		} else {
@@ -64,7 +63,7 @@ joinRoomBtn.addEventListener("click", () => {
 		$joinBtn.prop("disabled", false);
 	});
 
-	showModal($container);
+	showModal("Join Room", $container);
 });
 
 export function switchDrawer(drawerName) {

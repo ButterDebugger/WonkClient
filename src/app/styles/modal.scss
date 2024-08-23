@@ -46,5 +46,10 @@
 
     .content {
         padding: calc(var(--bubble-padding) / 2);
+
+        .container.join-room {
+            display: flex;
+            gap: calc(var(--bubble-padding) / 2);
+        }
     }
 }

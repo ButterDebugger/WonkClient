@@ -5,9 +5,9 @@ const modalQueue = [];
 
 dom("body").append($background);
 
-export function showModal(content) {
+export function showModal(title, content) {
 	if (isModalPresent()) {
-		modalQueue.push(content);
+		modalQueue.push([title, content]);
 		return;
 	}
 
@@ -24,10 +24,12 @@ export function showModal(content) {
 	// Create and append the modal to the body
 	let $modal = dom(`<div id="modal-wrapper">
         <div class="header">
-            <span class="title">Modal Title</span>
+            <span class="title">Modal</span>
         </div>
         <div class="content"></div>
     </div>`);
+
+	$modal.find(".title").text(title);
 
 	$modal.find(".header").append(
 		dom(`<div class="ic-small-container">
@@ -48,7 +50,7 @@ export function hideModal() {
 	dom("#modal-wrapper").remove();
 
 	if (modalQueue.length > 0) {
-		showModal(modalQueue.shift());
+		showModal(...modalQueue.shift());
 		return;
 	}
 
