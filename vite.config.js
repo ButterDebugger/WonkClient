@@ -28,6 +28,14 @@ export default defineConfig({
 			)
 		}
 	},
+	resolve: {
+		alias: {
+			"@fa": resolve(
+				__dirname,
+				"./node_modules/@fortawesome/fontawesome-free"
+			)
+		}
+	},
 	publicDir: resolve(process.cwd(), "public"),
 	root: resolve(process.cwd(), "src"),
 	appType: "mpa",
