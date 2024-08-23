@@ -1,5 +1,7 @@
+import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { createRoomTab } from "./components.js";
-import { client } from "./main.js";
+import { client, joinOrCreateRoom } from "./main.js";
+import { hideModal, showModal } from "./modal.js";
 import { getOrCreateRoomWrapper } from "./room.js";
 
 const exploreDrawer = document.getElementById("explore-drawer");
@@ -15,6 +17,7 @@ const navMessagesBtn = document.getElementById("nav-messages");
 const navYouBtn = document.getElementById("nav-you");
 
 const logoutBtn = document.getElementById("logout-btn");
+const joinRoomBtn = document.getElementById("join-room-btn");
 
 navExploreBtn.addEventListener("click", () => {
 	switchDrawer("explore");
@@ -33,30 +36,54 @@ logoutBtn.addEventListener("click", () => {
 	location.href = "/login/";
 });
 
+joinRoomBtn.addEventListener("click", () => {
+	let $container = dom(`<div class="container"></div>`);
+	let $input = dom(
+		`<input type="text" placeholder="Name" required minlength="3">`
+	);
+	let $joinBtn = dom(`<button disabled>Join</button>`);
+
+	$input.on("input", () => {
+		console.log("hiii", $input.element.validity.valid);
+		if ($input.element.validity.valid) {
+			$joinBtn.prop("disabled", false);
+		} else {
+			$joinBtn.prop("disabled", true);
+		}
+	});
+
+	$container.append($input, $joinBtn);
+
+	$joinBtn.on("click", async () => {
+		$joinBtn.prop("disabled", true);
+
+		if (await joinOrCreateRoom($input.prop("value"))) {
+			hideModal();
+		}
+
+		$joinBtn.prop("disabled", false);
+	});
+
+	showModal($container);
+});
+
 export function switchDrawer(drawerName) {
+	const removeOrAdd = (name) => (drawerName === name ? "remove" : "add");
+	const addOrRemove = (name) => (drawerName === name ? "add" : "remove");
+
 	// Show / hide drawers
-	messagesDrawer.classList[drawerName == "messages" ? "remove" : "add"](
-		"hidden"
-	);
-	roomsDrawer.classList[drawerName == "rooms" ? "remove" : "add"]("hidden");
-	exploreDrawer.classList[drawerName == "explore" ? "remove" : "add"](
-		"hidden"
-	);
-	youDrawer.classList[drawerName == "you" ? "remove" : "add"]("hidden");
-	viewDrawer.classList[drawerName == "view" ? "remove" : "add"]("hidden");
+	messagesDrawer.classList[removeOrAdd("messages")]("hidden");
+	roomsDrawer.classList[removeOrAdd("rooms")]("hidden");
+	exploreDrawer.classList[removeOrAdd("explore")]("hidden");
+	youDrawer.classList[removeOrAdd("you")]("hidden");
+	viewDrawer.classList[removeOrAdd("view")]("hidden");
 
 	// Only change the active button if a it can be switched
 	if (["messages", "rooms", "explore", "you"].includes(drawerName)) {
-		navMessagesBtn.classList[drawerName == "messages" ? "add" : "remove"](
-			"active"
-		);
-		navRoomsBtn.classList[drawerName == "rooms" ? "add" : "remove"](
-			"active"
-		);
-		navExploreBtn.classList[drawerName == "explore" ? "add" : "remove"](
-			"active"
-		);
-		navYouBtn.classList[drawerName == "you" ? "add" : "remove"]("active");
+		navMessagesBtn.classList[addOrRemove("messages")]("active");
+		navRoomsBtn.classList[addOrRemove("rooms")]("active");
+		navExploreBtn.classList[addOrRemove("explore")]("active");
+		navYouBtn.classList[addOrRemove("you")]("active");
 	}
 }
 

@@ -2,6 +2,7 @@
 @import "./icons.scss";
 @import "./room.scss";
 @import "./navbar.scss";
+@import "./modal.scss";
 
 html {
 	height: 100%;
@@ -80,6 +81,11 @@ body {
 	}
 	.footer {
 		@include bubble(true);
+	}
+
+	/* Fix navbar being push out on mobile */
+	@media screen and (max-width: $mobile-threshold) {
+		height: 0px;
 	}
 }
 

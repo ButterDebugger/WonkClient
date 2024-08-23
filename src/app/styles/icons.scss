@@ -86,6 +86,11 @@
 
 	--ic-url: url("@fa/svgs/solid/ellipsis.svg");
 }
+.ic-xmark {
+	@include icon(false);
+
+	--ic-url: url("@fa/svgs/solid/xmark.svg");
+}
 .ic-blue-dot {
 	@include icon(true);
 

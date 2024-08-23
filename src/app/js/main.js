@@ -2,6 +2,7 @@ import { Client, generateKeyPair } from "../../lib/client.js";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import { updateRoomTabs } from "./ui.js";
 import { appendMessage } from "./room.js";
+import { errorCodes } from "../../lib/builtinErrors.js";
 
 let _username = await binForage.get("username");
 let token = await binForage.get("token");
@@ -58,6 +59,28 @@ export async function joinRoom(roomName) {
 	try {
 		await client.rooms.join(roomName);
 	} catch (error) {
+		console.warn(error);
+		return false;
+	}
+	return true;
+}
+
+export async function joinOrCreateRoom(roomName) {
+	try {
+		await client.rooms.join(roomName);
+	} catch (error) {
+		if (error?.code === errorCodes.RoomDoesNotExist) {
+			try {
+				await client.rooms.create(roomName);
+				await client.rooms.join(roomName); // NOTE: I shouldn't need to join a room that I created
+				updateRoomTabs();
+			} catch (error) {
+				console.warn(error);
+				return false;
+			}
+			return true;
+		}
+
 		console.warn(error);
 		return false;
 	}

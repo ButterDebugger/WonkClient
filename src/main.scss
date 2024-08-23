@@ -90,6 +90,8 @@ textarea {
 	border: 2px solid var(--input-border-color);
 	color: var(--text-color);
 	outline: none;
+	padding: 8px 12px;
+	border-radius: 8px;
 	transition: filter 0.15s ease-in-out;
 
 	&:invalid {
