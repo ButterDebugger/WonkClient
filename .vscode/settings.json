@@ -7,7 +7,11 @@
 	"prettier.useTabs": true,
 	"prettier.trailingComma": "none",
 	"cSpell.words": [
-		"homeserver"
+		"fontawesome",
+		"fortawesome",
+		"homeserver",
+		"openpgp",
+		"svgs"
 	],
 	"[scss]": {
 		"editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
