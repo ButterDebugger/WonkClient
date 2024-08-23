@@ -19,8 +19,10 @@
 		mask-image: var(--ic-url);
 		-webkit-mask-repeat: no-repeat;
 		mask-repeat: no-repeat;
-		-webkit-mask-size: cover;
-		mask-size: cover;
+		-webkit-mask-size: auto;
+		mask-size: auto;
+		-webkit-mask-position: center;
+		mask-position: center;
 	}
 }
 
@@ -134,19 +136,19 @@
 
 /* Icon container sizes */
 .ic-large-container {
-	--container-size: var(--ic-large);
+	--ic-container-size: var(--ic-large);
 }
 .ic-normal-container {
-	--container-size: var(--ic-normal);
+	--ic-container-size: var(--ic-normal);
 }
 .ic-small-container {
-	--container-size: var(--ic-small);
+	--ic-container-size: var(--ic-small);
 }
 .ic-extra-small-container {
-	--container-size: var(--ic-extra-small);
+	--ic-container-size: var(--ic-extra-small);
 }
 .ic-text-size-container {
-	--container-size: 1em;
+	--ic-container-size: 1em;
 }
 
 /* Icon container */
@@ -161,8 +163,8 @@
 
 	border-radius: 9999px;
 	padding: 8px;
-	width: calc(var(--container-size) + 16px);
-	height: calc(var(--container-size) + 16px);
+	width: calc(var(--ic-container-size) + 16px);
+	height: calc(var(--ic-container-size) + 16px);
 	cursor: pointer;
 
 	&:hover {
