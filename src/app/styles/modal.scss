@@ -47,8 +47,15 @@
     .content {
         padding: calc(var(--bubble-padding) / 2);
 
-        .container.join-room {
+        .container.flex-row {
             display: flex;
+            flex-direction: row;
+            gap: calc(var(--bubble-padding) / 2);
+        }
+
+        .container.flex-column {
+            display: flex;
+            flex-direction: column;
             gap: calc(var(--bubble-padding) / 2);
         }
     }

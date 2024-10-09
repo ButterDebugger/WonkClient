@@ -1,0 +1,50 @@
+.attachment-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 1.5rem;
+    cursor: pointer;
+    text-align: center;
+    border: 2px dashed #aaa;
+    transition: border-color 0.2s ease-in-out;
+    border-radius: 8px;
+
+    &:hover {
+        border-color: #ddd;
+    }
+
+    .top-text {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+    .sub-text {
+        font-size: 0.9em;
+    }
+}
+.attachment-list {
+    $max-items: 4;
+    $padding-total-height: calc(var(--bubble-padding) / 2 * ($max-items - 1));
+    $item-total-height: calc((1lh + var(--bubble-padding)) * $max-items);
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: calc(var(--bubble-padding) / 2);
+
+    max-height: calc($item-total-height + $padding-total-height);
+    overflow-y: auto;
+}
+
+.file-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--bubble-padding) / 2);
+
+    border-radius: 9999px;
+    padding: calc(var(--bubble-padding) / 2);
+    background-color: var(--hover-color);
+    cursor: default;
+}

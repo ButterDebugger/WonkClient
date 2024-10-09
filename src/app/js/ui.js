@@ -37,7 +37,7 @@ logoutBtn.addEventListener("click", () => {
 });
 
 joinRoomBtn.addEventListener("click", () => {
-	let $container = dom(`<div class="container join-room"></div>`);
+	let $container = dom(`<div class="container flex-row"></div>`);
 	let $input = dom(
 		`<input type="text" placeholder="Name" required minlength="3">`
 	);

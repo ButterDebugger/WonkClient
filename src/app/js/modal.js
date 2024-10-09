@@ -2,6 +2,7 @@ import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 
 const $background = dom(`<div id="modal-background" class="hidden"></div>`);
 const modalQueue = [];
+let isModalUnlocked = true; // TODO: provide some indicator that the modal is locked
 
 dom("body").append($background);
 
@@ -33,8 +34,12 @@ export function showModal(title, content) {
 
 	$modal.find(".header").append(
 		dom(`<div class="ic-small-container">
-            <span class="ic-small ic-xmark"></span>
-        </div>`).on("click", () => hideModal())
+				<span class="ic-small ic-xmark"></span>
+			</div>`).on("click", () => {
+			if (isModalUnlocked) {
+				hideModal();
+			}
+		}),
 	);
 
 	$modal.find(".content").append(content);
@@ -59,4 +64,12 @@ export function hideModal() {
 	setTimeout(() => {
 		$background.addClass("hidden");
 	}, 200);
+}
+
+export function lockModal() {
+	isModalUnlocked = false;
+}
+
+export function unlockModal() {
+	isModalUnlocked = true;
 }

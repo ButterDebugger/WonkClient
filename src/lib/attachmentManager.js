@@ -1,5 +1,3 @@
-import { Client } from "./client.js";
-
 export default class AttachmentManager {
 	constructor(client) {
 		Object.defineProperty(this, "client", { value: client });
@@ -9,47 +7,45 @@ export default class AttachmentManager {
 		return new Attachment(this.client, content);
 	}
 
-	upload(attachments, progress) {
-		return new Promise(async (resolve, reject) => {
-			let formData = new FormData();
-			for (let attachment of attachments) {
-				formData.append("files", attachment.file);
-			}
+	async upload(attachments, progress) {
+		let formData = new FormData();
+		for (let attachment of attachments) {
+			formData.append("files", attachment.file);
+		}
 
-			this.client
-				.request({
-					method: "post",
-					url: "/upload",
-					data: formData,
-					headers: {
-						"Content-Type": "multipart/form-data",
-						Accept: "application/json"
-					},
-					onUploadProgress: progress
-				})
-				.then((res) => {
-					for (let result of res.data) {
-						let attachment = attachments.find(
-							// TODO: implement a better way of matching attachments
-							(attach) =>
-								attach.file.name === result.filename &&
-								attach.file.size === result.size
-						);
+		await this.client
+			.request({
+				method: "post",
+				url: "/upload",
+				data: formData,
+				headers: {
+					"Content-Type": "multipart/form-data",
+					Accept: "application/json",
+				},
+				onUploadProgress: progress,
+			})
+			.then((res) => {
+				for (let result of res.data) {
+					let attachment = attachments.find(
+						// TODO: implement a better way of matching attachments
+						(attach) =>
+							attach.file.name === result.filename &&
+							attach.file.size === result.size,
+					);
 
-						if (attachment.uploaded) continue;
-						if (result.success) attachment.path = result.path;
-					}
+					if (attachment.uploaded) continue;
+					if (result.success) attachment.path = result.path;
+				}
+			})
+			.catch((err) => {
+				if (typeof err?.response === "object") {
+					throw new ClientError(err.response.data, err);
+				}
 
-					resolve(true);
-				})
-				.catch((err) =>
-					reject(
-						typeof err?.response == "object"
-							? new ClientError(err.response.data, err)
-							: err
-					)
-				);
-		});
+				throw err;
+			});
+
+		return true;
 	}
 }
 

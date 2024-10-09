@@ -91,6 +91,16 @@
 
 	--ic-url: url("@fa/svgs/solid/xmark.svg");
 }
+.ic-upload {
+	@include icon(false);
+
+	--ic-url: url("@fa/svgs/solid/arrow-up-from-bracket.svg");
+}
+.ic-paperclip {
+	@include icon(false);
+
+	--ic-url: url("@fa/svgs/solid/paperclip.svg");
+}
 .ic-blue-dot {
 	@include icon(true);
 
@@ -153,7 +163,7 @@
 	--ic-container-size: var(--ic-extra-small);
 }
 .ic-text-size-container {
-	--ic-container-size: 1em;
+	--ic-container-size: 1lh;
 }
 
 /* Icon container */

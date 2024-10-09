@@ -4,6 +4,11 @@ import { changeViewDrawer, switchDrawer } from "./ui.js";
 import { sendMessage } from "./main.js";
 import { hasWrapper, getOrCreateWrapper, getWrapper } from "./wrapper.js";
 import { getOrCreateRoomInfoWrapper } from "./roomInfo.js";
+import {
+	clearRoomAttachments,
+	getRoomAttachments,
+	showAttachmentModal,
+} from "./attachments.js";
 
 export function getOrCreateRoomWrapper(room) {
 	let roomKey = `#${room.name}`;
@@ -14,13 +19,13 @@ export function getOrCreateRoomWrapper(room) {
 	wrapper.header.classList.add("room");
 	wrapper.content.classList.add("room");
 	wrapper.footer.classList.add("room");
-	wrapper.backAction = function () {
+	wrapper.backAction = () => {
 		switchDrawer("rooms");
 	};
 
 	// Create message input field
 	let $messageInput = dom(
-		`<input type="text" name="message-input" maxlength="1000">`
+		`<input type="text" name="message-input" maxlength="1000">`,
 	)
 		.on("keydown", ({ key }) => {
 			if (key === "Enter") send();
@@ -35,22 +40,29 @@ export function getOrCreateRoomWrapper(room) {
 		if (value.length === 0) return;
 
 		let result = await sendMessage(room.name, {
-			text: value
+			text: value,
+			attachments: getRoomAttachments(room.name),
 		});
+
+		clearRoomAttachments(room.name);
 
 		if (!result) {
 			alert("Failed to send message"); // TODO: make fancier
 		}
 	}
 
+	// Create attach icon
+	let $attachBtn = dom(
+		`<div class="ic-normal-container" name="attachment-button">
+			<span class="ic-normal ic-paperclip"></span>
+		</div>`,
+	);
+	$attachBtn.on("click", () => showAttachmentModal(room.name));
+
 	// Append footer message box
 	dom(wrapper.footer).append(
 		// Add attach icon to wrapper footer
-		dom(
-			`<div class="ic-normal-container">
-				<span name="attach-button" class="ic-normal ic-plus"></span>
-			</div>`
-		),
+		$attachBtn,
 
 		// Add message input
 		$messageInput,
@@ -59,8 +71,8 @@ export function getOrCreateRoomWrapper(room) {
 		dom(
 			`<div class="ic-normal-container">
                 <span name="send-button" class="ic-normal ic-arrow-up"></span>
-            </div>`
-		).on("click", () => send())
+            </div>`,
+		).on("click", () => send()),
 	);
 
 	// Append header content
@@ -68,7 +80,7 @@ export function getOrCreateRoomWrapper(room) {
 		// Append room label to wrapper header
 		dom(`<div class="label"></div>`).append(
 			dom(`<span class="title"></span>`).text(room.name),
-			dom(`<span class="description"></span>`).text(room.description)
+			dom(`<span class="description"></span>`).text(room.description),
 		),
 
 		// Append flex spacer
@@ -78,11 +90,11 @@ export function getOrCreateRoomWrapper(room) {
 		dom(
 			`<div class="ic-small-container">
 				<span class="ic-small ic-ellipsis"></span>
-			</div>`
+			</div>`,
 		).on("click", () => {
 			switchDrawer("view");
 			changeViewDrawer(getOrCreateRoomInfoWrapper(room));
-		})
+		}),
 	);
 
 	return wrapper;
@@ -100,5 +112,19 @@ export function appendMessage(message) {
 		wrapper.content.style["scroll-behavior"] = "unset";
 		messageEle.scrollIntoView();
 		wrapper.content.style["scroll-behavior"] = "";
+	}
+}
+
+export function setAttachmentAnimation(roomName, state) {
+	let roomKey = `#${roomName}`;
+	if (!hasWrapper(roomKey)) return;
+
+	let $attachBtn = dom(getWrapper(roomKey).footer).find(
+		'div[name="attachment-button"]',
+	);
+	if (state) {
+		$attachBtn.addClass("ring");
+	} else {
+		$attachBtn.removeClass("ring");
 	}
 }
