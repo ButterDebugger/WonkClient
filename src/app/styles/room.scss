@@ -55,18 +55,13 @@
 			flex-direction: row;
 			align-items: center;
 			justify-content: flex-start;
+			flex-wrap: wrap;
+			gap: 1ch;
 			width: 100%;
-		}
 
-		.message-attachment {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 32px;
-			height: 32px;
-			margin-right: 0.5rem;
-			border: 1px solid #ddd;
-			border-radius: 5px;
+			&:not(:empty) {
+				margin-top: 0.25lh;
+			}
 		}
 	}
 

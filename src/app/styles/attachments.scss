@@ -43,8 +43,12 @@
     justify-content: space-between;
     gap: calc(var(--bubble-padding) / 2);
 
-    border-radius: 9999px;
+    border-radius: 1em;
     padding: calc(var(--bubble-padding) / 2);
     background-color: var(--hover-color);
     cursor: default;
+}
+a.file-chip {
+    cursor: pointer;
+    color: var(--text-color);
 }
