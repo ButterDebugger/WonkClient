@@ -1,6 +1,6 @@
 import tippy from "tippy.js";
 import axios from "axios";
-import { locateHomeserver } from "../lib/client.js";
+import { locateHomeserver } from "../lib/client.ts";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 
 const errorMessageEle = document.getElementById("error-message");

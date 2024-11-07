@@ -1,5 +1,9 @@
+import { type Client, ClientError } from "./client.ts";
+
 export default class AttachmentManager {
-	constructor(client) {
+	client: Client;
+
+	constructor(client: Client) {
 		Object.defineProperty(this, "client", { value: client });
 	}
 
@@ -50,7 +54,11 @@ export default class AttachmentManager {
 }
 
 export class Attachment {
-	constructor(client, content) {
+	client: Client;
+	file: File;
+	path: string | null;
+
+	constructor(client: Client, content: File) {
 		Object.defineProperty(this, "client", { value: client });
 
 		if (!(content instanceof File))

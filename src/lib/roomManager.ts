@@ -1,21 +1,27 @@
 import { ClientError } from "./builtinErrors.js";
+import type { Client } from "./client.ts";
 import { encryptMessage } from "./cryption.js";
 
 export default class RoomManager {
-	constructor(client) {
+	client: Client;
+	cache: Map<string, Room>;
+
+	constructor(client: Client) {
 		Object.defineProperty(this, "client", { value: client });
 
 		this.cache = new Map();
 
 		client.on("roomMemberJoin", (username, roomName) => {
-			if (!this.cache.has(roomName)) return;
+			const room = this.cache.get(roomName);
+			if (!room) return;
 
-			this.cache.get(roomName).members.add(username);
+			room.members.add(username);
 		});
 		client.on("roomMemberLeave", (username, roomName) => {
-			if (!this.cache.has(roomName)) return;
+			const room = this.cache.get(roomName);
+			if (!room) return;
 
-			this.cache.get(roomName).members.delete(username);
+			room.members.delete(username);
 		});
 	}
 
@@ -87,7 +93,19 @@ export default class RoomManager {
 }
 
 export class Room {
-	constructor(client, name, description, key, members) {
+	client: Client;
+	name: string;
+	description: string;
+	publicKey: string;
+	members: Set<string>;
+
+	constructor(
+		client: Client,
+		name: string,
+		description: string,
+		key: string,
+		members: Iterable<string>,
+	) {
 		Object.defineProperty(this, "client", { value: client });
 
 		this.name = name;

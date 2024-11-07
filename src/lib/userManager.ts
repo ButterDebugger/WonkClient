@@ -1,7 +1,11 @@
 import { ClientError } from "./builtinErrors.js";
+import type { Client } from "./client.ts";
 
 export default class UserManager {
-	constructor(client) {
+	client: Client;
+	cache: Map<string, User>;
+
+	constructor(client: Client) {
 		Object.defineProperty(this, "client", { value: client });
 
 		this.cache = new Map();
@@ -12,9 +16,9 @@ export default class UserManager {
 	}
 
 	update(username, data) {
-		if (this.cache.has(username)) {
-			const cachedUser = this.cache.get(username);
+		const cachedUser = this.cache.get(username);
 
+		if (cachedUser) {
 			if (cachedUser.cacheTime >= data.timestamp) return; // Don't cache
 
 			cachedUser.color = data.color;
@@ -35,7 +39,7 @@ export default class UserManager {
 	}
 
 	subscribe(username) {
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			this.client
 				.request({
 					method: "post",
@@ -54,7 +58,7 @@ export default class UserManager {
 		});
 	}
 	unsubscribe(username) {
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			this.client
 				.request({
 					method: "post",
@@ -72,8 +76,8 @@ export default class UserManager {
 				);
 		});
 	}
-	fetch(username, ignoreCache = false) {
-		return new Promise((resolve) => {
+	fetch(username: string, ignoreCache = false) {
+		return new Promise((resolve, reject) => {
 			if (!ignoreCache && this.cache.has(username))
 				return resolve(this.cache.get(username));
 
@@ -101,7 +105,19 @@ export default class UserManager {
 }
 
 export class User {
-	constructor(client, username, color, offline, timestamp = Date.now()) {
+	client: Client;
+	username: string;
+	color: string;
+	offline: boolean;
+	cacheTime: number;
+
+	constructor(
+		client: Client,
+		username: string,
+		color: string,
+		offline: boolean,
+		timestamp = Date.now(),
+	) {
 		Object.defineProperty(this, "client", { value: client });
 
 		this.username = username;

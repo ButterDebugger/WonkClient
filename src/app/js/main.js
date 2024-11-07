@@ -1,8 +1,7 @@
-import { Client, generateKeyPair } from "../../lib/client.js";
+import { Client, generateKeyPair, errorCodes } from "../../lib/client.ts";
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import { updateRoomTabs } from "./ui.js";
 import { appendMessage } from "./room.js";
-import { errorCodes } from "../../lib/builtinErrors.js";
 
 const _username = await binForage.get("username");
 const token = await binForage.get("token");
@@ -13,8 +12,6 @@ if (homeserver === null) {
 	location.href = "/login/";
 }
 
-export const client = new Client(homeserver?.baseUrl);
-
 // Save a random pgp key pair if one doesn't exist
 if (!keyPair) {
 	keyPair = await generateKeyPair(_username);
@@ -22,13 +19,16 @@ if (!keyPair) {
 	await binForage.set("keyPair", keyPair);
 }
 
-await client
-	.login(token, keyPair.publicKey, keyPair.privateKey)
-	.catch((err) => {
-		console.error(err);
+export const client = await Client.login(
+	token,
+	keyPair.publicKey,
+	keyPair.privateKey,
+	homeserver?.baseUrl,
+).catch((err) => {
+	console.error(err);
 
-		location.href = "/login/";
-	});
+	// location.href = "/login/";
+});
 
 client.on("ready", async () => {
 	console.log(`Logged in as ${client.user.username}!`);

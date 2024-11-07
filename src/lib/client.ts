@@ -1,65 +1,141 @@
-import axios from "axios";
+import axios, { type AxiosRequestConfig } from "axios";
 import eventemitter3 from "eventemitter3";
 import { decryptMessage, generateKeyPair, signMessage } from "./cryption.js";
-import RoomManager, { Room } from "./roomManager.js";
-import UserManager, { User } from "./userManager.js";
-import { ClientError } from "./builtinErrors.js";
-import AttachmentManager from "./attachmentManager.js";
+import RoomManager, { Room } from "./roomManager.ts";
+import UserManager, { User } from "./userManager.ts";
+import { ClientError, errorCodes } from "./builtinErrors.js";
+import AttachmentManager from "./attachmentManager.ts";
 
-export { generateKeyPair };
+export { generateKeyPair, ClientError, errorCodes };
+
+export interface KeyPair {
+	publicKey: string;
+	privateKey: string;
+}
+
+export interface BaseUrl {
+	http: string;
+	ws: string;
+}
 
 export class Client extends eventemitter3 {
-	#baseUrl;
-	#token;
+	#baseUrl: BaseUrl;
+	#token: string;
+	#keyPair: KeyPair;
 
-	/**
-	 * @param {{ http: string, ws: string }} baseUrl
-	 */
-	constructor(baseUrl) {
+	rooms: RoomManager;
+	stream: WebSocket | null;
+	user: User;
+	users: UserManager;
+	attachments: AttachmentManager;
+
+	constructor(
+		token: string,
+		publicKey: string,
+		privateKey: string,
+		baseUrl: BaseUrl,
+	) {
 		super();
 
 		this.stream = null;
-		this.user = null;
-		this.keyPair = {
-			publicKey: null,
-			privateKey: null,
-		};
 		this.rooms = new RoomManager(this);
 		this.users = new UserManager(this);
 		this.attachments = new AttachmentManager(this);
 
 		this.#baseUrl = baseUrl;
+		this.#token = token;
+		this.#keyPair = {
+			publicKey,
+			privateKey,
+		};
+
+		this.#init();
 	}
 
 	get baseUrl() {
 		return this.#baseUrl;
 	}
 
-	/**
-	 * @param {string} value
-	 */
-	set token(value) {
-		if (this.authorized) throw new Error("Client already has a token");
-
-		this.#token = value;
-	}
 	get token() {
 		return this.#token;
 	}
 
-	get authorized() {
-		return typeof this.#token !== "undefined";
-	}
-
-	request(options) {
+	request(options: AxiosRequestConfig) {
 		return axios
 			.create({
 				baseURL: this.baseUrl.http,
-				headers: this.authorized
-					? { Authorization: `Bearer ${this.token}` }
-					: {},
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 			.request(options);
+	}
+
+	static regularRequest(
+		baseUrl: BaseUrl,
+		options: AxiosRequestConfig,
+		token?: string,
+	) {
+		return axios
+			.create({
+				baseURL: baseUrl.http,
+				headers:
+					typeof token === "string" ? { Authorization: `Bearer ${token}` } : {},
+			})
+			.request(options);
+	}
+
+	/** @throws if the key pair could not be set */
+	static async refreshKeyPair(
+		token: string,
+		publicKey: string,
+		privateKey: string,
+		baseUrl: BaseUrl,
+	): Promise<void> {
+		try {
+			const res = await Client.regularRequest(
+				// Throws an error
+				baseUrl,
+				{
+					method: "get",
+					url: "/keys/nonce",
+				},
+				token,
+			);
+
+			const { nonce } = res.data;
+			const signedNonce = await signMessage(nonce, privateKey);
+
+			await Client.regularRequest(
+				// Throws an error
+				baseUrl,
+				{
+					method: "post",
+					url: "/keys/verify",
+					data: {
+						signedNonce,
+						publicKey,
+					},
+				},
+				token,
+			);
+		} catch (err) {
+			throw typeof err?.response === "object"
+				? new ClientError(err.response.data, err)
+				: err;
+		}
+	}
+
+	/** @throws if the key pair could not be set */
+	static async login(
+		token: string,
+		publicKey: string,
+		privateKey: string,
+		baseUrl: BaseUrl,
+	): Promise<Client> {
+		await Client.refreshKeyPair(token, publicKey, privateKey, baseUrl); // Throws an error
+
+		return new Client(token, publicKey, privateKey, baseUrl);
 	}
 
 	async syncClient() {
@@ -73,11 +149,11 @@ export class Client extends eventemitter3 {
 
 					// Update the rooms cache
 					for (const room of rooms) {
-						if (this.rooms.cache.has(room.name)) {
-							const cachedRoom = this.rooms.cache.get(room.name);
+						const cachedRoom = this.rooms.cache.get(room.name);
 
+						if (cachedRoom) {
 							cachedRoom.description = room.description;
-							cachedRoom.key = room.key;
+							cachedRoom.publicKey = room.key;
 							cachedRoom.members = new Set(room.members);
 						} else {
 							this.rooms.cache.set(
@@ -95,9 +171,9 @@ export class Client extends eventemitter3 {
 
 					// Update the users cache
 					for (const user of users) {
-						if (this.users.cache.has(user.username)) {
-							const cachedUser = this.users.cache.get(user.username);
+						const cachedUser = this.users.cache.get(user.username);
 
+						if (cachedUser) {
 							cachedUser.username = user.username;
 							cachedUser.color = user.color;
 							cachedUser.offline = user.offline;
@@ -110,7 +186,7 @@ export class Client extends eventemitter3 {
 					}
 
 					// Update the client users cache
-					if (this.user === null) {
+					if (typeof this.user === "undefined") {
 						this.user = new User(this, you.username, you.color, you.offline);
 						this.users.cache.set(you.username, this.user);
 					} else {
@@ -132,7 +208,7 @@ export class Client extends eventemitter3 {
 	}
 
 	async syncMemory() {
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			this.request({
 				method: "get",
 				url: "/sync/memory",
@@ -148,56 +224,7 @@ export class Client extends eventemitter3 {
 		});
 	}
 
-	async setKeyPair(publicKey, privateKey) {
-		return new Promise((resolve, reject) => {
-			if (!this.authorized) return resolve(false); // TODO: throw an error
-
-			this.keyPair = {
-				publicKey,
-				privateKey,
-			};
-
-			this.request({
-				method: "get",
-				url: "/keys/nonce",
-			})
-				.then(async (res) => {
-					const { nonce } = res.data;
-
-					const signedNonce = await signMessage(nonce, this.keyPair.privateKey);
-
-					this.request({
-						method: "post",
-						url: "/keys/verify",
-						data: {
-							signedNonce,
-							publicKey: this.keyPair.publicKey,
-						},
-					})
-						.then(() => resolve(true))
-						.catch((err) =>
-							reject(
-								typeof err?.response === "object"
-									? new ClientError(err.response.data, err)
-									: err,
-							),
-						);
-				})
-				.catch((err) =>
-					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
-							: err,
-					),
-				);
-		});
-	}
-
-	async login(token, publicKey, privateKey) {
-		this.token = token;
-
-		await this.setKeyPair(publicKey, privateKey);
-
+	async #init() {
 		await this.syncClient();
 
 		// Connect to event stream
@@ -213,7 +240,7 @@ export class Client extends eventemitter3 {
 			this.syncMemory();
 		});
 		this.stream.addEventListener("message", async (event) => {
-			const data = await parseStreamData(event.data, this.keyPair.privateKey);
+			const data = await parseStreamData(event.data, this.#keyPair.privateKey);
 
 			switch (data.event) {
 				case "ping": {
@@ -256,11 +283,14 @@ export class Client extends eventemitter3 {
 						timestamp: data.timestamp,
 					};
 					this.users.update(data.author.username, authorData);
+
 					const message = new RoomMessage(
 						this,
 						data.author.username,
 						data.room,
-						data,
+						data.content,
+						data.attachments,
+						data.timestamp,
 					);
 
 					this.emit("roomMemberMessage", message);
@@ -271,7 +301,7 @@ export class Client extends eventemitter3 {
 	}
 }
 
-export async function locateHomeserver(domain) {
+export async function locateHomeserver(domain: string) {
 	try {
 		// Get the base URL of the homeserver
 		const wellKnownRes = await axios.get(`https://${domain}/.well-known/wonk`);
@@ -318,21 +348,36 @@ async function parseStreamData(input, privateKey) {
 }
 
 class RoomMessage {
-	constructor(client, username, roomName, msgData) {
+	#username: string;
+	#roomName: string;
+
+	client: Client;
+	content: string;
+	attachments: string[];
+	timestamp: number;
+
+	constructor(
+		client: Client,
+		username: string,
+		roomName: string,
+		content: string,
+		attachments: string[],
+		timestamp: number,
+	) {
 		Object.defineProperty(this, "client", { value: client });
 
-		this._username = username;
-		this._roomName = roomName;
+		this.#username = username;
+		this.#roomName = roomName;
 
-		this.content = msgData.content;
-		this.attachments = msgData.attachments;
-		this.timestamp = msgData.timestamp;
+		this.content = content;
+		this.attachments = attachments;
+		this.timestamp = timestamp;
 	}
 
 	get room() {
-		return this.client.rooms.cache.get(this._roomName);
+		return this.client.rooms.cache.get(this.#roomName);
 	}
 	get author() {
-		return this.client.users.cache.get(this._username);
+		return this.client.users.cache.get(this.#username);
 	}
 }

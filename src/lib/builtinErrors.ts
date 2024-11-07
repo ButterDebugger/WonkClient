@@ -9,16 +9,16 @@ export const errorCodes = Object.freeze({
 	InvalidMessageContent: 201,
 
 	// Room error codes
-    InvalidRoomName: 301,
-    AlreadyJoinedRoom: 302,
+	InvalidRoomName: 301,
+	AlreadyJoinedRoom: 302,
 	RoomDoesNotExist: 303,
 	SentMessageOutsideRoom: 304,
 	RoomAlreadyExists: 305,
 	AlreadyLeftRoom: 306,
 	QueriedInfoOutsideRoom: 307,
-	
+
 	// User error codes
-    UserDoesNotExist: 401,
+	UserDoesNotExist: 401,
 
 	// Authorization error codes
 	InvalidCredentials: 501,
@@ -26,13 +26,15 @@ export const errorCodes = Object.freeze({
 	InvalidPublicKey: 503,
 	LoginExpired: 505,
 	LoginInvalid: 506,
-	
+
 	// Stream error codes
 	MissingStream: 601,
-	StreamDisconnected: 602
+	StreamDisconnected: 602,
 });
 
 export class ClientError extends Error {
+	code: number;
+
 	constructor(data, cause) {
 		super(data.message);
 
