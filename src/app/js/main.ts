@@ -1,8 +1,14 @@
-import { Client, generateKeyPair, errorCodes } from "../../lib/client.ts";
+import {
+	Client,
+	generateKeyPair,
+	errorCodes,
+	ClientError,
+} from "../../lib/client.ts";
 // @ts-ignore
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import { updateRoomTabs } from "./ui.ts";
-import { appendMessage } from "./room.js";
+import { appendMessage } from "./room.ts";
+import type { MessageOptions } from "../../lib/roomManager.ts";
 
 const _username = await binForage.get("username");
 const token = await binForage.get("token");
@@ -70,16 +76,20 @@ export async function joinOrCreateRoom(roomName: string) {
 	try {
 		await client.rooms.join(roomName);
 	} catch (error) {
-		if (error?.code === errorCodes.RoomDoesNotExist) {
-			try {
-				await client.rooms.create(roomName);
-				await client.rooms.join(roomName); // NOTE: I shouldn't need to join a room that I created
-				updateRoomTabs();
-			} catch (error) {
-				console.warn(error);
-				return false;
+		if (error instanceof ClientError) {
+			const clientError = error as ClientError;
+
+			if (clientError.code === errorCodes.RoomDoesNotExist) {
+				try {
+					await client.rooms.create(roomName);
+					await client.rooms.join(roomName); // NOTE: I shouldn't need to join a room that I created
+					updateRoomTabs();
+				} catch (error) {
+					console.warn(error);
+					return false;
+				}
+				return true;
 			}
-			return true;
 		}
 
 		console.warn(error);
@@ -101,7 +111,7 @@ export async function leaveRoom(roomName: string) {
 	return true;
 }
 
-export async function sendMessage(roomName: string, options) {
+export async function sendMessage(roomName: string, options: MessageOptions) {
 	try {
 		const room = client.rooms.cache.get(roomName);
 		if (!room) return false;

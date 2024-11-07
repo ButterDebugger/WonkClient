@@ -1,9 +1,10 @@
 // @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
-import { createRoomTab } from "./components.js";
-import { client, joinOrCreateRoom } from "./main.js";
-import { hideModal, showModal } from "./modal.js";
-import { getOrCreateRoomWrapper } from "./room.js";
+import { createRoomTab } from "./components.ts";
+import { client, joinOrCreateRoom } from "./main.ts";
+import { hideModal, showModal } from "./modal.ts";
+import { getOrCreateRoomWrapper } from "./room.ts";
+import type { ViewWrapper } from "./wrapper.ts";
 
 const exploreDrawer = <HTMLElement>document.getElementById("explore-drawer");
 const roomsDrawer = <HTMLElement>document.getElementById("rooms-drawer");
@@ -67,9 +68,11 @@ joinRoomBtn.addEventListener("click", () => {
 	showModal("Join Room", $container);
 });
 
-export function switchDrawer(drawerName) {
-	const removeOrAdd = (name) => (drawerName === name ? "remove" : "add");
-	const addOrRemove = (name) => (drawerName === name ? "add" : "remove");
+export function switchDrawer(drawerName: string) {
+	const removeOrAdd = (name: string) =>
+		drawerName === name ? "remove" : "add";
+	const addOrRemove = (name: string) =>
+		drawerName === name ? "add" : "remove";
 
 	// Show / hide drawers
 	messagesDrawer.classList[removeOrAdd("messages")]("hidden");
@@ -87,7 +90,7 @@ export function switchDrawer(drawerName) {
 	}
 }
 
-export function changeViewDrawer(wrapper) {
+export function changeViewDrawer(wrapper: ViewWrapper) {
 	// Change view drawer
 	const headerEle = <HTMLElement>viewDrawer.querySelector(".header");
 	const contentEle = <HTMLElement>viewDrawer.querySelector(".content");
@@ -100,7 +103,7 @@ export function changeViewDrawer(wrapper) {
 	if (wrapper.backAction !== null) {
 		const backBtn = <HTMLElement>viewDrawer.querySelector("#back-btn");
 
-		backBtn.addEventListener("click", () => wrapper.backAction());
+		backBtn.addEventListener("click", () => wrapper.backAction?.());
 	}
 }
 

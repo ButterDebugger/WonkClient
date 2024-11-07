@@ -1,16 +1,16 @@
 // @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
-import { lockModal, showModal, unlockModal } from "./modal.js";
-import { client } from "./main.js";
-import { setAttachmentAnimation } from "./room.js";
-import type { Attachment } from "../../lib/attachmentManager.js";
+import { lockModal, showModal, unlockModal } from "./modal.ts";
+import { client } from "./main.ts";
+import { setAttachmentAnimation } from "./room.ts";
+import type { Attachment } from "../../lib/attachmentManager.ts";
 
 /** Room names mapped to file input elements */
 const roomFiles = new Map();
 /** Room names mapped to an array of attachment objects */
 const roomAttachments = new Map();
 
-export function showAttachmentModal(roomName) {
+export function showAttachmentModal(roomName: string) {
 	const $container = dom(`<div class="container flex-column"></div>`);
 	const $inputBox = dom(`<div class="attachment-box">
             <span class="ic-normal ic-upload"></span>
@@ -56,7 +56,7 @@ export function showAttachmentModal(roomName) {
 	showModal("Add Attachments", $container);
 }
 
-async function uploadAttachments(roomName) {
+async function uploadAttachments(roomName: string) {
 	const files = getRoomFiles(roomName);
 	const attachments: Attachment[] = [];
 
@@ -73,7 +73,7 @@ async function uploadAttachments(roomName) {
 	roomAttachments.set(roomName, attachments);
 }
 
-function getOrCreateFileInput(roomName) {
+function getOrCreateFileInput(roomName: string) {
 	if (roomFiles.has(roomName)) return roomFiles.get(roomName);
 
 	const $input = dom(`<input type="file" required multiple>`);
@@ -88,13 +88,13 @@ function getRoomFiles(roomName: string): FileList | null {
 	return roomFiles.get(roomName).element.files;
 }
 
-export function getRoomAttachments(roomName) {
+export function getRoomAttachments(roomName: string) {
 	if (!roomAttachments.has(roomName)) return [];
 
 	return roomAttachments.get(roomName);
 }
 
-export function clearRoomAttachments(roomName) {
+export function clearRoomAttachments(roomName: string) {
 	roomAttachments.delete(roomName);
 	setAttachmentAnimation(roomName, false);
 

@@ -35,11 +35,15 @@ export const errorCodes = Object.freeze({
 export class ClientError extends Error {
 	code: number;
 
-	constructor(data, cause) {
+	constructor(data: { message: string; code: number }, cause?: Error) {
 		super(data.message);
 
 		this.code = data.code;
 		this.name = "ClientError";
 		this.cause = cause;
 	}
+}
+
+export function isClientError(error: unknown): error is ClientError {
+	return error instanceof ClientError;
 }

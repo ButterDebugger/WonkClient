@@ -1,11 +1,11 @@
-import type { AxiosProgressEvent } from "axios";
+import { AxiosError, type AxiosProgressEvent } from "axios";
 import { type Client, ClientError } from "./client.ts";
 
 export default class AttachmentManager {
 	client: Client;
 
 	constructor(client: Client) {
-		Object.defineProperty(this, "client", { value: client });
+		this.client = client;
 	}
 
 	create(content: File): Attachment {
@@ -46,12 +46,10 @@ export default class AttachmentManager {
 					if (result.success) attachment.path = result.path;
 				}
 			})
-			.catch((err) => {
-				if (typeof err?.response === "object") {
-					throw new ClientError(err.response.data, err);
-				}
-
-				throw err;
+			.catch((err: unknown) => {
+				throw err instanceof AxiosError
+					? new ClientError(err?.response?.data, err)
+					: err;
 			});
 
 		return true;
@@ -64,7 +62,7 @@ export class Attachment {
 	path: string | null;
 
 	constructor(client: Client, content: File) {
-		Object.defineProperty(this, "client", { value: client });
+		this.client = client;
 
 		if (!(content instanceof File))
 			throw new TypeError("Attachment must be a file.");
@@ -77,7 +75,7 @@ export class Attachment {
 		return !(this.path === null);
 	}
 
-	async upload(progress) {
+	async upload(progress?: (progressEvent: AxiosProgressEvent) => void) {
 		return this.client.attachments.upload([this], progress);
 	}
 }

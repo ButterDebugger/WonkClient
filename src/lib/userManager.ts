@@ -1,12 +1,14 @@
-import { ClientError } from "./builtinErrors.js";
+import { AxiosError } from "axios";
+import { ClientError } from "./builtinErrors.ts";
 import type { Client } from "./client.ts";
+import type { UserData } from "./dataStream.ts";
 
 export default class UserManager {
 	client: Client;
 	cache: Map<string, User>;
 
 	constructor(client: Client) {
-		Object.defineProperty(this, "client", { value: client });
+		this.client = client;
 
 		this.cache = new Map();
 
@@ -15,7 +17,7 @@ export default class UserManager {
 		);
 	}
 
-	update(username, data) {
+	update(username: string, data: UserData) {
 		const cachedUser = this.cache.get(username);
 
 		if (cachedUser) {
@@ -38,7 +40,7 @@ export default class UserManager {
 		}
 	}
 
-	subscribe(username) {
+	subscribe(username: string) {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
@@ -50,14 +52,14 @@ export default class UserManager {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
 		});
 	}
-	unsubscribe(username) {
+	unsubscribe(username: string) {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
@@ -69,17 +71,17 @@ export default class UserManager {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
 		});
 	}
-	fetch(username: string, ignoreCache = false) {
+	fetch(username: string, ignoreCache = false): Promise<User> {
 		return new Promise((resolve, reject) => {
-			if (!ignoreCache && this.cache.has(username))
-				return resolve(this.cache.get(username));
+			const existingUser = this.cache.get(username);
+			if (!ignoreCache && existingUser) return resolve(existingUser);
 
 			this.client
 				.request({
@@ -89,14 +91,15 @@ export default class UserManager {
 				.then(async (res) => {
 					const { username, data } = res.data;
 
+					// Update cache for the user
 					this.update(username, data);
 
-					resolve(this.cache.get(username));
+					resolve(<User>this.cache.get(username));
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
@@ -118,7 +121,7 @@ export class User {
 		offline: boolean,
 		timestamp = Date.now(),
 	) {
-		Object.defineProperty(this, "client", { value: client });
+		this.client = client;
 
 		this.username = username;
 		this.color = color;

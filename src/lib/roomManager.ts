@@ -1,13 +1,15 @@
-import { ClientError } from "./builtinErrors.js";
+import { AxiosError } from "axios";
+import { ClientError } from "./builtinErrors.ts";
 import type { Client } from "./client.ts";
-import { encryptMessage } from "./cryption.js";
+import { encryptMessage } from "./cryption.ts";
+import type { Attachment } from "./attachmentManager.ts";
 
 export default class RoomManager {
 	client: Client;
 	cache: Map<string, Room>;
 
 	constructor(client: Client) {
-		Object.defineProperty(this, "client", { value: client });
+		this.client = client;
 
 		this.cache = new Map();
 
@@ -25,7 +27,7 @@ export default class RoomManager {
 		});
 	}
 
-	join(roomName) {
+	join(roomName: string): Promise<Room> {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
@@ -42,14 +44,14 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
 		});
 	}
-	leave(roomName) {
+	leave(roomName: string): Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
@@ -64,14 +66,14 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
 		});
 	}
-	create(roomName) {
+	create(roomName: string) {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
@@ -83,13 +85,20 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
 		});
 	}
+
+	fetch(roomName: string, ignoreCache = false) {}
+}
+
+export interface MessageOptions {
+	text: string;
+	attachments: Attachment[];
 }
 
 export class Room {
@@ -106,7 +115,7 @@ export class Room {
 		key: string,
 		members: Iterable<string>,
 	) {
-		Object.defineProperty(this, "client", { value: client });
+		this.client = client;
 
 		this.name = name;
 		this.description = description;
@@ -114,14 +123,8 @@ export class Room {
 		this.members = new Set(members);
 	}
 
-	async send(payload) {
-		let options = payload;
-
-		if (typeof options === "string") {
-			options = { text: options };
-		}
-
-		const attachments = (options.attachments ?? [])
+	async send(options: MessageOptions) {
+		const attachments = options.attachments
 			.filter((attach) => attach.uploaded)
 			.map((attach) => attach.path);
 
@@ -147,8 +150,8 @@ export class Room {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
@@ -172,8 +175,8 @@ export class Room {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);

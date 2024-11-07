@@ -1,10 +1,17 @@
-import axios, { type AxiosRequestConfig } from "axios";
-import eventemitter3 from "eventemitter3";
-import { decryptMessage, generateKeyPair, signMessage } from "./cryption.js";
+import axios, { AxiosError, type AxiosRequestConfig } from "axios";
+import { EventEmitter } from "eventemitter3";
+import { generateKeyPair, signMessage } from "./cryption.ts";
 import RoomManager, { Room } from "./roomManager.ts";
 import UserManager, { User } from "./userManager.ts";
-import { ClientError, errorCodes } from "./builtinErrors.js";
+import { ClientError, errorCodes } from "./builtinErrors.ts";
 import AttachmentManager from "./attachmentManager.ts";
+import {
+	type MessageBody,
+	parseStreamData,
+	type PingBody,
+	type UpdateMemberBody,
+	type UpdateUserBody,
+} from "./dataStream.ts";
 
 export { generateKeyPair, ClientError, errorCodes };
 
@@ -18,14 +25,14 @@ export interface BaseUrl {
 	ws: string;
 }
 
-export class Client extends eventemitter3 {
+export class Client extends EventEmitter {
 	#baseUrl: BaseUrl;
 	#token: string;
 	#keyPair: KeyPair;
 
 	rooms: RoomManager;
 	stream: WebSocket | null;
-	user: User;
+	user!: User;
 	users: UserManager;
 	attachments: AttachmentManager;
 
@@ -119,9 +126,9 @@ export class Client extends eventemitter3 {
 				},
 				token,
 			);
-		} catch (err) {
-			throw typeof err?.response === "object"
-				? new ClientError(err.response.data, err)
+		} catch (err: unknown) {
+			throw err instanceof AxiosError
+				? new ClientError(err?.response?.data, err)
 				: err;
 		}
 	}
@@ -199,8 +206,8 @@ export class Client extends eventemitter3 {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
@@ -216,8 +223,8 @@ export class Client extends eventemitter3 {
 				.then(() => resolve(true))
 				.catch((err) =>
 					reject(
-						typeof err?.response === "object"
-							? new ClientError(err.response.data, err)
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
 							: err,
 					),
 				);
@@ -232,6 +239,7 @@ export class Client extends eventemitter3 {
 			"Authorization",
 			this.token,
 		]);
+		this.stream.binaryType = "arraybuffer";
 
 		// Add stream event listeners
 		this.stream.addEventListener("open", () => {
@@ -241,28 +249,33 @@ export class Client extends eventemitter3 {
 		});
 		this.stream.addEventListener("message", async (event) => {
 			const data = await parseStreamData(event.data, this.#keyPair.privateKey);
+			if (data === null) return;
 
 			switch (data.event) {
 				case "ping": {
-					this.emit("ping", data.ping);
+					const pingData = <PingBody>data;
+
+					this.emit("ping", pingData.ping);
 					break;
 				}
 				case "updateMember": {
-					switch (data.state) {
+					const updateMemberData = <UpdateMemberBody>data;
+
+					switch (updateMemberData.state) {
 						case "join":
 							this.emit(
 								"roomMemberJoin",
-								data.username,
-								data.room,
-								data.timestamp,
+								updateMemberData.username,
+								updateMemberData.room,
+								updateMemberData.timestamp,
 							);
 							break;
 						case "leave":
 							this.emit(
 								"roomMemberLeave",
-								data.username,
-								data.room,
-								data.timestamp,
+								updateMemberData.username,
+								updateMemberData.room,
+								updateMemberData.timestamp,
 							);
 							break;
 						default:
@@ -272,25 +285,34 @@ export class Client extends eventemitter3 {
 					break;
 				}
 				case "updateUser": {
-					this.emit("userUpdate", data.username, data.data, data.timestamp);
+					const updateUserData = <UpdateUserBody>data;
+
+					this.emit(
+						"userUpdate",
+						updateUserData.username,
+						updateUserData.data,
+						updateUserData.timestamp,
+					);
 					break;
 				}
 				case "message": {
+					const messageData = <MessageBody>data;
+
 					const authorData = {
-						color: data.author.color,
-						offline: data.author.offline,
-						username: data.author.username,
-						timestamp: data.timestamp,
+						color: messageData.author.color,
+						offline: messageData.author.offline,
+						username: messageData.author.username,
+						timestamp: messageData.timestamp,
 					};
-					this.users.update(data.author.username, authorData);
+					this.users.update(messageData.author.username, authorData);
 
 					const message = new RoomMessage(
 						this,
-						data.author.username,
-						data.room,
-						data.content,
-						data.attachments,
-						data.timestamp,
+						messageData.author.username,
+						messageData.room,
+						messageData.content,
+						messageData.attachments,
+						messageData.timestamp,
 					);
 
 					this.emit("roomMemberMessage", message);
@@ -333,21 +355,7 @@ export async function locateHomeserver(domain: string) {
 	}
 }
 
-async function parseStreamData(input, privateKey) {
-	let data = input;
-
-	try {
-		data = JSON.parse(data);
-		data = await decryptMessage(data, privateKey);
-		data = JSON.parse(data);
-	} catch (error) {
-		console.error(error);
-	}
-
-	return data;
-}
-
-class RoomMessage {
+export class RoomMessage {
 	#username: string;
 	#roomName: string;
 
@@ -364,7 +372,7 @@ class RoomMessage {
 		attachments: string[],
 		timestamp: number,
 	) {
-		Object.defineProperty(this, "client", { value: client });
+		this.client = client;
 
 		this.#username = username;
 		this.#roomName = roomName;
@@ -374,10 +382,10 @@ class RoomMessage {
 		this.timestamp = timestamp;
 	}
 
-	get room() {
-		return this.client.rooms.cache.get(this.#roomName);
+	get room(): Room {
+		return <Room>this.client.rooms.cache.get(this.#roomName);
 	}
-	get author() {
-		return this.client.users.cache.get(this.#username);
+	get author(): User {
+		return <User>this.client.users.cache.get(this.#username);
 	}
 }

@@ -1,14 +1,22 @@
 // @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
-import { getOrCreateWrapper, getWrapper, hasWrapper } from "./wrapper.ts";
+import {
+	getOrCreateWrapper,
+	getWrapper,
+	hasWrapper,
+	type ViewWrapper,
+} from "./wrapper.ts";
 import { changeViewDrawer, switchDrawer } from "./ui.ts";
-import { leaveRoom } from "./main.js";
-import { createUserChip } from "./components.js";
+import { leaveRoom } from "./main.ts";
+import { createUserChip } from "./components.ts";
+import type { Room } from "../../lib/roomManager.ts";
 
-export function getOrCreateRoomInfoWrapper(room) {
+export function getOrCreateRoomInfoWrapper(room: Room): ViewWrapper {
 	const roomKey = `#${room.name}`;
 	const infoKey = `i#${room.name}`;
-	if (hasWrapper(infoKey)) return getWrapper(infoKey);
+
+	const existingWrapper = getWrapper(infoKey);
+	if (existingWrapper) return existingWrapper;
 
 	const wrapper = getOrCreateWrapper(infoKey);
 
@@ -20,6 +28,8 @@ export function getOrCreateRoomInfoWrapper(room) {
 
 		// Change view drawer to room
 		const wrapper = getWrapper(roomKey);
+		if (!wrapper) return;
+
 		changeViewDrawer(wrapper);
 	};
 
@@ -47,7 +57,7 @@ export function getOrCreateRoomInfoWrapper(room) {
 	});
 
 	// Add header tab buttons
-	function switchInfoTab(name) {
+	function switchInfoTab(name: string) {
 		dom(wrapper.header).findAll(".tab").removeClass("active");
 		dom(wrapper.header).find(`[for="${name}"]`).addClass("active");
 

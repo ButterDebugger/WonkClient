@@ -1,19 +1,27 @@
 // @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
-import { createMessage } from "./components.js";
+import { createMessage } from "./components.ts";
 import { changeViewDrawer, switchDrawer } from "./ui.ts";
-import { sendMessage } from "./main.js";
-import { hasWrapper, getOrCreateWrapper, getWrapper } from "./wrapper.ts";
+import { sendMessage } from "./main.ts";
+import {
+	hasWrapper,
+	getOrCreateWrapper,
+	getWrapper,
+	type ViewWrapper,
+} from "./wrapper.ts";
 import { getOrCreateRoomInfoWrapper } from "./roomInfo.ts";
 import {
 	clearRoomAttachments,
 	getRoomAttachments,
 	showAttachmentModal,
 } from "./attachments.ts";
+import type { Room } from "../../lib/roomManager.ts";
+import type { RoomMessage } from "../../lib/client.ts";
 
-export function getOrCreateRoomWrapper(room) {
+export function getOrCreateRoomWrapper(room: Room): ViewWrapper {
 	const roomKey = `#${room.name}`;
-	if (hasWrapper(roomKey)) return getWrapper(roomKey);
+	const existingWrapper = getWrapper(roomKey);
+	if (existingWrapper) return existingWrapper;
 
 	const wrapper = getOrCreateWrapper(roomKey);
 
@@ -28,7 +36,7 @@ export function getOrCreateRoomWrapper(room) {
 	const $messageInput = dom(
 		`<input type="text" name="message-input" maxlength="1000">`,
 	)
-		.on("keydown", ({ key }) => {
+		.on("keydown", ({ key }: KeyboardEvent) => {
 			if (key === "Enter") send();
 		})
 		.prop("placeholder", `Message #${room.name}`);
@@ -101,7 +109,7 @@ export function getOrCreateRoomWrapper(room) {
 	return wrapper;
 }
 
-export function appendMessage(message) {
+export function appendMessage(message: RoomMessage) {
 	const wrapper = getOrCreateWrapper(`#${message.room.name}`);
 	const canScroll =
 		wrapper.content.scrollHeight - Math.ceil(wrapper.content.scrollTop) <=
@@ -110,19 +118,21 @@ export function appendMessage(message) {
 	wrapper.content.appendChild(messageEle);
 
 	if (canScroll) {
+		// @ts-ignore
 		wrapper.content.style["scroll-behavior"] = "unset";
 		messageEle.scrollIntoView();
+		// @ts-ignore
 		wrapper.content.style["scroll-behavior"] = "";
 	}
 }
 
-export function setAttachmentAnimation(roomName, state) {
+export function setAttachmentAnimation(roomName: string, state: boolean) {
 	const roomKey = `#${roomName}`;
-	if (!hasWrapper(roomKey)) return;
+	const wrapper = getWrapper(roomKey);
+	if (!wrapper) return;
 
-	const $attachBtn = dom(getWrapper(roomKey).footer).find(
-		'div[name="attachment-button"]',
-	);
+	const $attachBtn = dom(wrapper.footer).find('div[name="attachment-button"]');
+
 	if (state) {
 		$attachBtn.addClass("ring");
 	} else {
