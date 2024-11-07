@@ -4,10 +4,10 @@ import { updateRoomTabs } from "./ui.js";
 import { appendMessage } from "./room.js";
 import { errorCodes } from "../../lib/builtinErrors.js";
 
-let _username = await binForage.get("username");
-let token = await binForage.get("token");
+const _username = await binForage.get("username");
+const token = await binForage.get("token");
 let keyPair = await binForage.get("keyPair");
-let homeserver = await binForage.get("homeserver");
+const homeserver = await binForage.get("homeserver");
 
 if (homeserver === null) {
 	location.href = "/login/";
@@ -89,7 +89,7 @@ export async function joinOrCreateRoom(roomName) {
 
 export async function leaveRoom(roomName) {
 	try {
-		let success = await client.rooms.leave(roomName);
+		const success = await client.rooms.leave(roomName);
 		if (!success) return false;
 	} catch (error) {
 		console.warn(error);

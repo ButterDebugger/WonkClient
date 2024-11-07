@@ -7,13 +7,13 @@ export default class UserManager {
 		this.cache = new Map();
 
 		this.client.on("userUpdate", (username, data) =>
-			this.update(username, data)
+			this.update(username, data),
 		);
 	}
 
 	update(username, data) {
 		if (this.cache.has(username)) {
-			let cachedUser = this.cache.get(username);
+			const cachedUser = this.cache.get(username);
 
 			if (cachedUser.cacheTime >= data.timestamp) return; // Don't cache
 
@@ -28,8 +28,8 @@ export default class UserManager {
 					data.username,
 					data.color,
 					data.offline,
-					data.timestamp
-				)
+					data.timestamp,
+				),
 			);
 		}
 	}
@@ -39,17 +39,17 @@ export default class UserManager {
 			this.client
 				.request({
 					method: "post",
-					url: `/users/${username}/subscribe`
+					url: `/users/${username}/subscribe`,
 				})
 				.then(async () => {
 					resolve(true);
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -58,17 +58,17 @@ export default class UserManager {
 			this.client
 				.request({
 					method: "post",
-					url: `/users/${username}/unsubscribe`
+					url: `/users/${username}/unsubscribe`,
 				})
 				.then(async () => {
 					resolve(true);
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -80,10 +80,10 @@ export default class UserManager {
 			this.client
 				.request({
 					method: "get",
-					url: `/users/${username}/fetch`
+					url: `/users/${username}/fetch`,
 				})
 				.then(async (res) => {
-					let { username, data } = res.data;
+					const { username, data } = res.data;
 
 					this.update(username, data);
 
@@ -91,10 +91,10 @@ export default class UserManager {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}

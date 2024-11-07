@@ -37,11 +37,11 @@ logoutBtn.addEventListener("click", () => {
 });
 
 joinRoomBtn.addEventListener("click", () => {
-	let $container = dom(`<div class="container flex-row"></div>`);
-	let $input = dom(
-		`<input type="text" placeholder="Name" required minlength="3">`
+	const $container = dom(`<div class="container flex-row"></div>`);
+	const $input = dom(
+		`<input type="text" placeholder="Name" required minlength="3">`,
 	);
-	let $joinBtn = dom(`<button disabled>Join</button>`);
+	const $joinBtn = dom("<button disabled>Join</button>");
 
 	$input.on("input", () => {
 		if ($input.element.validity.valid) {
@@ -99,22 +99,22 @@ export function changeViewDrawer(wrapper) {
 }
 
 export function updateRoomTabs() {
-	let roomsContainer = roomsDrawer.querySelector(".content");
+	const roomsContainer = roomsDrawer.querySelector(".content");
 	let oldTabs = Array.from(roomsContainer.querySelectorAll(".channel-tab"));
 
-	for (let room of client.rooms.cache.values()) {
-		let ele = createRoomTab(room.name);
+	for (const room of client.rooms.cache.values()) {
+		const ele = createRoomTab(room.name);
 		getOrCreateRoomWrapper(room);
 
 		// Remove room tab from list of old tabs
 		oldTabs = oldTabs.filter(
-			(tab) => tab.getAttribute("data-channel-id") != room.name
+			(tab) => tab.getAttribute("data-channel-id") !== room.name,
 		);
 
 		ele.addEventListener("click", () => {
 			switchDrawer("view");
 
-			let wrapper = getOrCreateRoomWrapper(room);
+			const wrapper = getOrCreateRoomWrapper(room);
 			changeViewDrawer(wrapper);
 
 			// Scroll to the bottom
@@ -125,7 +125,7 @@ export function updateRoomTabs() {
 	}
 
 	// Remove any remaining old tabs
-	for (let tab of oldTabs) {
+	for (const tab of oldTabs) {
 		tab.remove();
 	}
 }

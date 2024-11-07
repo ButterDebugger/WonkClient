@@ -13,15 +13,15 @@ export function getWrapper(key) {
 export function getOrCreateWrapper(key) {
 	if (viewWrappers.has(key)) return viewWrappers.get(key);
 
-	let headerEle = domParser(`<div class="header"></div>`);
-	let contentEle = domParser(`<div class="content"></div>`);
-	let footerEle = domParser(`<div class="footer"></div>`);
+	const headerEle = domParser(`<div class="header"></div>`);
+	const contentEle = domParser(`<div class="content"></div>`);
+	const footerEle = domParser(`<div class="footer"></div>`);
 
-	let wrapper = {
+	const wrapper = {
 		header: headerEle,
 		content: contentEle,
 		footer: footerEle,
-		backAction: null
+		backAction: null,
 	};
 
 	viewWrappers.set(key, wrapper);

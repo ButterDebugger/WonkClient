@@ -22,7 +22,7 @@ export class Client extends eventemitter3 {
 		this.user = null;
 		this.keyPair = {
 			publicKey: null,
-			privateKey: null
+			privateKey: null,
 		};
 		this.rooms = new RoomManager(this);
 		this.users = new UserManager(this);
@@ -57,7 +57,7 @@ export class Client extends eventemitter3 {
 				baseURL: this.baseUrl.http,
 				headers: this.authorized
 					? { Authorization: `Bearer ${this.token}` }
-					: {}
+					: {},
 			})
 			.request(options);
 	}
@@ -66,15 +66,15 @@ export class Client extends eventemitter3 {
 		return new Promise((resolve, reject) => {
 			this.request({
 				method: "get",
-				url: "/sync/client"
+				url: "/sync/client",
 			})
 				.then(async (res) => {
-					let { rooms, users, you } = res.data;
+					const { rooms, users, you } = res.data;
 
 					// Update the rooms cache
-					for (let room of rooms) {
+					for (const room of rooms) {
 						if (this.rooms.cache.has(room.name)) {
-							let cachedRoom = this.rooms.cache.get(room.name);
+							const cachedRoom = this.rooms.cache.get(room.name);
 
 							cachedRoom.description = room.description;
 							cachedRoom.key = room.key;
@@ -87,18 +87,16 @@ export class Client extends eventemitter3 {
 									room.name,
 									room.description,
 									room.key,
-									room.members
-								)
+									room.members,
+								),
 							);
 						}
 					}
 
 					// Update the users cache
-					for (let user of users) {
+					for (const user of users) {
 						if (this.users.cache.has(user.username)) {
-							let cachedUser = this.users.cache.get(
-								user.username
-							);
+							const cachedUser = this.users.cache.get(user.username);
 
 							cachedUser.username = user.username;
 							cachedUser.color = user.color;
@@ -106,24 +104,14 @@ export class Client extends eventemitter3 {
 						} else {
 							this.users.cache.set(
 								user.username,
-								new User(
-									this,
-									user.username,
-									user.color,
-									user.offline
-								)
+								new User(this, user.username, user.color, user.offline),
 							);
 						}
 					}
 
 					// Update the client users cache
 					if (this.user === null) {
-						this.user = new User(
-							this,
-							you.username,
-							you.color,
-							you.offline
-						);
+						this.user = new User(this, you.username, you.color, you.offline);
 						this.users.cache.set(you.username, this.user);
 					} else {
 						this.user.username = you.username;
@@ -135,10 +123,10 @@ export class Client extends eventemitter3 {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -147,15 +135,15 @@ export class Client extends eventemitter3 {
 		return new Promise((resolve) => {
 			this.request({
 				method: "get",
-				url: "/sync/memory"
+				url: "/sync/memory",
 			})
 				.then(() => resolve(true))
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -166,44 +154,41 @@ export class Client extends eventemitter3 {
 
 			this.keyPair = {
 				publicKey,
-				privateKey
+				privateKey,
 			};
 
 			this.request({
 				method: "get",
-				url: "/keys/nonce"
+				url: "/keys/nonce",
 			})
 				.then(async (res) => {
-					let { nonce } = res.data;
+					const { nonce } = res.data;
 
-					let signedNonce = await signMessage(
-						nonce,
-						this.keyPair.privateKey
-					);
+					const signedNonce = await signMessage(nonce, this.keyPair.privateKey);
 
 					this.request({
 						method: "post",
 						url: "/keys/verify",
 						data: {
 							signedNonce,
-							publicKey: this.keyPair.publicKey
-						}
+							publicKey: this.keyPair.publicKey,
+						},
 					})
 						.then(() => resolve(true))
 						.catch((err) =>
 							reject(
-								typeof err?.response == "object"
+								typeof err?.response === "object"
 									? new ClientError(err.response.data, err)
-									: err
-							)
+									: err,
+							),
 						);
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -218,7 +203,7 @@ export class Client extends eventemitter3 {
 		// Connect to event stream
 		this.stream = new WebSocket(`${this.baseUrl.ws}/stream`, [
 			"Authorization",
-			this.token
+			this.token,
 		]);
 
 		// Add stream event listeners
@@ -228,10 +213,7 @@ export class Client extends eventemitter3 {
 			this.syncMemory();
 		});
 		this.stream.addEventListener("message", async (event) => {
-			let data = await parseStreamData(
-				event.data,
-				this.keyPair.privateKey
-			);
+			const data = await parseStreamData(event.data, this.keyPair.privateKey);
 
 			switch (data.event) {
 				case "ping": {
@@ -245,7 +227,7 @@ export class Client extends eventemitter3 {
 								"roomMemberJoin",
 								data.username,
 								data.room,
-								data.timestamp
+								data.timestamp,
 							);
 							break;
 						case "leave":
@@ -253,7 +235,7 @@ export class Client extends eventemitter3 {
 								"roomMemberLeave",
 								data.username,
 								data.room,
-								data.timestamp
+								data.timestamp,
 							);
 							break;
 						default:
@@ -263,27 +245,22 @@ export class Client extends eventemitter3 {
 					break;
 				}
 				case "updateUser": {
-					this.emit(
-						"userUpdate",
-						data.username,
-						data.data,
-						data.timestamp
-					);
+					this.emit("userUpdate", data.username, data.data, data.timestamp);
 					break;
 				}
 				case "message": {
-					let authorData = {
+					const authorData = {
 						color: data.author.color,
 						offline: data.author.offline,
 						username: data.author.username,
-						timestamp: data.timestamp
+						timestamp: data.timestamp,
 					};
 					this.users.update(data.author.username, authorData);
-					let message = new RoomMessage(
+					const message = new RoomMessage(
 						this,
 						data.author.username,
 						data.room,
-						data
+						data,
 					);
 
 					this.emit("roomMemberMessage", message);
@@ -297,38 +274,38 @@ export class Client extends eventemitter3 {
 export async function locateHomeserver(domain) {
 	try {
 		// Get the base URL of the homeserver
-		let wellKnownRes = await axios.get(
-			`https://${domain}/.well-known/wonk`
-		);
-		let {
-			homeserver: { base_url }
+		const wellKnownRes = await axios.get(`https://${domain}/.well-known/wonk`);
+		const {
+			homeserver: { base_url },
 		} = wellKnownRes.data;
 
 		// Get the namespace of the homeserver
-		let baseRes = await axios.get(base_url);
-		let { namespace } = baseRes.data;
+		const baseRes = await axios.get(base_url);
+		const { namespace } = baseRes.data;
 
 		// Check if the namespace matches the domain
 		if (namespace !== domain) return null; // TODO: resolve namespace conflict
 
 		// Return the namespace and base URL
-		let url = new URL(base_url);
-		let wsProtocol = url.protocol == "https:" ? "wss://" : "ws://";
-		let pathname = url.pathname.replace(/\/$/g, "");
+		const url = new URL(base_url);
+		const wsProtocol = url.protocol === "https:" ? "wss://" : "ws://";
+		const pathname = url.pathname.replace(/\/$/g, "");
 
 		return {
 			namespace,
 			baseUrl: {
 				http: `${url.origin}${pathname}`,
-				ws: `${wsProtocol}${url.host}${pathname}`
-			}
+				ws: `${wsProtocol}${url.host}${pathname}`,
+			},
 		};
 	} catch {
 		return null;
 	}
 }
 
-async function parseStreamData(data, privateKey) {
+async function parseStreamData(input, privateKey) {
+	let data = input;
+
 	try {
 		data = JSON.parse(data);
 		data = await decryptMessage(data, privateKey);

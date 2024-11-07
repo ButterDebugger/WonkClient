@@ -24,28 +24,22 @@ export default class RoomManager {
 			this.client
 				.request({
 					method: "post",
-					url: `/room/${roomName}/join`
+					url: `/room/${roomName}/join`,
 				})
 				.then(async (res) => {
 					const { name, description, key, members } = res.data;
 
-					let room = new Room(
-						this.client,
-						name,
-						description,
-						key,
-						members
-					);
+					const room = new Room(this.client, name, description, key, members);
 					this.cache.set(name, room);
 
 					resolve(room);
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -54,7 +48,7 @@ export default class RoomManager {
 			this.client
 				.request({
 					method: "post",
-					url: `/room/${roomName}/leave`
+					url: `/room/${roomName}/leave`,
 				})
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
@@ -64,10 +58,10 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -76,17 +70,17 @@ export default class RoomManager {
 			this.client
 				.request({
 					method: "post",
-					url: `/room/${roomName}/create`
+					url: `/room/${roomName}/create`,
 				})
 				.then((res) => {
 					resolve(res.data);
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -102,39 +96,43 @@ export class Room {
 		this.members = new Set(members);
 	}
 
-	send(options) {
-		if (typeof options == "string") {
+	async send(payload) {
+		let options = payload;
+
+		if (typeof options === "string") {
 			options = { text: options };
 		}
 
-		let attachments = (options.attachments ?? [])
+		const attachments = (options.attachments ?? [])
 			.filter((attach) => attach.uploaded)
 			.map((attach) => attach.path);
 
-		return new Promise(async (resolve, reject) => {
+		const encryptedMessage = await encryptMessage(
+			JSON.stringify({
+				content: options.text,
+				attachments: attachments,
+			}),
+			this.publicKey,
+		);
+
+		return new Promise((resolve, reject) => {
 			this.client
 				.request({
 					method: "post",
 					url: `/room/${this.name}/message`,
 					data: {
-						message: await encryptMessage(
-							JSON.stringify({
-								content: options.text,
-								attachments: attachments
-							}),
-							this.publicKey
-						)
-					}
+						message: encryptedMessage,
+					},
 				})
 				.then((res) => {
 					resolve(res.data);
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}
@@ -144,7 +142,7 @@ export class Room {
 			this.client
 				.request({
 					method: "get",
-					url: `/room/${this.name}/info`
+					url: `/room/${this.name}/info`,
 				})
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
@@ -156,10 +154,10 @@ export class Room {
 				})
 				.catch((err) =>
 					reject(
-						typeof err?.response == "object"
+						typeof err?.response === "object"
 							? new ClientError(err.response.data, err)
-							: err
-					)
+							: err,
+					),
 				);
 		});
 	}

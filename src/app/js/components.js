@@ -18,7 +18,7 @@ export function createUserTag(name, color) {
 }
 
 export function createUserChip(name, color, online = true) {
-	let tagEle = createUserTag(name, color);
+	const tagEle = createUserTag(name, color);
 
 	if (!online) tagEle.classList.add("offline");
 
@@ -30,7 +30,7 @@ export function createUserChip(name, color, online = true) {
 
 export function createMessage(message) {
 	// Create timestamp element with tippy
-	let timestampEle = dom(`<span class="message-timestamp"></span>`).text(
+	const timestampEle = dom(`<span class="message-timestamp"></span>`).text(
 		moment(message.timestamp).format("LT"),
 	).element;
 
@@ -40,7 +40,7 @@ export function createMessage(message) {
 	});
 
 	// Create attachment components
-	let attachments = message.attachments.map((attachment) =>
+	const attachments = message.attachments.map((attachment) =>
 		createAttachment(attachment),
 	);
 
@@ -58,8 +58,8 @@ export function createMessage(message) {
 }
 
 function createAttachment(attachment) {
-	let slashIndex = attachment.lastIndexOf("/");
-	let fileName = attachment.substring(slashIndex + 1);
+	const slashIndex = attachment.lastIndexOf("/");
+	const fileName = attachment.substring(slashIndex + 1);
 
 	return dom(`<a class="file-chip"></a>`)
 		.prop("href", `${client.baseUrl.http}/${attachment}`)

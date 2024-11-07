@@ -23,7 +23,7 @@ export function showModal(title, content) {
 		}, 1);
 
 	// Create and append the modal to the body
-	let $modal = dom(`<div id="modal-wrapper">
+	const $modal = dom(`<div id="modal-wrapper">
         <div class="header">
             <span class="title">Modal</span>
         </div>

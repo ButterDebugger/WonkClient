@@ -11,10 +11,10 @@ import {
 } from "./attachments.js";
 
 export function getOrCreateRoomWrapper(room) {
-	let roomKey = `#${room.name}`;
+	const roomKey = `#${room.name}`;
 	if (hasWrapper(roomKey)) return getWrapper(roomKey);
 
-	let wrapper = getOrCreateWrapper(roomKey);
+	const wrapper = getOrCreateWrapper(roomKey);
 
 	wrapper.header.classList.add("room");
 	wrapper.content.classList.add("room");
@@ -24,7 +24,7 @@ export function getOrCreateRoomWrapper(room) {
 	};
 
 	// Create message input field
-	let $messageInput = dom(
+	const $messageInput = dom(
 		`<input type="text" name="message-input" maxlength="1000">`,
 	)
 		.on("keydown", ({ key }) => {
@@ -34,12 +34,12 @@ export function getOrCreateRoomWrapper(room) {
 
 	// Add send message handlers
 	async function send() {
-		let value = $messageInput.prop("value");
+		const value = $messageInput.prop("value");
 		$messageInput.prop("value", "");
 
 		if (value.length === 0) return;
 
-		let result = await sendMessage(room.name, {
+		const result = await sendMessage(room.name, {
 			text: value,
 			attachments: getRoomAttachments(room.name),
 		});
@@ -52,7 +52,7 @@ export function getOrCreateRoomWrapper(room) {
 	}
 
 	// Create attach icon
-	let $attachBtn = dom(
+	const $attachBtn = dom(
 		`<div class="ic-normal-container" name="attachment-button">
 			<span class="ic-normal ic-paperclip"></span>
 		</div>`,
@@ -101,11 +101,11 @@ export function getOrCreateRoomWrapper(room) {
 }
 
 export function appendMessage(message) {
-	let wrapper = getOrCreateWrapper(`#${message.room.name}`);
-	let canScroll =
+	const wrapper = getOrCreateWrapper(`#${message.room.name}`);
+	const canScroll =
 		wrapper.content.scrollHeight - Math.ceil(wrapper.content.scrollTop) <=
 		wrapper.content.clientHeight;
-	let messageEle = createMessage(message);
+	const messageEle = createMessage(message);
 	wrapper.content.appendChild(messageEle);
 
 	if (canScroll) {
@@ -116,10 +116,10 @@ export function appendMessage(message) {
 }
 
 export function setAttachmentAnimation(roomName, state) {
-	let roomKey = `#${roomName}`;
+	const roomKey = `#${roomName}`;
 	if (!hasWrapper(roomKey)) return;
 
-	let $attachBtn = dom(getWrapper(roomKey).footer).find(
+	const $attachBtn = dom(getWrapper(roomKey).footer).find(
 		'div[name="attachment-button"]',
 	);
 	if (state) {

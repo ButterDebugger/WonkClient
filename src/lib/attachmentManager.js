@@ -8,8 +8,8 @@ export default class AttachmentManager {
 	}
 
 	async upload(attachments, progress) {
-		let formData = new FormData();
-		for (let attachment of attachments) {
+		const formData = new FormData();
+		for (const attachment of attachments) {
 			formData.append("files", attachment.file);
 		}
 
@@ -25,8 +25,8 @@ export default class AttachmentManager {
 				onUploadProgress: progress,
 			})
 			.then((res) => {
-				for (let result of res.data) {
-					let attachment = attachments.find(
+				for (const result of res.data) {
+					const attachment = attachments.find(
 						// TODO: implement a better way of matching attachments
 						(attach) =>
 							attach.file.name === result.filename &&

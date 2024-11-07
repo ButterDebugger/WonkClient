@@ -9,14 +9,14 @@ const roomFiles = new Map();
 const roomAttachments = new Map();
 
 export function showAttachmentModal(roomName) {
-	let $container = dom(`<div class="container flex-column"></div>`);
-	let $inputBox = dom(`<div class="attachment-box">
+	const $container = dom(`<div class="container flex-column"></div>`);
+	const $inputBox = dom(`<div class="attachment-box">
             <span class="ic-normal ic-upload"></span>
             <span class="no-select top-text">Drag and drop files here</span>
             <span class="no-select sub-text">or click to select files</span>
         </div>`);
-	let $fileList = dom(`<div class="attachment-list"></div>`);
-	let $input = getOrCreateFileInput(roomName);
+	const $fileList = dom(`<div class="attachment-list"></div>`);
+	const $input = getOrCreateFileInput(roomName);
 
 	$inputBox.on("click", () => {
 		$input.element.click();
@@ -28,7 +28,7 @@ export function showAttachmentModal(roomName) {
 			$fileList.element.removeChild($fileList.element.lastChild);
 		}
 
-		for (let file of $input.element.files) {
+		for (const file of $input.element.files) {
 			$fileList.append(
 				dom(`<span class="file-chip no-select"></span>`).text(file.name),
 			);
@@ -55,15 +55,15 @@ export function showAttachmentModal(roomName) {
 }
 
 async function uploadAttachments(roomName) {
-	let files = getRoomFiles(roomName);
-	let attachments = [];
+	const files = getRoomFiles(roomName);
+	const attachments = [];
 
 	if (files === null) {
 		roomAttachments.set(roomName, []);
 		return;
 	}
 
-	for (let file of files) {
+	for (const file of files) {
 		attachments.push(client.attachments.create(file));
 	}
 
@@ -74,7 +74,7 @@ async function uploadAttachments(roomName) {
 function getOrCreateFileInput(roomName) {
 	if (roomFiles.has(roomName)) return roomFiles.get(roomName);
 
-	let $input = dom(`<input type="file" required multiple>`);
+	const $input = dom(`<input type="file" required multiple>`);
 
 	roomFiles.set(roomName, $input);
 	return $input;
@@ -96,7 +96,7 @@ export function clearRoomAttachments(roomName) {
 	roomAttachments.delete(roomName);
 	setAttachmentAnimation(roomName, false);
 
-	let inputEle = getOrCreateFileInput(roomName).element;
+	const inputEle = getOrCreateFileInput(roomName).element;
 
 	inputEle.value = "";
 	inputEle.dispatchEvent(new Event("input"));

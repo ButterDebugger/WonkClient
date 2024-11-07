@@ -14,20 +14,20 @@ const loginStage = document.getElementById("login-stage");
 const continueStage = document.getElementById("continue-stage");
 const usernameEle = document.getElementById("username");
 
-let ogAuthBtnText = authBtn.innerText;
-let params = new URLSearchParams(location.search);
+const ogAuthBtnText = authBtn.innerText;
+const params = new URLSearchParams(location.search);
 
 tippy([homeserverEle, homeserverLabelEle], {
 	content:
 		'<p style="text-align: center; margin: 0px;">The server you will be connected to<br>(also where your data will be stored)</p>',
 	allowHTML: true,
-	delay: [500, 0]
+	delay: [500, 0],
 });
 
 /** @returns The array of bytes converted to base64url */
 function encodeBase64Url(arr) {
 	return window
-		.btoa(arr.reduce((str, val) => (str += String.fromCharCode(val)), ""))
+		.btoa(arr.map((num) => String.fromCharCode(num)).join(""))
 		.replace(/\+/g, "-")
 		.replace(/\//g, "_")
 		.replace(/=/g, "");
@@ -35,25 +35,25 @@ function encodeBase64Url(arr) {
 
 /** @returns A random base64url encoded string */
 function randomBase64UrlString() {
-	let bytes = new Uint8Array(32);
+	const bytes = new Uint8Array(32);
 	window.crypto.getRandomValues(bytes);
 	return encodeBase64Url(bytes);
 }
 
 async function generateCode() {
 	// Generate the state
-	let state = randomBase64UrlString();
+	const state = randomBase64UrlString();
 
 	// Generate the code verifier
-	let bytes = new Uint8Array(32);
+	const bytes = new Uint8Array(32);
 	window.crypto.getRandomValues(bytes);
-	let verifier = encodeBase64Url(bytes);
+	const verifier = encodeBase64Url(bytes);
 
 	// Generate the code challenge
-	let encoder = new TextEncoder();
-	let data = encoder.encode(verifier);
-	let hash = await crypto.subtle.digest("SHA-256", data);
-	let challenge = encodeBase64Url(new Uint8Array(hash));
+	const encoder = new TextEncoder();
+	const data = encoder.encode(verifier);
+	const hash = await crypto.subtle.digest("SHA-256", data);
+	const challenge = encodeBase64Url(new Uint8Array(hash));
 
 	// Return the codes
 	return { state, verifier, challenge };
@@ -74,14 +74,14 @@ if ((await binForage.get("token")) !== null) {
 authBtn.addEventListener("click", async () => {
 	if (!homeserverEle.validity.valid) return;
 
-	let domain = homeserverEle.value;
+	const domain = homeserverEle.value;
 
 	errorMessageEle.innerText = "";
 	authBtn.innerText = "Locating";
 	authBtn.disabled = true;
 	homeserverEle.disabled = true;
 
-	let homeserver = await locateHomeserver(domain);
+	const homeserver = await locateHomeserver(domain);
 
 	if (homeserver === null) {
 		errorMessageEle.innerText = "Invalid homeserver";
@@ -92,15 +92,15 @@ authBtn.addEventListener("click", async () => {
 	}
 
 	authBtn.innerText = "Redirecting";
-	let { state, verifier, challenge } = await generateCode();
+	const { state, verifier, challenge } = await generateCode();
 	await binForage.set("verifier", verifier);
 	await binForage.set("state", state);
 	await binForage.set("homeserver", homeserver);
 
-	let params = new URLSearchParams({
+	const params = new URLSearchParams({
 		callback: encodeURIComponent(`${location.origin}${location.pathname}`),
 		state: state,
-		challenge: challenge
+		challenge: challenge,
 	});
 
 	location.href = `${homeserver.baseUrl.http}/oauth/login/?${params}`;
@@ -118,8 +118,8 @@ logoutBtn.addEventListener("click", async () => {
 });
 
 async function access() {
-	let verifier = await binForage.get("verifier");
-	let homeserver = await binForage.get("homeserver");
+	const verifier = await binForage.get("verifier");
+	const homeserver = await binForage.get("homeserver");
 
 	// Check if the state matches
 	if (params.get("state") !== (await binForage.get("state"))) {
@@ -132,10 +132,10 @@ async function access() {
 	// Retrieve the access token
 	axios
 		.post(`${homeserver.baseUrl.http}/oauth/token/`, {
-			verifier: verifier
+			verifier: verifier,
 		})
 		.then(async (res) => {
-			let { token } = res.data;
+			const { token } = res.data;
 
 			// Store the token
 			await binForage.set("token", token);
@@ -151,19 +151,19 @@ async function access() {
 }
 
 async function whoAmI() {
-	let token = await binForage.get("token");
-	let homeserver = await binForage.get("homeserver");
+	const token = await binForage.get("token");
+	const homeserver = await binForage.get("homeserver");
 
 	axios({
 		method: "GET",
 		url: `${homeserver.baseUrl.http}/sync/client/`,
 		headers: {
-			Authorization: `Bearer ${token}`
-		}
+			Authorization: `Bearer ${token}`,
+		},
 	})
 		.then(async (res) => {
-			let {
-				you: { username }
+			const {
+				you: { username },
 			} = res.data;
 
 			await binForage.set("username", username);
