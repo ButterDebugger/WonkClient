@@ -26,8 +26,15 @@ tippy([homeserverEle, homeserverLabelEle], {
 
 /** @returns The array of bytes converted to base64url */
 function encodeBase64Url(arr) {
+	// Convert the array to a string
+	let str = "";
+	for (const val of arr) {
+		str += String.fromCharCode(val);
+	}
+
+	// Convert the string to base64url
 	return window
-		.btoa(arr.map((num) => String.fromCharCode(num)).join(""))
+		.btoa(str)
 		.replace(/\+/g, "-")
 		.replace(/\//g, "_")
 		.replace(/=/g, "");
