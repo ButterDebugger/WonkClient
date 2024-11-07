@@ -1,14 +1,23 @@
+// @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 
 const $background = dom(`<div id="modal-background" class="hidden"></div>`);
-const modalQueue = [];
+const modalQueue: Modal[] = [];
 let isModalUnlocked = true; // TODO: provide some indicator that the modal is locked
 
 dom("body").append($background);
 
-export function showModal(title, content) {
+interface Modal {
+	title: string;
+	content: unknown;
+}
+
+export function showModal(title: string, content: unknown) {
 	if (isModalPresent()) {
-		modalQueue.push([title, content]);
+		modalQueue.push({
+			title,
+			content,
+		});
 		return;
 	}
 
@@ -55,7 +64,10 @@ export function hideModal() {
 	dom("#modal-wrapper").remove();
 
 	if (modalQueue.length > 0) {
-		showModal(...modalQueue.shift());
+		const nextModal = modalQueue.shift();
+		if (!nextModal) return;
+
+		showModal(nextModal.title, nextModal.content);
 		return;
 	}
 

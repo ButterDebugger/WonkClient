@@ -1,14 +1,15 @@
+// @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { createMessage } from "./components.js";
-import { changeViewDrawer, switchDrawer } from "./ui.js";
+import { changeViewDrawer, switchDrawer } from "./ui.ts";
 import { sendMessage } from "./main.js";
-import { hasWrapper, getOrCreateWrapper, getWrapper } from "./wrapper.js";
-import { getOrCreateRoomInfoWrapper } from "./roomInfo.js";
+import { hasWrapper, getOrCreateWrapper, getWrapper } from "./wrapper.ts";
+import { getOrCreateRoomInfoWrapper } from "./roomInfo.ts";
 import {
 	clearRoomAttachments,
 	getRoomAttachments,
 	showAttachmentModal,
-} from "./attachments.js";
+} from "./attachments.ts";
 
 export function getOrCreateRoomWrapper(room) {
 	const roomKey = `#${room.name}`;

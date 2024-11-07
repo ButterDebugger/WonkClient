@@ -1,3 +1,4 @@
+import type { AxiosProgressEvent } from "axios";
 import { type Client, ClientError } from "./client.ts";
 
 export default class AttachmentManager {
@@ -7,11 +8,14 @@ export default class AttachmentManager {
 		Object.defineProperty(this, "client", { value: client });
 	}
 
-	create(content) {
+	create(content: File): Attachment {
 		return new Attachment(this.client, content);
 	}
 
-	async upload(attachments, progress) {
+	async upload(
+		attachments: Attachment[],
+		progress?: (progressEvent: AxiosProgressEvent) => void,
+	) {
 		const formData = new FormData();
 		for (const attachment of attachments) {
 			formData.append("files", attachment.file);
@@ -30,13 +34,14 @@ export default class AttachmentManager {
 			})
 			.then((res) => {
 				for (const result of res.data) {
+					// TODO: implement a better way of matching attachments
 					const attachment = attachments.find(
-						// TODO: implement a better way of matching attachments
 						(attach) =>
 							attach.file.name === result.filename &&
 							attach.file.size === result.size,
 					);
 
+					if (!attachment) continue;
 					if (attachment.uploaded) continue;
 					if (result.success) attachment.path = result.path;
 				}

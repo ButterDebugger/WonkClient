@@ -1,7 +1,9 @@
+// @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { lockModal, showModal, unlockModal } from "./modal.js";
 import { client } from "./main.js";
 import { setAttachmentAnimation } from "./room.js";
+import type { Attachment } from "../../lib/attachmentManager.js";
 
 /** Room names mapped to file input elements */
 const roomFiles = new Map();
@@ -56,7 +58,7 @@ export function showAttachmentModal(roomName) {
 
 async function uploadAttachments(roomName) {
 	const files = getRoomFiles(roomName);
-	const attachments = [];
+	const attachments: Attachment[] = [];
 
 	if (files === null) {
 		roomAttachments.set(roomName, []);
@@ -80,7 +82,7 @@ function getOrCreateFileInput(roomName) {
 	return $input;
 }
 
-function getRoomFiles(roomName) {
+function getRoomFiles(roomName: string): FileList | null {
 	if (!roomFiles.has(roomName)) return null;
 
 	return roomFiles.get(roomName).element.files;

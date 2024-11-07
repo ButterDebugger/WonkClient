@@ -1,5 +1,6 @@
 import tippy from "tippy.js";
 import moment from "moment";
+// @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { client } from "./main";
 

@@ -8,12 +8,12 @@ const alwaysFullReload = {
 	handleHotUpdate({ server }) {
 		server.ws.send({ type: "full-reload" });
 		return [];
-	}
+	},
 };
 
 export default defineConfig({
 	server: {
-		port: process.env.PORT ?? 4030
+		port: process.env.PORT ?? 4030,
 	},
 	build: {
 		target: "es2022",
@@ -22,20 +22,17 @@ export default defineConfig({
 			input: (await glob("src/**/index.html")).reduce(
 				(put, path) => ({
 					...put,
-					[basename(dirname(path))]: path
+					[basename(dirname(path))]: path,
 				}),
-				{}
-			)
+				{},
+			),
 		},
-		sourcemap: true
+		sourcemap: true,
 	},
 	resolve: {
 		alias: {
-			"@fa": resolve(
-				__dirname,
-				"./node_modules/@fortawesome/fontawesome-free"
-			)
-		}
+			"@fa": resolve(__dirname, "./node_modules/@fortawesome/fontawesome-free"),
+		},
 	},
 	publicDir: resolve(process.cwd(), "public"),
 	root: resolve(process.cwd(), "src"),
@@ -49,15 +46,14 @@ export default defineConfig({
 				navigateFallbackDenylist: [/^\/login/],
 				runtimeCaching: [
 					{
-						urlPattern:
-							/^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+						urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
 						handler: "CacheFirst",
 						options: {
 							cacheName: "google-fonts",
 							expiration: {
-								maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
-							}
-						}
+								maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+							},
+						},
 					},
 					{
 						urlPattern:
@@ -66,9 +62,9 @@ export default defineConfig({
 						options: {
 							cacheName: "third-party-libraries",
 							expiration: {
-								maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
-							}
-						}
+								maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+							},
+						},
 					},
 					{
 						urlPattern: /(?:.*?)\.(?:ico|svg|png|jpe?g|gif)$/i,
@@ -76,18 +72,18 @@ export default defineConfig({
 						options: {
 							cacheName: "asset-cache",
 							expiration: {
-								maxAgeSeconds: 24 * 60 * 60 // 24 hours
-							}
-						}
+								maxAgeSeconds: 24 * 60 * 60, // 24 hours
+							},
+						},
 					},
 					{
 						urlPattern: /(?:.*?)\.(?:html|htm|js|ts|css|scss)$/i,
 						handler: "NetworkFirst",
 						options: {
-							cacheName: "source-cache"
-						}
-					}
-				]
+							cacheName: "source-cache",
+						},
+					},
+				],
 			},
 			manifest: {
 				name: "Wonk Chat",
@@ -101,28 +97,28 @@ export default defineConfig({
 						src: "app-icon-192.png",
 						sizes: "192x192",
 						type: "image/png",
-						purpose: "any"
+						purpose: "any",
 					},
 					{
 						src: "app-icon-192-maskable.png",
 						sizes: "192x192",
 						type: "image/png",
-						purpose: "maskable"
+						purpose: "maskable",
 					},
 					{
 						src: "app-icon-512.png",
 						sizes: "512x512",
 						type: "image/png",
-						purpose: "any"
+						purpose: "any",
 					},
 					{
 						src: "app-icon-512-maskable.png",
 						sizes: "512x512",
 						type: "image/png",
-						purpose: "maskable"
-					}
-				]
-			}
-		})
-	]
+						purpose: "maskable",
+					},
+				],
+			},
+		}),
+	],
 });

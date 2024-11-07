@@ -1,23 +1,24 @@
+// @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { createRoomTab } from "./components.js";
 import { client, joinOrCreateRoom } from "./main.js";
 import { hideModal, showModal } from "./modal.js";
 import { getOrCreateRoomWrapper } from "./room.js";
 
-const exploreDrawer = document.getElementById("explore-drawer");
-const roomsDrawer = document.getElementById("rooms-drawer");
-const messagesDrawer = document.getElementById("messages-drawer");
-const youDrawer = document.getElementById("you-drawer");
-const viewDrawer = document.getElementById("view-wrapper");
+const exploreDrawer = <HTMLElement>document.getElementById("explore-drawer");
+const roomsDrawer = <HTMLElement>document.getElementById("rooms-drawer");
+const messagesDrawer = <HTMLElement>document.getElementById("messages-drawer");
+const youDrawer = <HTMLElement>document.getElementById("you-drawer");
+const viewDrawer = <HTMLElement>document.getElementById("view-wrapper");
 
-const navbarEle = document.getElementById("navbar");
-const navExploreBtn = document.getElementById("nav-explore");
-const navRoomsBtn = document.getElementById("nav-rooms");
-const navMessagesBtn = document.getElementById("nav-messages");
-const navYouBtn = document.getElementById("nav-you");
+const navbarEle = <HTMLElement>document.getElementById("navbar");
+const navExploreBtn = <HTMLElement>document.getElementById("nav-explore");
+const navRoomsBtn = <HTMLElement>document.getElementById("nav-rooms");
+const navMessagesBtn = <HTMLElement>document.getElementById("nav-messages");
+const navYouBtn = <HTMLElement>document.getElementById("nav-you");
 
-const logoutBtn = document.getElementById("logout-btn");
-const joinRoomBtn = document.getElementById("join-room-btn");
+const logoutBtn = <HTMLElement>document.getElementById("logout-btn");
+const joinRoomBtn = <HTMLElement>document.getElementById("join-room-btn");
 
 navExploreBtn.addEventListener("click", () => {
 	switchDrawer("explore");
@@ -88,18 +89,23 @@ export function switchDrawer(drawerName) {
 
 export function changeViewDrawer(wrapper) {
 	// Change view drawer
-	viewDrawer.querySelector(".header").replaceWith(wrapper.header);
-	viewDrawer.querySelector(".content").replaceWith(wrapper.content);
-	viewDrawer.querySelector(".footer").replaceWith(wrapper.footer);
+	const headerEle = <HTMLElement>viewDrawer.querySelector(".header");
+	const contentEle = <HTMLElement>viewDrawer.querySelector(".content");
+	const footerEle = <HTMLElement>viewDrawer.querySelector(".footer");
 
-	if (wrapper.backAction !== null)
-		viewDrawer
-			.querySelector("#back-btn")
-			.addEventListener("click", () => wrapper.backAction());
+	headerEle.replaceWith(wrapper.header);
+	contentEle.replaceWith(wrapper.content);
+	footerEle.replaceWith(wrapper.footer);
+
+	if (wrapper.backAction !== null) {
+		const backBtn = <HTMLElement>viewDrawer.querySelector("#back-btn");
+
+		backBtn.addEventListener("click", () => wrapper.backAction());
+	}
 }
 
 export function updateRoomTabs() {
-	const roomsContainer = roomsDrawer.querySelector(".content");
+	const roomsContainer = <HTMLElement>roomsDrawer.querySelector(".content");
 	let oldTabs = Array.from(roomsContainer.querySelectorAll(".channel-tab"));
 
 	for (const room of client.rooms.cache.values()) {

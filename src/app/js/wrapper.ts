@@ -1,3 +1,4 @@
+// @ts-ignore
 import { domParser } from "https://debutter.dev/x/js/utils.js@1.2";
 
 const viewWrappers = new Map();

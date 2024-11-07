@@ -1,6 +1,7 @@
 import { Client, generateKeyPair, errorCodes } from "../../lib/client.ts";
+// @ts-ignore
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
-import { updateRoomTabs } from "./ui.js";
+import { updateRoomTabs } from "./ui.ts";
 import { appendMessage } from "./room.js";
 
 const _username = await binForage.get("username");
@@ -19,7 +20,7 @@ if (!keyPair) {
 	await binForage.set("keyPair", keyPair);
 }
 
-export const client = await Client.login(
+export const client = (await Client.login(
 	token,
 	keyPair.publicKey,
 	keyPair.privateKey,
@@ -27,8 +28,8 @@ export const client = await Client.login(
 ).catch((err) => {
 	console.error(err);
 
-	// location.href = "/login/";
-});
+	location.href = "/login/";
+})) as Client;
 
 client.on("ready", async () => {
 	console.log(`Logged in as ${client.user.username}!`);
@@ -55,7 +56,7 @@ client.on("roomMemberMessage", (message) => {
 	appendMessage(message);
 });
 
-export async function joinRoom(roomName) {
+export async function joinRoom(roomName: string) {
 	try {
 		await client.rooms.join(roomName);
 	} catch (error) {
@@ -65,7 +66,7 @@ export async function joinRoom(roomName) {
 	return true;
 }
 
-export async function joinOrCreateRoom(roomName) {
+export async function joinOrCreateRoom(roomName: string) {
 	try {
 		await client.rooms.join(roomName);
 	} catch (error) {
@@ -87,7 +88,7 @@ export async function joinOrCreateRoom(roomName) {
 	return true;
 }
 
-export async function leaveRoom(roomName) {
+export async function leaveRoom(roomName: string) {
 	try {
 		const success = await client.rooms.leave(roomName);
 		if (!success) return false;
@@ -100,9 +101,12 @@ export async function leaveRoom(roomName) {
 	return true;
 }
 
-export async function sendMessage(roomName, options) {
+export async function sendMessage(roomName: string, options) {
 	try {
-		await client.rooms.cache.get(roomName).send(options);
+		const room = client.rooms.cache.get(roomName);
+		if (!room) return false;
+
+		await room.send(options);
 	} catch (error) {
 		console.warn(error);
 		return false;

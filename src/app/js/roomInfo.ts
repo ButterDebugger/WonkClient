@@ -1,6 +1,7 @@
+// @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
-import { getOrCreateWrapper, getWrapper, hasWrapper } from "./wrapper.js";
-import { changeViewDrawer, switchDrawer } from "./ui.js";
+import { getOrCreateWrapper, getWrapper, hasWrapper } from "./wrapper.ts";
+import { changeViewDrawer, switchDrawer } from "./ui.ts";
 import { leaveRoom } from "./main.js";
 import { createUserChip } from "./components.js";
 
