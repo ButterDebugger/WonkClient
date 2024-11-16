@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { ClientError } from "./builtinErrors.ts";
 import type { Client } from "./client.ts";
-import { encryptMessage } from "./cryption.ts";
+import { encryptText } from "./cryption.ts";
 import type { Attachment } from "./attachmentManager.ts";
 
 export default class RoomManager {
@@ -128,7 +128,7 @@ export class Room {
 			.filter((attach) => attach.uploaded)
 			.map((attach) => attach.path);
 
-		const encryptedMessage = await encryptMessage(
+		const encryptedMessage = await encryptText(
 			JSON.stringify({
 				content: options.text,
 				attachments: attachments,

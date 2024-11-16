@@ -1,6 +1,6 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { EventEmitter } from "eventemitter3";
-import { generateKeyPair, signMessage } from "./cryption.ts";
+import { generateKeyPair, type KeyPair, signText } from "./cryption.ts";
 import RoomManager, { Room } from "./roomManager.ts";
 import UserManager, { User } from "./userManager.ts";
 import { ClientError, errorCodes } from "./builtinErrors.ts";
@@ -14,11 +14,6 @@ import {
 } from "./dataStream.ts";
 
 export { generateKeyPair, ClientError, errorCodes };
-
-export interface KeyPair {
-	publicKey: string;
-	privateKey: string;
-}
 
 export interface BaseUrl {
 	http: string;
@@ -111,7 +106,7 @@ export class Client extends EventEmitter {
 			);
 
 			const { nonce } = res.data;
-			const signedNonce = await signMessage(nonce, privateKey);
+			const signedNonce = await signText(nonce, privateKey);
 
 			await Client.regularRequest(
 				// Throws an error
