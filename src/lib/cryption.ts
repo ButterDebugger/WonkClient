@@ -15,7 +15,7 @@ export async function decryptData(
 ): Promise<Uint8Array> {
 	const { data: decrypted } = await openpgp.decrypt({
 		message: await openpgp.readMessage({ binaryMessage: message }),
-		decryptionKeys: await openpgp.readKey({ armoredKey: privateKey }),
+		decryptionKeys: await openpgp.readPrivateKey({ armoredKey: privateKey }),
 		format: "binary",
 	});
 
@@ -79,7 +79,7 @@ export async function signText(
 ): Promise<string> {
 	return await openpgp.sign({
 		message: await openpgp.createMessage({ text: message }),
-		signingKeys: await openpgp.readKey({ armoredKey: privateKey }),
+		signingKeys: await openpgp.readPrivateKey({ armoredKey: privateKey }),
 	});
 }
 
