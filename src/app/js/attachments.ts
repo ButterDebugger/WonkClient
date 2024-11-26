@@ -2,8 +2,8 @@
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
 import { lockModal, showModal, unlockModal } from "./modal.ts";
 import { client } from "./main.ts";
-import { setAttachmentAnimation } from "./room.ts";
 import type { Attachment } from "../../lib/attachmentManager.ts";
+import { setAttachmentAnimation } from "./views/room.ts";
 
 /** Room names mapped to file input elements */
 const roomFiles = new Map();

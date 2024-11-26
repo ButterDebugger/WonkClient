@@ -5,13 +5,12 @@
     flex-direction: row;
 
     position: relative;
-    padding: calc(var(--bubble-padding) / 2);
 
     /* Desktop design */
     @media screen and (min-width: $mobile-threshold) {
         flex-direction: column;
         justify-content: flex-start;
-        gap: calc(var(--bubble-padding) / 2);
+        gap: calc(var(--bubble-spacing) / 2);
     }
 }
 #navbar > .nav-item {
@@ -23,7 +22,7 @@
     z-index: 1;
     flex: 1;
     border-radius: 9999px;
-    padding: calc(var(--bubble-padding) / 2);
+    padding: calc(var(--bubble-spacing) / 2);
     cursor: pointer;
 
     /* Desktop design */
@@ -97,11 +96,11 @@
 }
 
 #nav-lavalamp {
-    --ll-scale: calc((100% - var(--bubble-padding)));
+    --ll-scale: calc(100% - var(--bubble-spacing) * 2);
     position: absolute;
-    height: calc(var(--ic-normal) + var(--bubble-padding));
+    height: calc(var(--ic-normal) + var(--bubble-spacing));
     width: calc(var(--ll-scale) * 0.25);
-    top: calc(var(--bubble-padding) / 2);
+    top: var(--bubble-spacing);
     z-index: 0;
     transition: all 0.35s ease 0s;
     border-radius: 9999px;
@@ -113,18 +112,18 @@
 }
 
 #nav-explore.active ~ #nav-lavalamp {
-    left: calc(0% + 8px);
+    left: calc(0% + var(--bubble-spacing));
     background-color: var(--hover-color);
 }
 #nav-rooms.active ~ #nav-lavalamp {
-    left: calc(var(--ll-scale) * 0.25 + 8px);
+    left: calc(var(--ll-scale) * 0.25 + var(--bubble-spacing));
     background-color: var(--hover-color);
 }
 #nav-messages.active ~ #nav-lavalamp {
-    left: calc(var(--ll-scale) * 0.5 + 8px);
+    left: calc(var(--ll-scale) * 0.5 + var(--bubble-spacing));
     background-color: var(--hover-color);
 }
 #nav-you.active ~ #nav-lavalamp {
-    left: calc(var(--ll-scale) * 0.75 + 8px);
+    left: calc(var(--ll-scale) * 0.75 + var(--bubble-spacing));
     background-color: var(--hover-color);
 }

@@ -25,13 +25,13 @@
 }
 .attachment-list {
     $max-items: 4;
-    $padding-total-height: calc(var(--bubble-padding) / 2 * ($max-items - 1));
-    $item-total-height: calc((1lh + var(--bubble-padding)) * $max-items);
+    $padding-total-height: calc(var(--bubble-spacing) / 2 * ($max-items - 1));
+    $item-total-height: calc((1lh + var(--bubble-spacing)) * $max-items);
 
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: calc(var(--bubble-padding) / 2);
+    gap: calc(var(--bubble-spacing) / 2);
 
     max-height: calc($item-total-height + $padding-total-height);
     overflow-y: auto;
@@ -41,10 +41,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: calc(var(--bubble-padding) / 2);
+    gap: calc(var(--bubble-spacing) / 2);
 
     border-radius: 1em;
-    padding: calc(var(--bubble-padding) / 2);
+    padding: calc(var(--bubble-spacing) / 2);
     background-color: var(--hover-color);
     cursor: default;
 }

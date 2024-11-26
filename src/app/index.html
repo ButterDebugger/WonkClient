@@ -20,100 +20,35 @@
 		<link rel="stylesheet" href="./styles/style.scss" />
 		<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js"></script>
 		<script defer type="module" src="./js/main.ts"></script>
+		<script async type="module">
+			// Add loading screen and fade out
+			window.addEventListener("load", () => {
+				const loadingOverlay =
+					document.getElementById("loading-overlay");
+
+				loadingOverlay.classList.add("fade-out");
+
+				setTimeout(() => {
+					loadingOverlay.remove();
+				}, 350);
+			});
+		</script>
 	</head>
 	<body>
 		<div id="root">
 			<div id="app">
-				<div id="explore-drawer">
-					<div class="header">
-						<span class="title">Explore</span>
-						<div class="flex-spacer"></div>
-
-						<!-- <div class="search-container">
-							<div id="search-btn">
-								<span class="ic-small ic-magnifying-glass"></span>
-							</div>
-							<input id="explore-search" type="text" placeholder="Search">
-							<div id="filter-btn">
-								<span class="ic-small ic-filter"></span>
-							</div>
-						</div> -->
-
-						<div id="start-search-btn" class="ic-small-container">
-							<span class="ic-small ic-magnifying-glass"></span>
+				<div class="head">
+					<div class="back-container hidden">
+						<div class="back-btn ic-small-container">
+							<span class="ic-small ic-chevron-left"></span>
 						</div>
 					</div>
-					<div class="content no-select"></div>
+					<div class="header"></div>
 				</div>
+				<div class="content"></div>
+				<div class="footer hidden"></div>
 
-				<div id="rooms-drawer" class="hidden">
-					<div class="header">
-						<span class="title">Rooms</span>
-						<div class="flex-spacer"></div>
-						<div id="join-room-btn" class="ic-small-container">
-							<span class="ic-small ic-plus"></span>
-						</div>
-					</div>
-					<div class="content no-select"></div>
-				</div>
-
-				<div id="messages-drawer" class="hidden">
-					<div class="header">
-						<span class="title">Messages</span>
-						<div class="flex-spacer"></div>
-						<div class="ic-small-container">
-							<span
-								id="start-convo-btn"
-								class="ic-small ic-plus"
-							></span>
-						</div>
-					</div>
-					<div class="content no-select">
-						<div class="channel-tab">
-							<span class="ic-text-size ic-at"></span>
-							<span>Debutter</span>
-						</div>
-						<div class="channel-tab">
-							<span class="ic-text-size ic-at"></span>
-							<span>Sloth</span>
-						</div>
-						<div class="channel-tab">
-							<span class="ic-text-size ic-at"></span>
-							<span>Applesauce</span>
-						</div>
-					</div>
-				</div>
-
-				<div id="you-drawer" class="hidden">
-					<div class="header">
-						<span class="title">You</span>
-						<div class="flex-spacer"></div>
-						<div id="logout-btn" class="ic-small-container">
-							<span
-								class="ic-small ic-right-arrow-bracket"
-							></span>
-						</div>
-						<div id="settings-btn" class="ic-small-container">
-							<span class="ic-small ic-gear"></span>
-						</div>
-					</div>
-					<div class="content no-select"></div>
-				</div>
-
-				<div id="view-wrapper" class="hidden">
-					<div class="head">
-						<div class="back-container">
-							<div id="back-btn" class="ic-small-container">
-								<span class="ic-small ic-chevron-left"></span>
-							</div>
-						</div>
-						<div class="header"></div>
-					</div>
-					<div class="content"></div>
-					<div class="footer"></div>
-				</div>
-
-				<div id="navbar" class="no-select">
+				<div class="navigator" id="navbar">
 					<div id="nav-explore" class="nav-item active">
 						<span class="nav-icon ic-compass"></span>
 						<span class="nav-text">Explore</span>
@@ -134,6 +69,10 @@
 					<div id="nav-lavalamp"></div>
 				</div>
 			</div>
+		</div>
+
+		<div id="loading-overlay">
+			<span class="rotating ic-large ic-spinner"></span>
 		</div>
 	</body>
 </html>

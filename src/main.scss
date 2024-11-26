@@ -22,8 +22,7 @@ $mobile-threshold: 1024px;
 	--warning-color: #d93025;
 	--valid-color: #35c76d;
 	--bubble-roundness: 24px;
-	--bubble-gap: 16px;
-	--bubble-padding: 16px;
+	--bubble-spacing: 16px;
 }
 
 html,
@@ -166,7 +165,8 @@ textarea:focus {
 @mixin bubble($dark: false) {
 	display: flex;
 
-	padding: var(--bubble-padding);
+	padding: var(--bubble-spacing);
+	min-height: calc(var(--bubble-spacing) * 2 + 1lh);
 	border-radius: var(--bubble-roundness);
 
 	@if $dark == true {

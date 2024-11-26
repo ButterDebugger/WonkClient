@@ -1,0 +1,81 @@
+#app {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: auto 1fr;
+
+    overflow-y: auto;
+    height: 100%;
+    padding: var(--bubble-spacing);
+
+    > .navigator {
+        grid-column: 2;
+        grid-row: 4;
+
+        margin-right: var(--bubble-spacing);
+
+        /* Desktop design */
+        @media screen and (min-width: $mobile-threshold) {
+            grid-column: 1;
+            grid-row: 1 / 4;
+        }
+    }
+    > .head {
+        display: flex;
+        gap: var(--bubble-spacing);
+        margin-bottom: var(--bubble-spacing);
+        grid-column: 2;
+
+        > .back-container {
+            @include bubble;
+        }
+
+        > .header {
+            @include bubble;
+
+            flex: 1;
+
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-start;
+            gap: calc(var(--bubble-spacing) / 2);
+
+            > .title {
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+
+            > .description {
+                font-size: 0.8rem;
+                color: var(--secondary-text-color);
+            }
+        }
+    }
+    > .content {
+        @include bubble;
+
+        grid-column: 2;
+        flex-direction: column;
+        overflow-y: auto;
+        gap: calc(var(--bubble-spacing) / 2);
+    }
+    > .footer {
+        @include bubble(true);
+
+        grid-column: 2;
+
+        &:not(.hidden) {
+            margin-top: var(--bubble-spacing);
+        }
+
+        /* Mobile design */
+        @media screen and (max-width: $mobile-threshold) {
+            &:not(.hidden) + .navigator {
+                display: none;
+            }
+            &.hidden + .navigator {
+                margin-top: var(--bubble-spacing);
+                margin-right: 0px;
+            }
+        }
+    }
+}

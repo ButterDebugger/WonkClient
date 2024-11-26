@@ -101,6 +101,11 @@
 
 	--ic-url: url("@fa/svgs/solid/paperclip.svg");
 }
+.ic-spinner {
+	@include icon(false);
+
+	--ic-url: url("@fa/svgs/solid/spinner.svg");
+}
 .ic-blue-dot {
 	@include icon(true);
 
@@ -178,6 +183,7 @@
 
 	border-radius: 9999px;
 	padding: 8px;
+	background-color: var(--hover-color);
 	width: calc(var(--ic-container-size) + 16px);
 	height: calc(var(--ic-container-size) + 16px);
 	cursor: pointer;
@@ -187,10 +193,5 @@
 	}
 	&:active {
 		background-color: var(--active-color);
-	}
-
-	/* Reveal background color on mobile */
-	@media screen and (max-width: $mobile-threshold) {
-		background-color: var(--hover-color);
 	}
 }

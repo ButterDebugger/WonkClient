@@ -1,14 +1,16 @@
+// @ts-ignore
+import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+// @ts-ignore
+import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import {
 	Client,
 	generateKeyPair,
 	errorCodes,
 	ClientError,
 } from "../../lib/client.ts";
-// @ts-ignore
-import * as binForage from "https://debutter.dev/x/js/binforage.js";
-import { updateRoomTabs } from "./ui.ts";
-import { appendMessage } from "./room.ts";
 import type { MessageOptions } from "../../lib/roomManager.ts";
+import { appendMessage } from "./views/room.ts";
+import { updateRoomsTabs } from "./views/rooms.ts";
 
 const _username = await binForage.get("username");
 const token = await binForage.get("token");
@@ -26,6 +28,7 @@ if (!keyPair) {
 	await binForage.set("keyPair", keyPair);
 }
 
+// Initialize the client
 export const client = (await Client.login(
 	token,
 	keyPair.publicKey,
@@ -37,12 +40,13 @@ export const client = (await Client.login(
 	location.href = "/login/";
 })) as Client;
 
+// Add event listeners
 client.on("ready", async () => {
 	console.log(`Logged in as ${client.user.username}!`);
 
 	await joinRoom("wonk");
 
-	updateRoomTabs();
+	updateRoomsTabs();
 });
 
 client.on("ping", (pings) => {
@@ -83,7 +87,7 @@ export async function joinOrCreateRoom(roomName: string) {
 				try {
 					await client.rooms.create(roomName);
 					await client.rooms.join(roomName); // NOTE: I shouldn't need to join a room that I created
-					updateRoomTabs();
+					updateRoomsTabs();
 				} catch (error) {
 					console.warn(error);
 					return false;
@@ -107,7 +111,7 @@ export async function leaveRoom(roomName: string) {
 		return false;
 	}
 
-	updateRoomTabs();
+	updateRoomsTabs();
 	return true;
 }
 

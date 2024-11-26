@@ -21,19 +21,19 @@ main {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	gap: var(--bubble-gap);
+	gap: var(--bubble-spacing);
 
 	margin: 0px auto 0px auto;
-	padding: var(--bubble-padding);
+	padding: var(--bubble-spacing);
 	max-width: 1260px;
 }
 
 .page-content {
 	display: flex;
 	flex-direction: column;
-	gap: var(--bubble-gap);
+	gap: var(--bubble-spacing);
 
-	padding: var(--bubble-padding);
+	padding: var(--bubble-spacing);
 	text-align: center;
 	flex: 1;
 }
@@ -123,7 +123,7 @@ li {
 	flex-wrap: wrap;
 	flex-direction: row;
 	justify-content: space-evenly;
-	gap: 0px var(--bubble-gap);
+	gap: 0px var(--bubble-spacing);
 }
 .feature-container > div {
 	max-width: 260px;

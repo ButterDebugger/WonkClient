@@ -1,36 +1,36 @@
 // @ts-ignore
 import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+import { switchNav } from "../navigator.ts";
+import { leaveRoom } from "../main.ts";
+import { createUserChip } from "../components.ts";
+import type { Room } from "../../../lib/roomManager.ts";
 import {
-	getOrCreateWrapper,
-	getWrapper,
-	hasWrapper,
+	createBlankView,
+	getView,
+	setView,
+	switchView,
 	type ViewWrapper,
-} from "./wrapper.ts";
-import { changeViewDrawer, switchDrawer } from "./ui.ts";
-import { leaveRoom } from "./main.ts";
-import { createUserChip } from "./components.ts";
-import type { Room } from "../../lib/roomManager.ts";
+} from "../views.ts";
 
-export function getOrCreateRoomInfoWrapper(room: Room): ViewWrapper {
+export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
+	// Return existing view
 	const roomKey = `#${room.name}`;
 	const infoKey = `i#${room.name}`;
 
-	const existingWrapper = getWrapper(infoKey);
-	if (existingWrapper) return existingWrapper;
+	const existingView = getView(infoKey);
+	if (existingView) return existingView;
 
-	const wrapper = getOrCreateWrapper(infoKey);
+	// Create new view
+	const view = createBlankView();
 
-	wrapper.header.classList.add("room-info");
-	wrapper.content.classList.add("room-info");
-	wrapper.footer.classList.add("hidden");
-	wrapper.backAction = () => {
-		switchDrawer("view");
+	view.header.classList.add("room-info");
+	view.content.classList.add("room-info");
+	view.footer.classList.add("hidden");
+	view.backAction = () => {
+		const view = getView(roomKey);
+		if (!view) return;
 
-		// Change view drawer to room
-		const wrapper = getWrapper(roomKey);
-		if (!wrapper) return;
-
-		changeViewDrawer(wrapper);
+		switchView(view);
 	};
 
 	// Add members list and update handlers
@@ -58,14 +58,14 @@ export function getOrCreateRoomInfoWrapper(room: Room): ViewWrapper {
 
 	// Add header tab buttons
 	function switchInfoTab(name: string) {
-		dom(wrapper.header).findAll(".tab").removeClass("active");
-		dom(wrapper.header).find(`[for="${name}"]`).addClass("active");
+		dom(view.header).findAll(".tab").removeClass("active");
+		dom(view.header).find(`[for="${name}"]`).addClass("active");
 
-		dom(wrapper.content).findAll(".info-container").addClass("hidden");
-		dom(wrapper.content).find(`[for="${name}"]`).removeClass("hidden");
+		dom(view.content).findAll(".info-container").addClass("hidden");
+		dom(view.content).find(`[for="${name}"]`).removeClass("hidden");
 	}
 
-	dom(wrapper.header).append(
+	dom(view.header).append(
 		dom(
 			`<div class="tab no-select active" for="general">
 				<span class="ic-small ic-gear"></span>
@@ -81,14 +81,14 @@ export function getOrCreateRoomInfoWrapper(room: Room): ViewWrapper {
 	);
 
 	// Add tab sections
-	dom(wrapper.content).append(
+	dom(view.content).append(
 		// Add general settings area
 		dom(`<div class="info-container" for="general"></div>`).append(
 			dom("<button>Leave</button>").on("click", async () => {
 				const success = await leaveRoom(room.name);
 
 				if (success) {
-					switchDrawer("rooms");
+					switchNav("rooms");
 				} else {
 					console.error("Failed to leave room"); // TODO: make fancier
 				}
@@ -100,5 +100,8 @@ export function getOrCreateRoomInfoWrapper(room: Room): ViewWrapper {
 		),
 	);
 
-	return wrapper;
+	// Save and return the view
+	setView(infoKey, view);
+
+	return view;
 }
