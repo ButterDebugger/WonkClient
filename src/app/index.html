@@ -21,17 +21,31 @@
 		<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js"></script>
 		<script defer type="module" src="./js/main.ts"></script>
 		<script async type="module">
-			// Add loading screen and fade out
-			window.addEventListener("load", () => {
+			const loadingInterval = setInterval(() => {
+				// Check if the document is fully loaded and missed the load event
+				if (document.readyState === "complete") {
+					removeLoadingScreen();
+				}
+			}, 400);
+
+			function removeLoadingScreen() {
 				const loadingOverlay =
 					document.getElementById("loading-overlay");
 
 				loadingOverlay.classList.add("fade-out");
 
+				// Remove listeners
+				clearInterval(loadingInterval);
+				window.removeEventListener("load", removeLoadingScreen);
+
+				// Delete loading screen after animation finishes playing
 				setTimeout(() => {
 					loadingOverlay.remove();
 				}, 350);
-			});
+			}
+
+			// Add loading screen and fade out
+			window.addEventListener("load", removeLoadingScreen);
 		</script>
 	</head>
 	<body>
