@@ -1,18 +1,19 @@
-// @ts-ignore
-import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+import { $, dom, type DomContext, parseHTML } from "@debutter/dom";
 
-const $background = dom(`<div id="modal-background" class="hidden"></div>`);
+const $background = dom(
+	parseHTML(`<div id="modal-background" class="hidden"></div>`),
+);
 const modalQueue: Modal[] = [];
 let isModalUnlocked = true; // TODO: provide some indicator that the modal is locked
 
-dom("body").append($background);
+$.body?.append($background);
 
 interface Modal {
 	title: string;
-	content: unknown;
+	content: DomContext;
 }
 
-export function showModal(title: string, content: unknown) {
+export function showModal(title: string, content: DomContext) {
 	if (isModalPresent()) {
 		modalQueue.push({
 			title,
@@ -22,7 +23,7 @@ export function showModal(title: string, content: unknown) {
 	}
 
 	// Play background animation
-	dom("#root").addClass("modal-present");
+	dom("#root")?.addClass("modal-present");
 
 	$background.removeClass("hidden");
 
@@ -32,28 +33,36 @@ export function showModal(title: string, content: unknown) {
 		}, 1);
 
 	// Create and append the modal to the body
-	const $modal = dom(`<div id="modal-wrapper">
-        <div class="header">
-            <span class="title">Modal</span>
-        </div>
-        <div class="content"></div>
-    </div>`);
+	const $modal = dom(
+		parseHTML(
+			`<div id="modal-wrapper">
+				<div class="header">
+					<span class="title">Modal</span>
+				</div>
+				<div class="content"></div>
+			</div>`,
+		),
+	);
 
-	$modal.find(".title").text(title);
+	$modal.find(".title")?.text(title);
 
-	$modal.find(".header").append(
-		dom(`<div class="ic-small-container">
-				<span class="ic-small ic-xmark"></span>
-			</div>`).on("click", () => {
+	$modal.find(".header")?.append(
+		dom(
+			parseHTML(
+				`<div class="ic-small-container">
+					<span class="ic-small ic-xmark"></span>
+				</div>`,
+			),
+		).on("click", () => {
 			if (isModalUnlocked) {
 				hideModal();
 			}
 		}),
 	);
 
-	$modal.find(".content").append(content);
+	$modal.find(".content")?.append(content);
 
-	dom("body").append($modal);
+	$.body?.append($modal);
 }
 
 function isModalPresent() {
@@ -61,7 +70,7 @@ function isModalPresent() {
 }
 
 export function hideModal() {
-	dom("#modal-wrapper").remove();
+	dom("#modal-wrapper")?.remove();
 
 	if (modalQueue.length > 0) {
 		const nextModal = modalQueue.shift();
@@ -71,7 +80,7 @@ export function hideModal() {
 		return;
 	}
 
-	dom("#root").removeClass("modal-present");
+	dom("#root")?.removeClass("modal-present");
 	$background.removeClass("increase-opacity");
 	setTimeout(() => {
 		$background.addClass("hidden");

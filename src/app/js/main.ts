@@ -1,6 +1,4 @@
 // @ts-ignore
-import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
-// @ts-ignore
 import * as binForage from "https://debutter.dev/x/js/binforage.js";
 import {
 	Client,
@@ -76,7 +74,7 @@ export async function joinRoom(roomName: string) {
 	return true;
 }
 
-export async function joinOrCreateRoom(roomName: string) {
+export async function joinOrCreateRoom(roomName: string): Promise<boolean> {
 	try {
 		await client.rooms.join(roomName);
 	} catch (error) {

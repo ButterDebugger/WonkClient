@@ -1,5 +1,4 @@
-// @ts-ignore
-import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+import { dom, type DomContext, parseHTML } from "@debutter/dom";
 import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
 import { hideModal, showModal } from "../modal.ts";
 import { client, joinOrCreateRoom } from "../main.ts";
@@ -13,21 +12,34 @@ export function getRoomsView(): ViewWrapper {
 
 	// Create new view
 	const view: ViewWrapper = {
-		header: dom(`<div class="header">
-            <span class="title">Rooms</span>
-            <div class="flex-spacer"></div>
-        </div>`).append(
-			dom(`<div id="join-room-btn" class="ic-small-container">
-                <span class="ic-small ic-plus"></span>
-            </div>`).on("click", () => {
-				const $container = dom(`<div class="container flex-row"></div>`);
-				const $input = dom(
-					`<input type="text" placeholder="Name" required minlength="3">`,
+		header: dom(
+			parseHTML(
+				`<div class="header">
+					<span class="title">Rooms</span>
+					<div class="flex-spacer"></div>
+				</div>`,
+			),
+		).append(
+			dom(
+				parseHTML(
+					`<div id="join-room-btn" class="ic-small-container">
+						<span class="ic-small ic-plus"></span>
+					</div>`,
+				),
+			).on("click", () => {
+				const $container = dom(
+					parseHTML(`<div class="container flex-row"></div>`),
 				);
-				const $joinBtn = dom("<button disabled>Join</button>");
+				const $input = dom(
+					parseHTML(
+						`<input type="text" placeholder="Name" required minlength="3">`,
+					),
+				);
+				const inputEle = <HTMLInputElement>$input.element;
+				const $joinBtn = dom(parseHTML("<button disabled>Join</button>"));
 
 				$input.on("input", () => {
-					if ($input.element.validity.valid) {
+					if (inputEle.validity.valid) {
 						$joinBtn.prop("disabled", false);
 					} else {
 						$joinBtn.prop("disabled", true);
@@ -39,7 +51,7 @@ export function getRoomsView(): ViewWrapper {
 				$joinBtn.on("click", async () => {
 					$joinBtn.prop("disabled", true);
 
-					if (await joinOrCreateRoom($input.prop("value"))) {
+					if (await joinOrCreateRoom(<string>$input.prop("value"))) {
 						hideModal();
 					}
 
@@ -48,9 +60,9 @@ export function getRoomsView(): ViewWrapper {
 
 				showModal("Join Room", $container);
 			}),
-		).element,
-		content: dom(`<div class="content"></div>`).element,
-		footer: dom(`<div class="footer hidden"></div>`).element,
+		),
+		content: dom(parseHTML(`<div class="content"></div>`)),
+		footer: dom(parseHTML(`<div class="footer hidden"></div>`)),
 		backAction: null,
 	};
 
@@ -62,31 +74,31 @@ export function getRoomsView(): ViewWrapper {
 
 export function updateRoomsTabs() {
 	const view = getRoomsView();
-	const roomsContainer = view.content;
-	let oldTabs = Array.from(roomsContainer.querySelectorAll(".channel-tab"));
+	const $roomsContainer = view.content;
+	let $oldTabs: DomContext[] = [...$roomsContainer.findAll(".channel-tab")];
 
 	for (const room of client.rooms.cache.values()) {
-		const ele = createRoomTab(room.name);
+		const $ele = createRoomTab(room.name);
 		getOrCreateRoomView(room);
 
 		// Remove room tab from list of old tabs
-		oldTabs = oldTabs.filter(
-			(tab) => tab.getAttribute("data-channel-id") !== room.name,
+		$oldTabs = $oldTabs.filter(
+			(tab) => tab.attr("data-channel-id") !== room.name,
 		);
 
-		ele.addEventListener("click", () => {
+		$ele.on("click", () => {
 			const view = getOrCreateRoomView(room);
 			switchView(view);
 
 			// Scroll to the bottom
-			view.content.scrollTop = view.content.scrollHeight;
+			view.content.element.scrollTop = view.content.element.scrollHeight;
 		});
 
-		roomsContainer.appendChild(ele);
+		$roomsContainer.append($ele);
 	}
 
 	// Remove any remaining old tabs
-	for (const tab of oldTabs) {
+	for (const tab of $oldTabs) {
 		tab.remove();
 	}
 }

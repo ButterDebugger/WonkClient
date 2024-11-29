@@ -1,5 +1,4 @@
-// @ts-ignore
-import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+import { dom, parseHTML } from "@debutter/dom";
 import { getView, setView, type ViewWrapper } from "../views.ts";
 
 export function getExploreView(): ViewWrapper {
@@ -9,16 +8,20 @@ export function getExploreView(): ViewWrapper {
 
 	// Create new view
 	const view: ViewWrapper = {
-		header: dom(`<div class="header">
-			<span class="title">Explore</span>
-				<div class="flex-spacer"></div>
+		header: dom(
+			parseHTML(
+				`<div class="header">
+					<span class="title">Explore</span>
+					<div class="flex-spacer"></div>
 
-				<div id="start-search-btn" class="ic-small-container">
-					<span class="ic-small ic-magnifying-glass"></span>
-				</div>
-			</div>`).element,
-		content: dom(`<div class="content"></div>`).element,
-		footer: dom(`<div class="footer hidden"></div>`).element,
+					<div id="start-search-btn" class="ic-small-container">
+						<span class="ic-small ic-magnifying-glass"></span>
+					</div>
+				</div>`,
+			),
+		),
+		content: dom(parseHTML(`<div class="content"></div>`)),
+		footer: dom(parseHTML(`<div class="footer hidden"></div>`)),
 		backAction: null,
 	};
 

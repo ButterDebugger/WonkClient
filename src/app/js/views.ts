@@ -1,20 +1,19 @@
-// @ts-ignore
-import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+import { dom, parseHTML, type DomContext } from "@debutter/dom";
 
 export type BackFunction = (() => void) | null;
 
 export interface ViewWrapper {
-	header: HTMLElement;
-	content: HTMLElement;
-	footer: HTMLElement;
+	header: DomContext;
+	content: DomContext;
+	footer: DomContext;
 	backAction: BackFunction;
 }
 
-const $backContainer = dom("#app > .head > .back-container");
-const $backBtn = $backContainer.find(".back-btn");
-const $header = dom("#app > .head > .header");
-const $content = dom("#app > .content");
-const $footer = dom("#app > .footer");
+const $backContainer = <DomContext>dom("#app > .head > .back-container");
+const $backBtn = <DomContext>$backContainer.find(".back-btn");
+const $header = <DomContext>dom("#app > .head > .header");
+const $content = <DomContext>dom("#app > .content");
+const $footer = <DomContext>dom("#app > .footer");
 
 let backAction: BackFunction = null;
 
@@ -36,9 +35,9 @@ export function setView(name: string, wrapper: ViewWrapper): void {
 
 export function createBlankView(): ViewWrapper {
 	return {
-		header: dom(`<div class="header"></div>`).element,
-		content: dom(`<div class="content"></div>`).element,
-		footer: dom(`<div class="footer"></div>`).element,
+		header: dom(parseHTML(`<div class="header"></div>`)),
+		content: dom(parseHTML(`<div class="content"></div>`)),
+		footer: dom(parseHTML(`<div class="footer"></div>`)),
 		backAction: null,
 	};
 }

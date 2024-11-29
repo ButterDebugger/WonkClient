@@ -1,5 +1,4 @@
-// @ts-ignore
-import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+import { dom, parseHTML } from "@debutter/dom";
 import { switchNav } from "../navigator.ts";
 import { leaveRoom } from "../main.ts";
 import { createUserChip } from "../components.ts";
@@ -23,9 +22,9 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	// Create new view
 	const view = createBlankView();
 
-	view.header.classList.add("room-info");
-	view.content.classList.add("room-info");
-	view.footer.classList.add("hidden");
+	view.header.addClass("room-info");
+	view.content.addClass("room-info");
+	view.footer.addClass("hidden");
 	view.backAction = () => {
 		const view = getView(roomKey);
 		if (!view) return;
@@ -34,7 +33,7 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	};
 
 	// Add members list and update handlers
-	const $membersList = dom(`<div class="members-list"></div>`);
+	const $membersList = dom(parseHTML(`<div class="members-list"></div>`));
 
 	// TODO: make a loading screen until this finishes
 	for (const member of room.members) {
@@ -58,33 +57,37 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 
 	// Add header tab buttons
 	function switchInfoTab(name: string) {
-		dom(view.header).findAll(".tab").removeClass("active");
-		dom(view.header).find(`[for="${name}"]`).addClass("active");
+		view.header.findAll(".tab").removeClass("active");
+		view.header.find(`[for="${name}"]`)?.addClass("active");
 
-		dom(view.content).findAll(".info-container").addClass("hidden");
-		dom(view.content).find(`[for="${name}"]`).removeClass("hidden");
+		view.content.findAll(".info-container").addClass("hidden");
+		view.content.find(`[for="${name}"]`)?.removeClass("hidden");
 	}
 
 	dom(view.header).append(
 		dom(
-			`<div class="tab no-select active" for="general">
-				<span class="ic-small ic-gear"></span>
-				<span class="tab-name">General</span>
-			</div>`,
+			parseHTML(
+				`<div class="tab no-select active" for="general">
+					<span class="ic-small ic-gear"></span>
+					<span class="tab-name">General</span>
+				</div>`,
+			),
 		).on("click", () => switchInfoTab("general")),
 		dom(
-			`<div class="tab no-select" for="members">
-				<span class="ic-small ic-user"></span>
-				<span class="tab-name">Members</span>
-			</div>`,
+			parseHTML(
+				`<div class="tab no-select" for="members">
+					<span class="ic-small ic-user"></span>
+					<span class="tab-name">Members</span>
+				</div>`,
+			),
 		).on("click", () => switchInfoTab("members")),
 	);
 
 	// Add tab sections
 	dom(view.content).append(
 		// Add general settings area
-		dom(`<div class="info-container" for="general"></div>`).append(
-			dom("<button>Leave</button>").on("click", async () => {
+		dom(parseHTML(`<div class="info-container" for="general"></div>`)).append(
+			dom(parseHTML("<button>Leave</button>")).on("click", async () => {
 				const success = await leaveRoom(room.name);
 
 				if (success) {
@@ -95,9 +98,9 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 			}),
 		),
 		// Add members area
-		dom(`<div class="info-container hidden" for="members"></div>`).append(
-			$membersList,
-		),
+		dom(
+			parseHTML(`<div class="info-container hidden" for="members"></div>`),
+		).append($membersList),
 	);
 
 	// Save and return the view

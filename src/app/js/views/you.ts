@@ -1,5 +1,4 @@
-// @ts-ignore
-import { dom } from "https://debutter.dev/x/js/dom.js@1.0.0";
+import { dom, parseHTML } from "@debutter/dom";
 import { getView, setView, type ViewWrapper } from "../views.ts";
 
 export function getYouView(): ViewWrapper {
@@ -9,24 +8,36 @@ export function getYouView(): ViewWrapper {
 
 	// Create new view
 	const view: ViewWrapper = {
-		header: dom(`<div class="header">
-			<span class="title">You</span>
-			<div class="flex-spacer"></div>
-		</div>`)
+		header: dom(
+			parseHTML(
+				`<div class="header">
+					<span class="title">You</span>
+					<div class="flex-spacer"></div>
+				</div>`,
+			),
+		)
 			.append(
-				dom(`<div id="logout-btn" class="ic-small-container">
-					<span class="ic-small ic-right-arrow-bracket"></span>
-				</div>`).on("click", () => {
+				dom(
+					parseHTML(
+						`<div id="logout-btn" class="ic-small-container">
+							<span class="ic-small ic-right-arrow-bracket"></span>
+						</div>`,
+					),
+				).on("click", () => {
 					location.href = "/login/";
 				}),
 			)
 			.append(
-				dom(`<div id="settings-btn" class="ic-small-container">
-					<span class="ic-small ic-gear"></span>
-				</div>`),
-			).element,
-		content: dom(`<div class="content"></div>`).element,
-		footer: dom(`<div class="footer hidden"></div>`).element,
+				dom(
+					parseHTML(
+						`<div id="settings-btn" class="ic-small-container">
+							<span class="ic-small ic-gear"></span>
+						</div>`,
+					),
+				),
+			),
+		content: dom(parseHTML(`<div class="content"></div>`)),
+		footer: dom(parseHTML(`<div class="footer hidden"></div>`)),
 		backAction: null,
 	};
 
