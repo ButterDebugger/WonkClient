@@ -163,7 +163,7 @@ async function whoAmI() {
 
 	axios({
 		method: "GET",
-		url: `${homeserver.baseUrl.http}/sync/client/`,
+		url: `${homeserver.baseUrl.http}/sync/client`,
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
