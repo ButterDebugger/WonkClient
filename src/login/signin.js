@@ -138,7 +138,7 @@ async function access() {
 
 	// Retrieve the access token
 	axios
-		.post(`${homeserver.baseUrl.http}/oauth/token/`, {
+		.post(`${homeserver.baseUrl.http}/oauth/token`, {
 			verifier: verifier,
 		})
 		.then(async (res) => {
