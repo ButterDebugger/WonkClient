@@ -1,4 +1,4 @@
-import { dom, parseHTML } from "@debutter/dom";
+import { dom, html } from "@debutter/dom";
 import { switchNav } from "../navigator.ts";
 import { leaveRoom } from "../main.ts";
 import { createUserChip } from "../components.ts";
@@ -8,7 +8,7 @@ import {
 	getView,
 	setView,
 	switchView,
-	type ViewWrapper,
+	type ViewWrapper
 } from "../views.ts";
 
 export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
@@ -33,7 +33,7 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	};
 
 	// Add members list and update handlers
-	const $membersList = dom(parseHTML(`<div class="members-list"></div>`));
+	const $membersList = dom(html`<div class="members-list"></div>`);
 
 	// TODO: make a loading screen until this finishes
 	for (const member of room.members) {
@@ -66,28 +66,24 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 
 	dom(view.header).append(
 		dom(
-			parseHTML(
-				`<div class="tab no-select active" for="general">
-					<span class="ic-small ic-gear"></span>
-					<span class="tab-name">General</span>
-				</div>`,
-			),
+			html`<div class="tab no-select active" for="general">
+				<span class="ic-small ic-gear"></span>
+				<span class="tab-name">General</span>
+			</div>`
 		).on("click", () => switchInfoTab("general")),
 		dom(
-			parseHTML(
-				`<div class="tab no-select" for="members">
-					<span class="ic-small ic-user"></span>
-					<span class="tab-name">Members</span>
-				</div>`,
-			),
-		).on("click", () => switchInfoTab("members")),
+			html`<div class="tab no-select" for="members">
+				<span class="ic-small ic-user"></span>
+				<span class="tab-name">Members</span>
+			</div>`
+		).on("click", () => switchInfoTab("members"))
 	);
 
 	// Add tab sections
 	dom(view.content).append(
 		// Add general settings area
-		dom(parseHTML(`<div class="info-container" for="general"></div>`)).append(
-			dom(parseHTML("<button>Leave</button>")).on("click", async () => {
+		dom(html`<div class="info-container" for="general"></div>`).append(
+			dom(html`<button>Leave</button>`).on("click", async () => {
 				const success = await leaveRoom(room.name);
 
 				if (success) {
@@ -95,12 +91,12 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 				} else {
 					console.error("Failed to leave room"); // TODO: make fancier
 				}
-			}),
+			})
 		),
 		// Add members area
 		dom(
-			parseHTML(`<div class="info-container hidden" for="members"></div>`),
-		).append($membersList),
+			html`<div class="info-container hidden" for="members"></div>`
+		).append($membersList)
 	);
 
 	// Save and return the view

@@ -1,9 +1,9 @@
-import { dom, parseHTML } from "@debutter/dom";
+import { dom, html } from "@debutter/dom";
 import type { Room } from "../../../lib/roomManager.ts";
 import {
 	clearRoomAttachments,
 	getRoomAttachments,
-	showAttachmentModal,
+	showAttachmentModal
 } from "../attachments.ts";
 import { sendMessage } from "../main.ts";
 import {
@@ -11,7 +11,7 @@ import {
 	getView,
 	setView,
 	switchView,
-	type ViewWrapper,
+	type ViewWrapper
 } from "../views.ts";
 import { getOrCreateRoomInfoView } from "./room-info.ts";
 import type { RoomMessage } from "../../../lib/client.ts";
@@ -38,7 +38,7 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 
 	// Create message input field
 	const $messageInput = dom(
-		parseHTML(`<input type="text" name="message-input" maxlength="1000">`),
+		html`<input type="text" name="message-input" maxlength="1000" />`
 	)
 		.on("keydown", ({ key }: KeyboardEvent) => {
 			if (key === "Enter") send();
@@ -54,7 +54,7 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 
 		const result = await sendMessage(room.name, {
 			text: value,
-			attachments: getRoomAttachments(room.name),
+			attachments: getRoomAttachments(room.name)
 		});
 
 		clearRoomAttachments(room.name);
@@ -66,11 +66,9 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 
 	// Create attach icon
 	const $attachBtn = dom(
-		parseHTML(
-			`<div class="ic-normal-container" name="attachment-button">
-				<span class="ic-normal ic-paperclip"></span>
-			</div>`,
-		),
+		html`<div class="ic-normal-container" name="attachment-button">
+			<span class="ic-normal ic-paperclip"></span>
+		</div>`
 	);
 	$attachBtn.on("click", () => showAttachmentModal(room.name));
 
@@ -84,33 +82,29 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 
 		// Add send icon to wrapper footer
 		dom(
-			parseHTML(
-				`<div class="ic-normal-container">
-	                <span name="send-button" class="ic-normal ic-arrow-up"></span>
-	            </div>`,
-			),
-		).on("click", () => send()),
+			html`<div class="ic-normal-container">
+				<span name="send-button" class="ic-normal ic-arrow-up"></span>
+			</div>`
+		).on("click", () => send())
 	);
 
 	// Append header content
 	dom(view.header).append(
 		// Append room label to wrapper header
-		dom(parseHTML(`<span class="title"></span>`)).text(room.name),
-		dom(parseHTML(`<span class="description"></span>`)).text(room.description),
+		dom(html`<span class="title"></span>`).text(room.name),
+		dom(html`<span class="description"></span>`).text(room.description),
 
 		// Append flex spacer
 		`<div class="flex-spacer"></div>`,
 
 		// Append more icon to wrapper header
 		dom(
-			parseHTML(
-				`<div class="ic-small-container">
-					<span class="ic-small ic-ellipsis"></span>
-				</div>`,
-			),
+			html`<div class="ic-small-container">
+				<span class="ic-small ic-ellipsis"></span>
+			</div>`
 		).on("click", () => {
 			switchView(getOrCreateRoomInfoView(room));
-		}),
+		})
 	);
 
 	// Save and return the view

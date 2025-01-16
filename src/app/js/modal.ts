@@ -1,8 +1,6 @@
-import { $, dom, type DomContext, parseHTML } from "@debutter/dom";
+import { $, dom, type DomContext, html } from "@debutter/dom";
 
-const $background = dom(
-	parseHTML(`<div id="modal-background" class="hidden"></div>`),
-);
+const $background = dom(html`<div id="modal-background" class="hidden"></div>`);
 const modalQueue: Modal[] = [];
 let isModalUnlocked = true; // TODO: provide some indicator that the modal is locked
 
@@ -17,7 +15,7 @@ export function showModal(title: string, content: DomContext) {
 	if (isModalPresent()) {
 		modalQueue.push({
 			title,
-			content,
+			content
 		});
 		return;
 	}
@@ -34,30 +32,26 @@ export function showModal(title: string, content: DomContext) {
 
 	// Create and append the modal to the body
 	const $modal = dom(
-		parseHTML(
-			`<div id="modal-wrapper">
-				<div class="header">
-					<span class="title">Modal</span>
-				</div>
-				<div class="content"></div>
-			</div>`,
-		),
+		html`<div id="modal-wrapper">
+			<div class="header">
+				<span class="title">Modal</span>
+			</div>
+			<div class="content"></div>
+		</div>`
 	);
 
 	$modal.find(".title")?.text(title);
 
 	$modal.find(".header")?.append(
 		dom(
-			parseHTML(
-				`<div class="ic-small-container">
-					<span class="ic-small ic-xmark"></span>
-				</div>`,
-			),
+			html`<div class="ic-small-container">
+				<span class="ic-small ic-xmark"></span>
+			</div>`
 		).on("click", () => {
 			if (isModalUnlocked) {
 				hideModal();
 			}
-		}),
+		})
 	);
 
 	$modal.find(".content")?.append(content);

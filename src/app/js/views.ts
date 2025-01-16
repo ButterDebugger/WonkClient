@@ -1,4 +1,4 @@
-import { dom, parseHTML, type DomContext } from "@debutter/dom";
+import { dom, html, type DomContext } from "@debutter/dom";
 
 export type BackFunction = (() => void) | null;
 
@@ -35,10 +35,10 @@ export function setView(name: string, wrapper: ViewWrapper): void {
 
 export function createBlankView(): ViewWrapper {
 	return {
-		header: dom(parseHTML(`<div class="header"></div>`)),
-		content: dom(parseHTML(`<div class="content"></div>`)),
-		footer: dom(parseHTML(`<div class="footer"></div>`)),
-		backAction: null,
+		header: dom(html`<div class="header"></div>`),
+		content: dom(html`<div class="content"></div>`),
+		footer: dom(html`<div class="footer"></div>`),
+		backAction: null
 	};
 }
 

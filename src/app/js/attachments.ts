@@ -1,4 +1,4 @@
-import { dom, type DomContext, parseHTML } from "@debutter/dom";
+import { dom, type DomContext, html } from "@debutter/dom";
 import { lockModal, showModal, unlockModal } from "./modal.ts";
 import { client } from "./main.ts";
 import type { Attachment } from "../../lib/attachmentManager.ts";
@@ -10,19 +10,15 @@ const roomFiles = new Map();
 const roomAttachments = new Map();
 
 export function showAttachmentModal(roomName: string) {
-	const $container = dom(
-		parseHTML(`<div class="container flex-column"></div>`),
-	);
+	const $container = dom(html`<div class="container flex-column"></div>`);
 	const $inputBox = dom(
-		parseHTML(
-			`<div class="attachment-box">
-				<span class="ic-normal ic-upload"></span>
-				<span class="no-select top-text">Drag and drop files here</span>
-				<span class="no-select sub-text">or click to select files</span>
-			</div>`,
-		),
+		html`<div class="attachment-box">
+			<span class="ic-normal ic-upload"></span>
+			<span class="no-select top-text">Drag and drop files here</span>
+			<span class="no-select sub-text">or click to select files</span>
+		</div>`
 	);
-	const $fileList = dom(parseHTML(`<div class="attachment-list"></div>`));
+	const $fileList = dom(html`<div class="attachment-list"></div>`);
 	const $input = getOrCreateFileInput(roomName);
 	const inputEle = <HTMLInputElement>$input.element;
 
@@ -33,14 +29,16 @@ export function showAttachmentModal(roomName: string) {
 	const updateModal = () => {
 		// Update the file list
 		while ($fileList.element.firstChild) {
-			$fileList.element.removeChild(<ChildNode>$fileList.element.lastChild);
+			$fileList.element.removeChild(
+				<ChildNode>$fileList.element.lastChild
+			);
 		}
 
 		for (const file of inputEle.files ?? []) {
 			$fileList.append(
-				dom(parseHTML(`<span class="file-chip no-select"></span>`)).text(
-					file.name,
-				),
+				dom(html`<span class="file-chip no-select"></span>`).text(
+					file.name
+				)
 			);
 		}
 
@@ -84,7 +82,7 @@ async function uploadAttachments(roomName: string) {
 function getOrCreateFileInput(roomName: string): DomContext {
 	if (roomFiles.has(roomName)) return roomFiles.get(roomName);
 
-	const $input = dom(parseHTML(`<input type="file" required multiple>`));
+	const $input = dom(html`<input type="file" required multiple />`);
 
 	roomFiles.set(roomName, $input);
 	return $input;

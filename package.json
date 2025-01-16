@@ -12,7 +12,7 @@
 	"author": "ButterDebugger",
 	"license": "MIT",
 	"dependencies": {
-		"@debutter/dom": "npm:@jsr/debutter__dom@^0.1.2",
+		"@debutter/dom": "npm:@jsr/debutter__dom@^0.2.0",
 		"@debutter/jsbin": "npm:@jsr/debutter__jsbin@^1.1.0",
 		"@fortawesome/fontawesome-free": "^6.6.0",
 		"axios": "^1.7.4",

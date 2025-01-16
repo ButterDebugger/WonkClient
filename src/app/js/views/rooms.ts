@@ -1,4 +1,4 @@
-import { dom, type DomContext, parseHTML } from "@debutter/dom";
+import { dom, type DomContext, html } from "@debutter/dom";
 import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
 import { hideModal, showModal } from "../modal.ts";
 import { client, joinOrCreateRoom } from "../main.ts";
@@ -13,30 +13,29 @@ export function getRoomsView(): ViewWrapper {
 	// Create new view
 	const view: ViewWrapper = {
 		header: dom(
-			parseHTML(
-				`<div class="header">
-					<span class="title">Rooms</span>
-					<div class="flex-spacer"></div>
-				</div>`,
-			),
+			html`<div class="header">
+				<span class="title">Rooms</span>
+				<div class="flex-spacer"></div>
+			</div>`
 		).append(
 			dom(
-				parseHTML(
-					`<div id="join-room-btn" class="ic-small-container">
-						<span class="ic-small ic-plus"></span>
-					</div>`,
-				),
+				html`<div id="join-room-btn" class="ic-small-container">
+					<span class="ic-small ic-plus"></span>
+				</div>`
 			).on("click", () => {
 				const $container = dom(
-					parseHTML(`<div class="container flex-row"></div>`),
+					html`<div class="container flex-row"></div>`
 				);
 				const $input = dom(
-					parseHTML(
-						`<input type="text" placeholder="Name" required minlength="3">`,
-					),
+					html`<input
+						type="text"
+						placeholder="Name"
+						required
+						minlength="3"
+					/>`
 				);
 				const inputEle = <HTMLInputElement>$input.element;
-				const $joinBtn = dom(parseHTML("<button disabled>Join</button>"));
+				const $joinBtn = dom(html`<button disabled>Join</button>`);
 
 				$input.on("input", () => {
 					if (inputEle.validity.valid) {
@@ -59,11 +58,11 @@ export function getRoomsView(): ViewWrapper {
 				});
 
 				showModal("Join Room", $container);
-			}),
+			})
 		),
-		content: dom(parseHTML(`<div class="content"></div>`)),
-		footer: dom(parseHTML(`<div class="footer hidden"></div>`)),
-		backAction: null,
+		content: dom(html`<div class="content"></div>`),
+		footer: dom(html`<div class="footer hidden"></div>`),
+		backAction: null
 	};
 
 	// Save and return the view
@@ -83,7 +82,7 @@ export function updateRoomsTabs() {
 
 		// Remove room tab from list of old tabs
 		$oldTabs = $oldTabs.filter(
-			(tab) => tab.attr("data-channel-id") !== room.name,
+			(tab) => tab.attr("data-channel-id") !== room.name
 		);
 
 		$ele.on("click", () => {
