@@ -43,15 +43,16 @@ export function showModal(title: string, content: DomContext) {
 	$modal.find(".title")?.text(title);
 
 	$modal.find(".header")?.append(
-		dom(
-			html`<div class="ic-small-container">
-				<span class="ic-small ic-xmark"></span>
-			</div>`
-		).on("click", () => {
-			if (isModalUnlocked) {
-				hideModal();
-			}
-		})
+		html`<div
+			class="ic-small-container"
+			onclick=${() => {
+				if (isModalUnlocked) {
+					hideModal();
+				}
+			}}
+		>
+			<span class="ic-small ic-xmark"></span>
+		</div>`
 	);
 
 	$modal.find(".content")?.append(content);

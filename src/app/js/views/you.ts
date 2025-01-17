@@ -15,13 +15,15 @@ export function getYouView(): ViewWrapper {
 			</div>`
 		)
 			.append(
-				dom(
-					html`<div id="logout-btn" class="ic-small-container">
-						<span class="ic-small ic-right-arrow-bracket"></span>
-					</div>`
-				).on("click", () => {
-					location.href = "/login/";
-				})
+				html`<div
+					id="logout-btn"
+					class="ic-small-container"
+					onclick=${() => {
+						location.href = "/login/";
+					}}
+				>
+					<span class="ic-small ic-right-arrow-bracket"></span>
+				</div>`
 			)
 			.append(
 				dom(

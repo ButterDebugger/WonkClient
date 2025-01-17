@@ -64,28 +64,24 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 		}
 	}
 
-	// Create attach icon
-	const $attachBtn = dom(
-		html`<div class="ic-normal-container" name="attachment-button">
-			<span class="ic-normal ic-paperclip"></span>
-		</div>`
-	);
-	$attachBtn.on("click", () => showAttachmentModal(room.name));
-
 	// Append footer message box
 	dom(view.footer).append(
 		// Add attach icon to wrapper footer
-		$attachBtn,
+		html`<div
+			class="ic-normal-container"
+			name="attachment-button"
+			onclick=${() => showAttachmentModal(room.name)}
+		>
+			<span class="ic-normal ic-paperclip"></span>
+		</div>`,
 
 		// Add message input
 		$messageInput,
 
 		// Add send icon to wrapper footer
-		dom(
-			html`<div class="ic-normal-container">
-				<span name="send-button" class="ic-normal ic-arrow-up"></span>
-			</div>`
-		).on("click", () => send())
+		html`<div class="ic-normal-container" onclick=${() => send()}>
+			<span name="send-button" class="ic-normal ic-arrow-up"></span>
+		</div>`
 	);
 
 	// Append header content
@@ -98,13 +94,12 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 		`<div class="flex-spacer"></div>`,
 
 		// Append more icon to wrapper header
-		dom(
-			html`<div class="ic-small-container">
-				<span class="ic-small ic-ellipsis"></span>
-			</div>`
-		).on("click", () => {
-			switchView(getOrCreateRoomInfoView(room));
-		})
+		html`<div
+			class="ic-small-container"
+			onclick=${() => switchView(getOrCreateRoomInfoView(room))}
+		>
+			<span class="ic-small ic-ellipsis"></span>
+		</div>`
 	);
 
 	// Save and return the view

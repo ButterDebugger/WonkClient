@@ -10,6 +10,7 @@ import {
 	switchView,
 	type ViewWrapper
 } from "../views.ts";
+import { getRoomsView } from "./rooms.ts";
 
 export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	// Return existing view
@@ -65,34 +66,43 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	}
 
 	dom(view.header).append(
-		dom(
-			html`<div class="tab no-select active" for="general">
-				<span class="ic-small ic-gear"></span>
-				<span class="tab-name">General</span>
-			</div>`
-		).on("click", () => switchInfoTab("general")),
-		dom(
-			html`<div class="tab no-select" for="members">
-				<span class="ic-small ic-user"></span>
-				<span class="tab-name">Members</span>
-			</div>`
-		).on("click", () => switchInfoTab("members"))
+		html`<div
+			class="tab no-select active"
+			for="general"
+			onclick=${() => switchInfoTab("general")}
+		>
+			<span class="ic-small ic-gear"></span>
+			<span class="tab-name">General</span>
+		</div>`,
+		html`<div
+			class="tab no-select"
+			for="members"
+			onclick=${() => switchInfoTab("members")}
+		>
+			<span class="ic-small ic-user"></span>
+			<span class="tab-name">Members</span>
+		</div>`
 	);
 
 	// Add tab sections
 	dom(view.content).append(
 		// Add general settings area
-		dom(html`<div class="info-container" for="general"></div>`).append(
-			dom(html`<button>Leave</button>`).on("click", async () => {
-				const success = await leaveRoom(room.name);
+		dom(html`<div class="info-container" for="general">
+			<button
+				onclick=${async () => {
+					const success = await leaveRoom(room.name);
 
-				if (success) {
-					switchNav("rooms");
-				} else {
-					console.error("Failed to leave room"); // TODO: make fancier
-				}
-			})
-		),
+					if (success) {
+						switchNav("rooms");
+						switchView(getRoomsView());
+					} else {
+						console.error("Failed to leave room"); // TODO: make fancier
+					}
+				}}
+			>
+				Leave
+			</button>
+		</div>`),
 		// Add members area
 		dom(
 			html`<div class="info-container hidden" for="members"></div>`

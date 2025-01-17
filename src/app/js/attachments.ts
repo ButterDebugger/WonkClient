@@ -11,20 +11,23 @@ const roomAttachments = new Map();
 
 export function showAttachmentModal(roomName: string) {
 	const $container = dom(html`<div class="container flex-column"></div>`);
+	const $input = getOrCreateFileInput(roomName);
+	const inputEle = <HTMLInputElement>$input.element;
 	const $inputBox = dom(
-		html`<div class="attachment-box">
+		html`<div
+			class="attachment-box"
+			onclick=${() => {
+				document.body.appendChild(inputEle);
+				inputEle.click();
+				document.body.removeChild(inputEle);
+			}}
+		>
 			<span class="ic-normal ic-upload"></span>
 			<span class="no-select top-text">Drag and drop files here</span>
 			<span class="no-select sub-text">or click to select files</span>
 		</div>`
 	);
 	const $fileList = dom(html`<div class="attachment-list"></div>`);
-	const $input = getOrCreateFileInput(roomName);
-	const inputEle = <HTMLInputElement>$input.element;
-
-	$inputBox.on("click", () => {
-		inputEle.click();
-	});
 
 	const updateModal = () => {
 		// Update the file list
