@@ -4,6 +4,8 @@ import { hideModal, showModal } from "../modal.ts";
 import { client, joinOrCreateRoom } from "../main.ts";
 import { createRoomTab } from "../components.ts";
 import { getOrCreateRoomView } from "./room.ts";
+import { switchNav } from "../navigator.ts";
+import { appendBreadcrumb } from "../breadcrumbs.ts";
 
 export function getRoomsView(): ViewWrapper {
 	// Return existing view
@@ -14,55 +16,77 @@ export function getRoomsView(): ViewWrapper {
 	const view: ViewWrapper = {
 		header: dom(
 			html`<div class="header">
-				<span class="title">Rooms</span>
-				<div class="flex-spacer"></div>
+				<div class="center">
+					<span class="title">Rooms</span>
+				</div>
+
+				<div class="right">
+					<div
+						class="ic-small-container"
+						onclick=${() => {
+							const $container = dom(
+								html`<div class="container flex-row"></div>`
+							);
+							const $input = dom(
+								html`<input
+									type="text"
+									placeholder="Name"
+									required
+									minlength="3"
+								/>`
+							);
+							const inputEle = <HTMLInputElement>$input.element;
+							const $joinBtn = dom(
+								html`<button disabled>Join</button>`
+							);
+
+							$input.on("input", () => {
+								if (inputEle.validity.valid) {
+									$joinBtn.prop("disabled", false);
+								} else {
+									$joinBtn.prop("disabled", true);
+								}
+							});
+
+							$container.append($input, $joinBtn);
+
+							$joinBtn.on("click", async () => {
+								$joinBtn.prop("disabled", true);
+
+								if (
+									await joinOrCreateRoom(
+										<string>$input.prop("value")
+									)
+								) {
+									hideModal();
+								}
+
+								$joinBtn.prop("disabled", false);
+							});
+
+							showModal("Join Room", $container);
+						}}
+					>
+						<span class="ic-small ic-plus"></span>
+					</div>
+				</div>
 			</div>`
-		).append(
-			dom(
-				html`<div id="join-room-btn" class="ic-small-container">
-					<span class="ic-small ic-plus"></span>
-				</div>`
-			).on("click", () => {
-				const $container = dom(
-					html`<div class="container flex-row"></div>`
-				);
-				const $input = dom(
-					html`<input
-						type="text"
-						placeholder="Name"
-						required
-						minlength="3"
-					/>`
-				);
-				const inputEle = <HTMLInputElement>$input.element;
-				const $joinBtn = dom(html`<button disabled>Join</button>`);
-
-				$input.on("input", () => {
-					if (inputEle.validity.valid) {
-						$joinBtn.prop("disabled", false);
-					} else {
-						$joinBtn.prop("disabled", true);
-					}
-				});
-
-				$container.append($input, $joinBtn);
-
-				$joinBtn.on("click", async () => {
-					$joinBtn.prop("disabled", true);
-
-					if (await joinOrCreateRoom(<string>$input.prop("value"))) {
-						hideModal();
-					}
-
-					$joinBtn.prop("disabled", false);
-				});
-
-				showModal("Join Room", $container);
-			})
 		),
 		content: dom(html`<div class="content"></div>`),
 		footer: dom(html`<div class="footer hidden"></div>`),
-		backAction: null
+		switchAction: () => {
+			// Update navigation
+			switchNav("rooms");
+
+			// Append breadcrumb
+			appendBreadcrumb(
+				"Rooms",
+				() => {
+					switchView(getRoomsView());
+				},
+				"Home"
+			);
+		}
 	};
 
 	// Save and return the view

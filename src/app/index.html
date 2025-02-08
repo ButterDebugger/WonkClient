@@ -50,19 +50,38 @@
 	</head>
 	<body>
 		<div id="root">
-			<div id="app">
-				<div class="head">
-					<div class="back-container hidden">
+			<div id="app" class="vertical-container">
+				<div class="top-container horizontal-scroll">
+					<div id="breadcrumbs"></div>
+
+					<!-- <div class="flex-spacer"></div>
+
+					<div class="ic-small-container ic-inset">
+						<span class="ic-small ic-user"> </span>
+					</div> -->
+
+					<!-- <div class="back-container hidden">
 						<div class="back-btn ic-small-container">
 							<span class="ic-small ic-chevron-left"></span>
 						</div>
-					</div>
-					<div class="header"></div>
+					</div> -->
 				</div>
-				<div class="content"></div>
-				<div class="footer hidden"></div>
+				<div class="content-wrapper">
+					<div class="header"></div>
+					<div class="content"></div>
+					<div class="footer hidden"></div>
+				</div>
+			</div>
 
-				<div class="navigator" id="navbar">
+			<div class="vertical-container">
+				<div class="top-container hide-on-mobile">
+					<a href="/" class="logo">
+						<span class="ic-normal ic-logo"></span>
+						<span>Wonk Chat</span>
+					</a>
+				</div>
+
+				<div id="navbar">
 					<div id="nav-explore" class="nav-item active">
 						<span class="nav-icon ic-compass"></span>
 						<span class="nav-text">Explore</span>
@@ -75,7 +94,7 @@
 						<span class="nav-icon ic-at"></span>
 						<span class="nav-text">DMs</span>
 					</div>
-					<div class="flex-spacer"></div>
+					<!-- <div class="flex-spacer"></div> -->
 					<div id="nav-you" class="nav-item">
 						<span class="nav-icon ic-user"></span>
 						<span class="nav-text">You</span>

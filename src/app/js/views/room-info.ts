@@ -11,6 +11,7 @@ import {
 	type ViewWrapper
 } from "../views.ts";
 import { getRoomsView } from "./rooms.ts";
+import { appendBreadcrumb } from "../breadcrumbs.ts";
 
 export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	// Return existing view
@@ -26,34 +27,44 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	view.header.addClass("room-info");
 	view.content.addClass("room-info");
 	view.footer.addClass("hidden");
-	view.backAction = () => {
-		const view = getView(roomKey);
-		if (!view) return;
-
-		switchView(view);
+	view.switchAction = () => {
+		// Append breadcrumb
+		appendBreadcrumb(
+			"Info",
+			() => {
+				switchView(view);
+			},
+			roomKey
+		);
 	};
 
 	// Add members list and update handlers
 	const $membersList = dom(html`<div class="members-list"></div>`);
 
-	// TODO: make a loading screen until this finishes
-	for (const member of room.members) {
-		room.client.users.fetch(member).then((user) => {
-			const ele = createUserChip(user.username, user.color, user.online);
+	function updateMembersList() {
+		// TODO: make a loading screen until this finishes
+		for (const member of room.members) {
+			room.client.users.fetch(member).then((user) => {
+				const ele = createUserChip(
+					user.username,
+					user.color,
+					user.online
+				);
 
-			$membersList.append(ele); // TODO: add members in alphabetical order and by statuses
-		});
+				$membersList.append(ele); // TODO: add members in alphabetical order and by statuses
+			});
+		}
 	}
 
 	room.client.on("roomMemberJoin", (username, roomName) => {
 		if (room.name !== roomName) return;
 
-		// TODO: dynamically add user to members list
+		updateMembersList(); // TODO: dynamically add user to members list, instead of refreshing
 	});
 	room.client.on("roomMemberLeave", (username, roomName) => {
 		if (room.name !== roomName) return;
 
-		// TODO: remove user from the members list
+		updateMembersList(); // TODO: only remove user from members list, instead of refreshing
 	});
 
 	// Add header tab buttons
@@ -66,21 +77,23 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	}
 
 	dom(view.header).append(
-		html`<div
-			class="tab no-select active"
-			for="general"
-			onclick=${() => switchInfoTab("general")}
-		>
-			<span class="ic-small ic-gear"></span>
-			<span class="tab-name">General</span>
-		</div>`,
-		html`<div
-			class="tab no-select"
-			for="members"
-			onclick=${() => switchInfoTab("members")}
-		>
-			<span class="ic-small ic-user"></span>
-			<span class="tab-name">Members</span>
+		html`<div class="left">
+			<div
+				class="tab no-select active"
+				for="general"
+				onclick=${() => switchInfoTab("general")}
+			>
+				<span class="ic-small ic-gear"></span>
+				<span class="tab-name">General</span>
+			</div>
+			<div
+				class="tab no-select"
+				for="members"
+				onclick=${() => switchInfoTab("members")}
+			>
+				<span class="ic-small ic-user"></span>
+				<span class="tab-name">Members</span>
+			</div>
 		</div>`
 	);
 

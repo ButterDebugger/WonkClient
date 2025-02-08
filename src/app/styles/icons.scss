@@ -1,8 +1,7 @@
 :root {
-	--ic-large: 32px;
-	--ic-normal: 24px;
-	--ic-small: 20px;
-	--ic-extra-small: 16px;
+	--ic-large: 2em;
+	--ic-normal: 1.5em;
+	--ic-small: 1.25em;
 }
 
 /* Icons */
@@ -131,6 +130,11 @@
 
 	--ic-url: url("/assets/dot/yellow.svg");
 }
+.ic-logo {
+	@include icon(true);
+
+	--ic-url: url("/icon.png");
+}
 
 /* Icon sizes */
 .ic-large {
@@ -144,10 +148,6 @@
 .ic-small {
 	width: var(--ic-small);
 	height: var(--ic-small);
-}
-.ic-extra-small {
-	width: var(--ic-extra-small);
-	height: var(--ic-extra-small);
 }
 .ic-text-size {
 	width: 1em;
@@ -164,9 +164,6 @@
 .ic-small-container {
 	--ic-container-size: var(--ic-small);
 }
-.ic-extra-small-container {
-	--ic-container-size: var(--ic-extra-small);
-}
 .ic-text-size-container {
 	--ic-container-size: 1lh;
 }
@@ -175,7 +172,6 @@
 .ic-large-container,
 .ic-normal-container,
 .ic-small-container,
-.ic-extra-small-container,
 .ic-text-size-container {
 	display: flex;
 	justify-content: center;
@@ -193,5 +189,8 @@
 	}
 	&:active {
 		background-color: var(--active-color);
+	}
+	&.ic-inset {
+		margin: -8px;
 	}
 }

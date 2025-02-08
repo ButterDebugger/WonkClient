@@ -1,5 +1,7 @@
 import { dom, html } from "@debutter/dom";
-import { getView, setView, type ViewWrapper } from "../views.ts";
+import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
+import { switchNav } from "../navigator.ts";
+import { appendBreadcrumb } from "../breadcrumbs.ts";
 
 export function getExploreView(): ViewWrapper {
 	// Return existing view
@@ -10,17 +12,34 @@ export function getExploreView(): ViewWrapper {
 	const view: ViewWrapper = {
 		header: dom(
 			html`<div class="header">
-				<span class="title">Explore</span>
-				<div class="flex-spacer"></div>
+				<div class="left"></div>
 
-				<div id="start-search-btn" class="ic-small-container">
-					<span class="ic-small ic-magnifying-glass"></span>
+				<div class="center">
+					<span class="title">Explore</span>
+				</div>
+
+				<div class="right">
+					<div class="ic-small-container">
+						<span class="ic-small ic-magnifying-glass"></span>
+					</div>
 				</div>
 			</div>`
 		),
 		content: dom(html`<div class="content"></div>`),
 		footer: dom(html`<div class="footer hidden"></div>`),
-		backAction: null
+		switchAction: () => {
+			// Update navigation
+			switchNav("explore");
+
+			// Append breadcrumb
+			appendBreadcrumb(
+				"Explore",
+				() => {
+					switchView(getExploreView());
+				},
+				"Home"
+			);
+		}
 	};
 
 	// Save and return the view

@@ -1,5 +1,7 @@
 import { dom, html } from "@debutter/dom";
-import { getView, setView, type ViewWrapper } from "../views.ts";
+import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
+import { switchNav } from "../navigator.ts";
+import { appendBreadcrumb } from "../breadcrumbs.ts";
 
 export function getMessagesView(): ViewWrapper {
 	// Return existing view
@@ -10,10 +12,17 @@ export function getMessagesView(): ViewWrapper {
 	const view: ViewWrapper = {
 		header: dom(
 			html`<div class="header">
-				<span class="title">Messages</span>
-				<div class="flex-spacer"></div>
-				<div class="ic-small-container">
-					<span id="start-convo-btn" class="ic-small ic-plus"></span>
+				<div class="center">
+					<span class="title">Messages</span>
+				</div>
+
+				<div class="right">
+					<div class="ic-small-container">
+						<span
+							id="start-convo-btn"
+							class="ic-small ic-plus"
+						></span>
+					</div>
 				</div>
 			</div>`
 		),
@@ -34,7 +43,19 @@ export function getMessagesView(): ViewWrapper {
 			</div>`
 		),
 		footer: dom(html`<div class="footer hidden"></div>`),
-		backAction: null
+		switchAction: () => {
+			// Update navigation
+			switchNav("messages");
+
+			// Append breadcrumb
+			appendBreadcrumb(
+				"Messages",
+				() => {
+					switchView(getMessagesView());
+				},
+				"Home"
+			);
+		}
 	};
 
 	// Save and return the view

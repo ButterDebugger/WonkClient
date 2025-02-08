@@ -17,6 +17,7 @@ import { getOrCreateRoomInfoView } from "./room-info.ts";
 import type { RoomMessage } from "../../../lib/client.ts";
 import { createMessage } from "../components.ts";
 import { getRoomsView } from "./rooms.ts";
+import { appendBreadcrumb } from "../breadcrumbs.ts";
 
 export function getOrCreateRoomView(room: Room): ViewWrapper {
 	// Return existing view
@@ -30,10 +31,15 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 	view.header.addClass("room");
 	view.content.addClass("room");
 	view.footer.addClass("room");
-	view.backAction = () => {
-		const view = getRoomsView();
-
-		switchView(view);
+	view.switchAction = () => {
+		// Append breadcrumb
+		appendBreadcrumb(
+			roomKey,
+			() => {
+				switchView(view);
+			},
+			"Rooms"
+		);
 	};
 
 	// Create message input field
@@ -87,18 +93,19 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 	// Append header content
 	dom(view.header).append(
 		// Append room label to wrapper header
-		dom(html`<span class="title"></span>`).text(room.name),
-		dom(html`<span class="description"></span>`).text(room.description),
-
-		// Append flex spacer
-		`<div class="flex-spacer"></div>`,
+		dom(html`<div class="center"></div>`).append(
+			dom(html`<span class="title"></span>`).text(room.name),
+			dom(html`<span class="description"></span>`).text(room.description)
+		),
 
 		// Append more icon to wrapper header
-		html`<div
-			class="ic-small-container"
-			onclick=${() => switchView(getOrCreateRoomInfoView(room))}
-		>
-			<span class="ic-small ic-ellipsis"></span>
+		html`<div class="right">
+			<div
+				class="ic-small-container"
+				onclick=${() => switchView(getOrCreateRoomInfoView(room))}
+			>
+				<span class="ic-small ic-ellipsis"></span>
+			</div>
 		</div>`
 	);
 

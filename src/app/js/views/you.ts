@@ -1,5 +1,7 @@
 import { dom, html } from "@debutter/dom";
-import { getView, setView, type ViewWrapper } from "../views.ts";
+import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
+import { switchNav } from "../navigator.ts";
+import { appendBreadcrumb } from "../breadcrumbs.ts";
 
 export function getYouView(): ViewWrapper {
 	// Return existing view
@@ -10,31 +12,42 @@ export function getYouView(): ViewWrapper {
 	const view: ViewWrapper = {
 		header: dom(
 			html`<div class="header">
-				<span class="title">You</span>
-				<div class="flex-spacer"></div>
-			</div>`
-		)
-			.append(
-				html`<div
-					id="logout-btn"
-					class="ic-small-container"
-					onclick=${() => {
-						location.href = "/login/";
-					}}
-				>
-					<span class="ic-small ic-right-arrow-bracket"></span>
-				</div>`
-			)
-			.append(
-				dom(
-					html`<div id="settings-btn" class="ic-small-container">
+				<div class="center">
+					<span class="title">You</span>
+				</div>
+
+				<div class="right">
+					<div
+						id="logout-btn"
+						class="ic-small-container"
+						onclick=${() => {
+							location.href = "/login/";
+						}}
+					>
+						<span class="ic-small ic-right-arrow-bracket"></span>
+					</div>
+
+					<div id="settings-btn" class="ic-small-container">
 						<span class="ic-small ic-gear"></span>
-					</div>`
-				)
-			),
+					</div>
+				</div>
+			</div>`
+		),
 		content: dom(html`<div class="content"></div>`),
 		footer: dom(html`<div class="footer hidden"></div>`),
-		backAction: null
+		switchAction: () => {
+			// Update navigation
+			switchNav("you");
+
+			// Append breadcrumb
+			appendBreadcrumb(
+				"You",
+				() => {
+					switchView(getYouView());
+				},
+				"Home"
+			);
+		}
 	};
 
 	// Save and return the view

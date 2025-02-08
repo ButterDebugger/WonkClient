@@ -4,11 +4,14 @@ import {
 	Client,
 	generateKeyPair,
 	errorCodes,
-	ClientError,
+	ClientError
 } from "../../lib/client.ts";
 import type { MessageOptions } from "../../lib/roomManager.ts";
 import { appendMessage } from "./views/room.ts";
 import { updateRoomsTabs } from "./views/rooms.ts";
+import { appendBreadcrumb } from "./breadcrumbs.ts";
+import { switchView } from "./views.ts";
+import { getExploreView } from "./views/explore.ts";
 
 const _username = await binForage.get("username");
 const token = await binForage.get("token");
@@ -31,7 +34,7 @@ export const client = (await Client.login(
 	token,
 	keyPair.publicKey,
 	keyPair.privateKey,
-	homeserver?.baseUrl,
+	homeserver?.baseUrl
 ).catch((err) => {
 	console.error(err);
 

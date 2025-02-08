@@ -1,43 +1,120 @@
-#app {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: auto 1fr;
+#root {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 1.5rem;
 
-    overflow-y: auto;
-    height: 100%;
-    padding: var(--bubble-spacing);
+    padding: 1.5rem;
 
-    > .navigator {
-        grid-column: 2;
-        grid-row: 4;
+    /* Mobile design */
+    @media screen and (max-width: $mobile-threshold) {
+        flex-direction: column;
+    }
+}
 
-        margin-right: var(--bubble-spacing);
+.hide-on-mobile {
+    /* Mobile design */
+    @media screen and (max-width: $mobile-threshold) {
+        display: none !important;
+    }
+}
 
-        /* Desktop design */
-        @media screen and (min-width: $mobile-threshold) {
-            grid-column: 1;
-            grid-row: 1 / 4;
+.top-container {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 0.75rem;
+
+    padding: 0.75rem;
+    min-height: 3rem;
+}
+
+.vertical-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.content-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    flex-direction: column;
+
+    padding: 1.5rem;
+    background-color: var(--dark-container-color);
+    border: 1px solid var(--container-color);
+    border-radius: 1.5rem;
+    flex: 1;
+    max-height: calc(100% - 4.5rem);
+    overflow: hidden;
+
+    .content {
+        overflow-y: auto;
+    }
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    text-decoration: none !important;
+    font-weight: 700;
+
+    img {
+        height: 1.5rem;
+        width: 1.5rem;
+    }
+    span {
+        color: var(--primary-color);
+    }
+}
+
+#breadcrumbs {
+    display: flex;
+    gap: 0.75rem;
+
+    color: var(--secondary-text-color);
+    font-size: 0.875rem;
+
+    .separator {
+        cursor: default;
+    }
+    .crumb {
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+
+        &:hover,
+        &.active {
+            color: var(--text-color);
         }
     }
-    > .head {
-        display: flex;
-        gap: var(--bubble-spacing);
-        margin-bottom: var(--bubble-spacing);
-        grid-column: 2;
+}
 
-        > .back-container {
-            @include bubble;
+#app {
+    flex: 1;
+
+    .header {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 0.75rem;
+
+        > .left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            grid-column: 1;
+            justify-self: start;
         }
 
-        > .header {
-            @include bubble;
-
-            flex: 1;
-
+        > .center {
             display: flex;
             align-items: baseline;
-            justify-content: flex-start;
-            gap: calc(var(--bubble-spacing) / 2);
+            gap: 0.75rem;
+
+            grid-column: 2;
+            justify-self: center;
 
             > .title {
                 font-size: 1.5rem;
@@ -49,20 +126,26 @@
                 color: var(--secondary-text-color);
             }
         }
-    }
-    > .content {
-        @include bubble;
 
-        grid-column: 2;
+        > .right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            grid-column: 3;
+            justify-self: end;
+        }
+    }
+    .content {
+        display: flex;
+        // grid-column: 2;
         flex-direction: column;
-        overflow-y: auto;
         gap: calc(var(--bubble-spacing) / 2);
+
+        flex: 1;
+        overflow-y: auto;
     }
-    > .footer {
-        @include bubble(true);
-
-        grid-column: 2;
-
+    .footer {
         &:not(.hidden) {
             margin-top: var(--bubble-spacing);
         }
