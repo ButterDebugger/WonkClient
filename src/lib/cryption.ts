@@ -11,12 +11,14 @@ export interface KeyPair {
 
 export async function decryptData(
 	message: Uint8Array,
-	privateKey: string,
+	privateKey: string
 ): Promise<Uint8Array> {
 	const { data: decrypted } = await openpgp.decrypt({
 		message: await openpgp.readMessage({ binaryMessage: message }),
-		decryptionKeys: await openpgp.readPrivateKey({ armoredKey: privateKey }),
-		format: "binary",
+		decryptionKeys: await openpgp.readPrivateKey({
+			armoredKey: privateKey
+		}),
+		format: "binary"
 	});
 
 	return decrypted;
@@ -58,11 +60,11 @@ export async function decryptData(
  */
 export async function encryptText(
 	message: string,
-	publicKey: string,
+	publicKey: string
 ): Promise<string> {
 	return await openpgp.encrypt({
 		message: await openpgp.createMessage({ text: message }),
-		encryptionKeys: await openpgp.readKey({ armoredKey: publicKey }),
+		encryptionKeys: await openpgp.readKey({ armoredKey: publicKey })
 	});
 }
 
@@ -75,37 +77,32 @@ export async function encryptText(
  */
 export async function signText(
 	message: string,
-	privateKey: string,
+	privateKey: string
 ): Promise<string> {
 	return await openpgp.sign({
 		message: await openpgp.createMessage({ text: message }),
-		signingKeys: await openpgp.readPrivateKey({ armoredKey: privateKey }),
+		signingKeys: await openpgp.readPrivateKey({ armoredKey: privateKey })
 	});
 }
 
 /**
- * Generates an RSA key pair
+ * Generates an ECC key pair
  *
  * @param name The name associated with the key pair
- * @param bits The number of bits for the RSA key
- * @returns The RSA key pair
+ * @returns The ECC key pair
  */
-export async function generateKeyPair(
-	name: string,
-	bits = 2048,
-): Promise<KeyPair> {
+export async function generateKeyPair(name: string): Promise<KeyPair> {
 	const { publicKey, privateKey } = await openpgp.generateKey({
-		type: "rsa",
-		rsaBits: bits,
+		type: "curve25519",
 		userIDs: [
 			{
-				name: name,
-			},
-		],
+				name: name
+			}
+		]
 	});
 
 	return {
 		publicKey: publicKey,
-		privateKey: privateKey,
+		privateKey: privateKey
 	};
 }
