@@ -1,5 +1,4 @@
 {
-	"workbench.iconTheme": "vs-seti",
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
 	"prettier.tabWidth": 4,
