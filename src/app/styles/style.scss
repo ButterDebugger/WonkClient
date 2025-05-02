@@ -1,11 +1,11 @@
-@import "../../main.scss";
-@import "./icons.scss";
-@import "./room.scss";
-@import "./navbar.scss";
-@import "./modal.scss";
-@import "./attachments.scss";
-@import "./layout.scss";
-@import "./loading.scss";
+@use "../../main.scss";
+@use "icons.scss";
+@use "room.scss";
+@use "navbar.scss";
+@use "modal.scss";
+@use "attachments.scss";
+@use "layout.scss";
+@use "loading.scss";
 
 html {
 	height: 100%;

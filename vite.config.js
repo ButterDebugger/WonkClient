@@ -19,13 +19,10 @@ export default defineConfig({
 		target: "es2022",
 		outDir: resolve(process.cwd(), "dist"),
 		rollupOptions: {
-			input: (await glob("src/**/index.html")).reduce(
-				(put, path) => ({
-					...put,
-					[basename(dirname(path))]: path,
-				}),
-				{},
-			),
+			input: (await glob("src/**/index.html")).reduce((put, path) => {
+				put[basename(dirname(path))] = path;
+				return put;
+			}, {}),
 		},
 		sourcemap: true,
 	},

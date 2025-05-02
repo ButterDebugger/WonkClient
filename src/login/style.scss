@@ -1,4 +1,4 @@
-@import "../main.scss";
+@use "../main.scss";
 
 html {
 	height: 100%;
@@ -66,7 +66,7 @@ main {
 
 /* Form styles */
 .container {
-	@include bubble;
+	@include main.bubble;
 
 	flex-direction: column;
 	min-width: 30vw;

@@ -1,3 +1,5 @@
+@use "../../main.scss";
+
 #root {
     transition: transform 200ms ease-in-out;
 
@@ -22,7 +24,7 @@
     }
 }
 #modal-wrapper {
-    @include bubble;
+    @include main.bubble;
 
     display: flex;
     flex-direction: column;

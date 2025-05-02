@@ -15,7 +15,7 @@
 		"@debutter/dom": "npm:@jsr/debutter__dom@^0.2.0",
 		"@debutter/jsbin": "npm:@jsr/debutter__jsbin@^1.4.0",
 		"@fortawesome/fontawesome-free": "^6.6.0",
-		"axios": "^1.8.4",
+		"axios": "^1.9.0",
 		"cors": "^2.8.5",
 		"eventemitter3": "^5.0.1",
 		"express": "^4.21.2",
@@ -25,8 +25,8 @@
 	},
 	"devDependencies": {
 		"glob": "^10.4.2",
-		"sass": "^1.77.6",
-		"vite": "^5.4.18",
-		"vite-plugin-pwa": "^0.20.5"
+		"sass": "^1.87.0",
+		"vite": "^6.3.2",
+		"vite-plugin-pwa": "^1.0.0"
 	}
 }

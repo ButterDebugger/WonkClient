@@ -1,3 +1,5 @@
+@use "../../main.scss";
+
 #root {
     display: flex;
     flex-direction: row-reverse;
@@ -6,14 +8,14 @@
     padding: 1.5rem;
 
     /* Mobile design */
-    @media screen and (max-width: $mobile-threshold) {
+    @media screen and (max-width: main.$mobile-threshold) {
         flex-direction: column;
     }
 }
 
 .hide-on-mobile {
     /* Mobile design */
-    @media screen and (max-width: $mobile-threshold) {
+    @media screen and (max-width: main.$mobile-threshold) {
         display: none !important;
     }
 }
@@ -153,7 +155,7 @@
         }
 
         /* Mobile design */
-        @media screen and (max-width: $mobile-threshold) {
+        @media screen and (max-width: main.$mobile-threshold) {
             &:not(.hidden) + .navigator {
                 display: none;
             }
