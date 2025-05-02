@@ -13,7 +13,7 @@ export default class UserManager {
 		this.cache = new Map();
 
 		this.client.on("userUpdate", (username, data) =>
-			this.update(username, data),
+			this.update(username, data)
 		);
 	}
 
@@ -34,8 +34,8 @@ export default class UserManager {
 					data.username,
 					data.color,
 					data.offline,
-					data.timestamp,
-				),
+					data.timestamp
+				)
 			);
 		}
 	}
@@ -45,7 +45,7 @@ export default class UserManager {
 			this.client
 				.request({
 					method: "post",
-					url: `/users/${username}/subscribe`,
+					url: `/user/${username}/subscribe`
 				})
 				.then(async () => {
 					resolve(true);
@@ -54,8 +54,8 @@ export default class UserManager {
 					reject(
 						err instanceof AxiosError
 							? new ClientError(err?.response?.data, err)
-							: err,
-					),
+							: err
+					)
 				);
 		});
 	}
@@ -64,7 +64,7 @@ export default class UserManager {
 			this.client
 				.request({
 					method: "post",
-					url: `/users/${username}/unsubscribe`,
+					url: `/user/${username}/unsubscribe`
 				})
 				.then(async () => {
 					resolve(true);
@@ -73,8 +73,8 @@ export default class UserManager {
 					reject(
 						err instanceof AxiosError
 							? new ClientError(err?.response?.data, err)
-							: err,
-					),
+							: err
+					)
 				);
 		});
 	}
@@ -86,7 +86,7 @@ export default class UserManager {
 			this.client
 				.request({
 					method: "get",
-					url: `/users/${username}/fetch`,
+					url: `/user/${username}/fetch`
 				})
 				.then(async (res) => {
 					const { username, data } = res.data;
@@ -100,8 +100,8 @@ export default class UserManager {
 					reject(
 						err instanceof AxiosError
 							? new ClientError(err?.response?.data, err)
-							: err,
-					),
+							: err
+					)
 				);
 		});
 	}
@@ -119,7 +119,7 @@ export class User {
 		username: string,
 		color: string,
 		offline: boolean,
-		timestamp = Date.now(),
+		timestamp = Date.now()
 	) {
 		this.client = client;
 
