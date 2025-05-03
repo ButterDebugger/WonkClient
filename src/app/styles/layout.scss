@@ -36,6 +36,11 @@
     gap: 1.5rem;
 
     max-height: calc(100vh - 1.5rem * 2);
+
+    // Mobile design
+    @media screen and (max-width: main.$mobile-threshold) {
+        max-height: calc(100vh - 1.5rem * 5);
+    }
 }
 
 .content-wrapper {
@@ -150,10 +155,6 @@
         overflow-y: auto;
     }
     .footer {
-        &:not(.hidden) {
-            margin-top: var(--bubble-spacing);
-        }
-
         /* Mobile design */
         @media screen and (max-width: main.$mobile-threshold) {
             &:not(.hidden) + .navigator {

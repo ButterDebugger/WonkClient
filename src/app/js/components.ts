@@ -1,8 +1,41 @@
 import tippy from "tippy.js";
 import moment from "moment";
-import { dom, type DomContext, html } from "@debutter/dom";
+import { dom, type DomContext, html, parse } from "@debutter/dom";
 import { client } from "./main.ts";
 import type { RoomMessage } from "../../lib/client.ts";
+import markdownit from "markdown-it";
+import DOMPurify from "dompurify";
+
+const md = markdownit({
+	breaks: true,
+	linkify: true
+});
+
+// https://github.com/markdown-it/markdown-it/issues/211#issuecomment-508380611
+const defaultParagraphRenderer =
+	md.renderer.rules.paragraph_open ||
+	((tokens, idx, options, env, self) =>
+		self.renderToken(tokens, idx, options));
+md.renderer.rules.paragraph_open = (tokens, idx, options, env, self) => {
+	let result = "";
+	if (idx > 1) {
+		const inline = tokens[idx - 2];
+		const paragraph = tokens[idx];
+		if (
+			inline.type === "inline" &&
+			inline.map &&
+			inline.map[1] &&
+			paragraph.map &&
+			paragraph.map[0]
+		) {
+			const diff = paragraph.map[0] - inline.map[1];
+			if (diff > 0) {
+				result = "<br>".repeat(diff);
+			}
+		}
+	}
+	return result + defaultParagraphRenderer(tokens, idx, options, env, self);
+};
 
 export function createRoomTab(name: string): DomContext {
 	return dom(html`<div class="channel-tab"></div>`)
@@ -49,6 +82,12 @@ export function createMessage(message: RoomMessage) {
 		createAttachment(attachment)
 	);
 
+	// Create markdown message content
+	const markdown = md.render(message.content);
+	const content = parse(
+		`<div class="message-body">${DOMPurify.sanitize(markdown)}</div>`
+	);
+
 	// Return full component
 	return dom(html`<div class="message"></div>`).append(
 		dom(html`<div class="message-header"></div>`).append(
@@ -56,7 +95,7 @@ export function createMessage(message: RoomMessage) {
 			timestampEle
 		),
 		dom(html`<div class="message-content"></div>`).append(
-			dom(html`<div class="message-body"></div>`).text(message.content),
+			content,
 			dom(html`<div class="message-attachments"></div>`).append(
 				...attachments
 			)

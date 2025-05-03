@@ -16,7 +16,6 @@ import {
 import { getOrCreateRoomInfoView } from "./room-info.ts";
 import type { RoomMessage } from "../../../lib/client.ts";
 import { createMessage } from "../components.ts";
-import { getRoomsView } from "./rooms.ts";
 import { appendBreadcrumb } from "../breadcrumbs.ts";
 
 export function getOrCreateRoomView(room: Room): ViewWrapper {
@@ -44,10 +43,25 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 
 	// Create message input field
 	const $messageInput = dom(
-		html`<input type="text" name="message-input" maxlength="1000" />`
+		html`<textarea
+			type="text"
+			name="message-input"
+			maxlength="1000"
+			rows="1"
+		></textarea>`
 	)
-		.on("keydown", ({ key }: KeyboardEvent) => {
-			if (key === "Enter") send();
+		.on("keydown", (event: KeyboardEvent) => {
+			if (event.key === "Enter" && !event.shiftKey) {
+				event.preventDefault();
+				send();
+			}
+		})
+		.on("input", () => {
+			const value = <string>$messageInput.prop("value");
+			const newLines = value.match(/\n/g)?.length ?? 0;
+			const rows = Math.max(Math.min(newLines + 1, 8), 1);
+
+			$messageInput.prop("rows", rows);
 		})
 		.prop("placeholder", `Message #${room.name}`);
 
@@ -55,6 +69,7 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 	async function send() {
 		const value: string = <string>$messageInput.prop("value");
 		$messageInput.prop("value", "");
+		$messageInput.prop("rows", 1);
 
 		if (value.length === 0) return;
 
