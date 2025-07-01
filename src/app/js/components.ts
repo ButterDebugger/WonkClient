@@ -3,38 +3,37 @@ import moment from "moment";
 import { dom, type DomContext, html, parse } from "@debutter/dom";
 import { client } from "./main.ts";
 import type { RoomMessage } from "../../lib/client.ts";
-import markdownit from "markdown-it";
+import { Marked } from "marked";
 import DOMPurify from "dompurify";
 
-const md = markdownit({
-	breaks: true,
-	linkify: true
+const marked = new Marked({
+	async: false,
+	breaks: true
 });
-
-// https://github.com/markdown-it/markdown-it/issues/211#issuecomment-508380611
-const defaultParagraphRenderer =
-	md.renderer.rules.paragraph_open ||
-	((tokens, idx, options, env, self) =>
-		self.renderToken(tokens, idx, options));
-md.renderer.rules.paragraph_open = (tokens, idx, options, env, self) => {
-	let result = "";
-	if (idx > 1) {
-		const inline = tokens[idx - 2];
-		const paragraph = tokens[idx];
-		if (
-			inline.type === "inline" &&
-			inline.map &&
-			inline.map[1] &&
-			paragraph.map &&
-			paragraph.map[0]
-		) {
-			const diff = paragraph.map[0] - inline.map[1];
-			if (diff > 0) {
-				result = "<br>".repeat(diff);
-			}
-		}
-	}
-	return result + defaultParagraphRenderer(tokens, idx, options, env, self);
+const sanitizeConfig = {
+	ALLOWED_TAGS: [
+		"h1",
+		"h2",
+		"h3",
+		"h4",
+		"h5",
+		"h6",
+		"p",
+		"strong",
+		"em",
+		"a",
+		"br",
+		"span",
+		"code",
+		"pre",
+		"table",
+		"thead",
+		"tbody",
+		"tr",
+		"th",
+		"td",
+		"blockquote"
+	]
 };
 
 export function createRoomTab(name: string): DomContext {
@@ -83,9 +82,17 @@ export function createMessage(message: RoomMessage) {
 	);
 
 	// Create markdown message content
-	const markdown = md.render(message.content);
+	const markdown = <string>marked.parse(
+		// Remove the most common zero width characters from the start
+		// https://github.com/markedjs/marked/issues/2139
+		// biome-ignore lint/suspicious/noMisleadingCharacterClass: Its needed, probably
+		message.content.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, "")
+	);
 	const content = parse(
-		`<div class="message-body">${DOMPurify.sanitize(markdown)}</div>`
+		`<div class="message-body">${DOMPurify.sanitize(
+			markdown,
+			sanitizeConfig
+		)}</div>`
 	);
 
 	// Return full component

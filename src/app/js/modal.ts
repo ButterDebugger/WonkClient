@@ -4,7 +4,7 @@ const $background = dom(html`<div id="modal-background" class="hidden"></div>`);
 const modalQueue: Modal[] = [];
 let isModalUnlocked = true; // TODO: provide some indicator that the modal is locked
 
-$.body?.append($background);
+$(document.body).append($background);
 
 interface Modal {
 	title: string;
@@ -57,7 +57,7 @@ export function showModal(title: string, content: DomContext) {
 
 	$modal.find(".content")?.append(content);
 
-	$.body?.append($modal);
+	$(document.body).append($modal);
 }
 
 function isModalPresent() {

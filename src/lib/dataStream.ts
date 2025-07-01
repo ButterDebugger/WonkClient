@@ -1,5 +1,5 @@
 import { decryptData } from "./cryption.ts";
-import * as JsBin from "@debutter/jsbin";
+import * as TruffleByte from "@debutter/trufflebyte";
 
 /*
  * Stream body types
@@ -67,12 +67,15 @@ export interface UserData {
  */
 export async function parseStreamData<Body extends StreamBody>(
 	input: ArrayBuffer,
-	privateKey: string,
+	privateKey: string
 ): Promise<Body | null> {
 	try {
 		const bufferData = new Uint8Array(input);
-		const encodedData: Uint8Array = await decryptData(bufferData, privateKey);
-		const data: unknown = JsBin.decode(encodedData);
+		const encodedData: Uint8Array = await decryptData(
+			bufferData,
+			privateKey
+		);
+		const data: unknown = TruffleByte.decode(encodedData);
 
 		if (!isStreamBody(data)) {
 			console.warn("Received invalid stream body:", data);
