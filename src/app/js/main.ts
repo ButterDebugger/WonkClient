@@ -42,7 +42,7 @@ export const client = (await Client.login(
 })) as Client;
 
 // Add event listeners
-client.on("ready", async () => {
+client.once("ready", async () => {
 	console.log(`Logged in as ${client.user.username}!`);
 
 	await joinRoom("wonk");

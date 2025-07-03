@@ -9,10 +9,10 @@ import {
 	type MessageBody,
 	parseStreamData,
 	type PingBody,
+	StreamManager,
 	type UpdateMemberBody,
 	type UpdateUserBody
 } from "./dataStream.ts";
-import { Signature } from "openpgp";
 
 export { generateKeyPair, ClientError, errorCodes };
 
@@ -27,7 +27,7 @@ export class Client extends EventEmitter {
 	#keyPair: KeyPair;
 
 	rooms: RoomManager;
-	stream: WebSocket | null;
+	stream: StreamManager;
 	user!: User;
 	users: UserManager;
 	attachments: AttachmentManager;
@@ -40,7 +40,7 @@ export class Client extends EventEmitter {
 	) {
 		super();
 
-		this.stream = null;
+		this.stream = new StreamManager(this);
 		this.rooms = new RoomManager(this);
 		this.users = new UserManager(this);
 		this.attachments = new AttachmentManager(this);
@@ -61,6 +61,14 @@ export class Client extends EventEmitter {
 
 	get token() {
 		return this.#token;
+	}
+
+	get publicKey() {
+		return this.#keyPair.publicKey;
+	}
+
+	get privateKey() {
+		return this.#keyPair.privateKey;
 	}
 
 	request(options: AxiosRequestConfig) {
@@ -209,92 +217,23 @@ export class Client extends EventEmitter {
 
 		await this.syncClient();
 
-		// Connect to event stream
-		this.stream = new WebSocket(`${this.baseUrl.ws}/stream`, [
-			"Authorization",
-			this.token
-		]);
-		this.stream.binaryType = "arraybuffer";
+		// Connect to the event stream
+		this.stream.connect();
 
-		// Add stream event listeners
-		this.stream.addEventListener("open", () => {
-			this.emit("ready");
+		// Log when the client is ready
+		this.on("ready", () => {
+			console.log("Connected to event stream");
 		});
-		this.stream.addEventListener("message", async (event) => {
-			const data = await parseStreamData(
-				event.data,
-				this.#keyPair.privateKey
-			);
-			if (data === null) return;
 
-			switch (data.event) {
-				case "ping": {
-					const pingData = <PingBody>data;
+		// Reconnect to the event stream when disconnected
+		this.on("disconnect", () => {
+			console.log("Disconnected from event stream");
 
-					this.emit("ping", pingData.ping);
-					break;
-				}
-				case "updateMember": {
-					const updateMemberData = <UpdateMemberBody>data;
+			setTimeout(() => {
+				console.log("Reconnecting to event stream...");
 
-					switch (updateMemberData.state) {
-						case "join":
-							this.emit(
-								"roomMemberJoin",
-								updateMemberData.username,
-								updateMemberData.room,
-								updateMemberData.timestamp
-							);
-							break;
-						case "leave":
-							this.emit(
-								"roomMemberLeave",
-								updateMemberData.username,
-								updateMemberData.room,
-								updateMemberData.timestamp
-							);
-							break;
-						default:
-							// TODO: Throw out of date client error
-							break;
-					}
-					break;
-				}
-				case "updateUser": {
-					const updateUserData = <UpdateUserBody>data;
-
-					this.emit(
-						"userUpdate",
-						updateUserData.username,
-						updateUserData.data,
-						updateUserData.timestamp
-					);
-					break;
-				}
-				case "message": {
-					const messageData = <MessageBody>data;
-
-					const authorData = {
-						color: messageData.author.color,
-						offline: messageData.author.offline,
-						username: messageData.author.username,
-						timestamp: messageData.timestamp
-					};
-					this.users.update(messageData.author.username, authorData);
-
-					const message = new RoomMessage(
-						this,
-						messageData.author.username,
-						messageData.room,
-						messageData.content,
-						messageData.attachments,
-						messageData.timestamp
-					);
-
-					this.emit("roomMemberMessage", message);
-					break;
-				}
-			}
+				this.stream.connect();
+			}, 5000);
 		});
 	}
 }

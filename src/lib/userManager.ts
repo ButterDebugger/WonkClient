@@ -40,44 +40,6 @@ export default class UserManager {
 		}
 	}
 
-	subscribe(username: string) {
-		return new Promise((resolve, reject) => {
-			this.client
-				.request({
-					method: "post",
-					url: `/user/${username}/subscribe`
-				})
-				.then(async () => {
-					resolve(true);
-				})
-				.catch((err) =>
-					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err
-					)
-				);
-		});
-	}
-	unsubscribe(username: string) {
-		return new Promise((resolve, reject) => {
-			this.client
-				.request({
-					method: "post",
-					url: `/user/${username}/unsubscribe`
-				})
-				.then(async () => {
-					resolve(true);
-				})
-				.catch((err) =>
-					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err
-					)
-				);
-		});
-	}
 	fetch(username: string, ignoreCache = false): Promise<User> {
 		return new Promise((resolve, reject) => {
 			const existingUser = this.cache.get(username);

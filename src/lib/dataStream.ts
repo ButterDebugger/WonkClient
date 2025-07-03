@@ -1,5 +1,128 @@
+import { Client, RoomMessage } from "./client.ts";
 import { decryptData } from "./cryption.ts";
 import * as TruffleByte from "@debutter/trufflebyte";
+
+export class StreamManager {
+	#socket: WebSocket | null;
+
+	client: Client;
+
+	constructor(client: Client) {
+		this.client = client;
+		this.#socket = null;
+	}
+
+	connect() {
+		// Connect to event stream
+		this.#socket = new WebSocket(`${this.client.baseUrl.ws}/stream`, [
+			"Authorization",
+			this.client.token
+		]);
+		this.#socket.binaryType = "arraybuffer";
+
+		// Add stream event listeners
+		this.#socket.addEventListener("open", () => {
+			this.client.emit("ready");
+		});
+		this.#socket.addEventListener("message", async (event) => {
+			const data = await parseStreamData(
+				event.data,
+				this.client.privateKey
+			);
+			if (data === null) return;
+
+			switch (data.event) {
+				case "ping": {
+					const pingData = <PingBody>data;
+
+					this.client.emit("ping", pingData.ping);
+					break;
+				}
+				case "updateMember": {
+					const updateMemberData = <UpdateMemberBody>data;
+
+					switch (updateMemberData.state) {
+						case "join":
+							this.client.emit(
+								"roomMemberJoin",
+								updateMemberData.username,
+								updateMemberData.room,
+								updateMemberData.timestamp
+							);
+							break;
+						case "leave":
+							this.client.emit(
+								"roomMemberLeave",
+								updateMemberData.username,
+								updateMemberData.room,
+								updateMemberData.timestamp
+							);
+							break;
+						default:
+							// TODO: Throw out of date client error
+							break;
+					}
+					break;
+				}
+				case "updateUser": {
+					const updateUserData = <UpdateUserBody>data;
+
+					this.client.emit(
+						"userUpdate",
+						updateUserData.username,
+						updateUserData.data,
+						updateUserData.timestamp
+					);
+					break;
+				}
+				case "message": {
+					const messageData = <MessageBody>data;
+
+					const authorData = {
+						color: messageData.author.color,
+						offline: messageData.author.offline,
+						username: messageData.author.username,
+						timestamp: messageData.timestamp
+					};
+					this.client.users.update(
+						messageData.author.username,
+						authorData
+					);
+
+					const message = new RoomMessage(
+						this.client,
+						messageData.author.username,
+						messageData.room,
+						messageData.content,
+						messageData.attachments,
+						messageData.timestamp
+					);
+
+					this.client.emit("roomMemberMessage", message);
+					break;
+				}
+			}
+		});
+		this.#socket.addEventListener("close", () => {
+			this.client.emit("disconnect");
+		});
+		this.#socket.addEventListener("error", () => {
+			this.client.emit("disconnect");
+		});
+	}
+
+	subscribe(subscriptions: string[]) {
+		// TODO: test and implement
+		if (!this.#socket) return;
+
+		this.#socket.send(
+			TruffleByte.encode({
+				event: "listen",
+				subscriptions: subscriptions
+			})
+		);
+	}
+}
 
 /*
  * Stream body types
