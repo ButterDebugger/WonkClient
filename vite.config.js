@@ -48,18 +48,18 @@ export default defineConfig({
 						options: {
 							cacheName: "google-fonts",
 							expiration: {
-								maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+								maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
 							},
 						},
 					},
 					{
 						urlPattern:
-							/^https:\/\/(?:cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|debutter\.dev\/x|unpkg\.com)\/.*/i,
+							/^https:\/\/(?:cdn\.jsdelivr\.net|cdnjs\.cloudflare\.com|debutter\.dev\/x|unpkg\.com|esm\.sh)\/.*/i,
 						handler: "CacheFirst",
 						options: {
 							cacheName: "third-party-libraries",
 							expiration: {
-								maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+								maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
 							},
 						},
 					},

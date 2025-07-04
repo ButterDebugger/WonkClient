@@ -1,7 +1,7 @@
 import tippy from "tippy.js";
 import axios from "axios";
 import { locateHomeserver } from "../lib/client.ts";
-import * as binForage from "https://debutter.dev/x/js/binforage.js";
+import * as tbForage from "../tbForage.ts";
 
 const errorMessageEle = document.getElementById("error-message");
 const homeserverEle = document.getElementById("homeserver");
@@ -66,7 +66,7 @@ async function generateCode() {
 	return { state, verifier, challenge };
 }
 
-if ((await binForage.get("token")) !== null) {
+if ((await tbForage.get("token")) !== null) {
 	continueStage.classList.remove("hidden");
 
 	whoAmI();
@@ -100,9 +100,9 @@ authBtn.addEventListener("click", async () => {
 
 	authBtn.innerText = "Redirecting";
 	const { state, verifier, challenge } = await generateCode();
-	await binForage.set("verifier", verifier);
-	await binForage.set("state", state);
-	await binForage.set("homeserver", homeserver);
+	await tbForage.set("verifier", verifier);
+	await tbForage.set("state", state);
+	await tbForage.set("homeserver", homeserver);
 
 	const params = new URLSearchParams({
 		callback: encodeURIComponent(`${location.origin}${location.pathname}`),
@@ -118,18 +118,18 @@ continueBtn.addEventListener("click", () => {
 });
 
 logoutBtn.addEventListener("click", async () => {
-	await binForage.remove("token");
+	await tbForage.remove("token");
 
 	loginStage.classList.remove("hidden");
 	continueStage.classList.add("hidden");
 });
 
 async function access() {
-	const verifier = await binForage.get("verifier");
-	const homeserver = await binForage.get("homeserver");
+	const verifier = await tbForage.get("verifier");
+	const homeserver = await tbForage.get("homeserver");
 
 	// Check if the state matches
-	if (params.get("state") !== (await binForage.get("state"))) {
+	if (params.get("state") !== (await tbForage.get("state"))) {
 		errorMessageEle.innerText = "Invalid state";
 		accessStage.classList.add("hidden");
 		loginStage.classList.remove("hidden");
@@ -145,7 +145,7 @@ async function access() {
 			const { token } = res.data;
 
 			// Store the token
-			await binForage.set("token", token);
+			await tbForage.set("token", token);
 
 			// Remove query string from url and in the process go to the continue stage
 			location.href = `${location.origin}${location.pathname}`;
@@ -158,8 +158,8 @@ async function access() {
 }
 
 async function whoAmI() {
-	const token = await binForage.get("token");
-	const homeserver = await binForage.get("homeserver");
+	const token = await tbForage.get("token");
+	const homeserver = await tbForage.get("homeserver");
 
 	axios({
 		method: "GET",
@@ -173,7 +173,7 @@ async function whoAmI() {
 				you: { username },
 			} = res.data;
 
-			await binForage.set("username", username);
+			await tbForage.set("username", username);
 
 			usernameEle.innerText = `@${username}:${homeserver.namespace}`;
 			continueBtn.disabled = false;

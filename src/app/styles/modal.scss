@@ -1,4 +1,5 @@
 @use "../../main.scss";
+@use "../../theme.scss";
 
 #root {
     transition: transform 200ms ease-in-out;
@@ -24,7 +25,7 @@
     }
 }
 #modal-wrapper {
-    @include main.bubble;
+    @include theme.bubble;
 
     display: flex;
     flex-direction: column;
@@ -34,7 +35,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2000;
-    padding: calc(var(--bubble-spacing) / 2);
+    padding: calc(theme.$bubble-spacing / 2);
 
     .header {
         display: flex;
@@ -42,23 +43,23 @@
         justify-content: space-between;
 
         .title {
-            padding: calc(var(--bubble-spacing) / 2);
+            padding: calc(theme.$bubble-spacing / 2);
         }
     }
 
     .content {
-        padding: calc(var(--bubble-spacing) / 2);
+        padding: calc(theme.$bubble-spacing / 2);
 
         .container.flex-row {
             display: flex;
             flex-direction: row;
-            gap: calc(var(--bubble-spacing) / 2);
+            gap: calc(theme.$bubble-spacing / 2);
         }
 
         .container.flex-column {
             display: flex;
             flex-direction: column;
-            gap: calc(var(--bubble-spacing) / 2);
+            gap: calc(theme.$bubble-spacing / 2);
         }
     }
 }

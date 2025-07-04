@@ -12,7 +12,7 @@ const navYouBtn = <HTMLElement>document.getElementById("nav-you");
 
 // Set the default breadcrumbs
 appendBreadcrumb("Home", () => {
-	location.reload();
+	location.href = "/";
 });
 
 // Show default view

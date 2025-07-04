@@ -1,3 +1,6 @@
+@use "../../main.scss";
+@use "../../theme.scss";
+
 .attachment-box {
     display: flex;
     flex-direction: column;
@@ -25,30 +28,32 @@
 }
 .attachment-list {
     $max-items: 4;
-    $padding-total-height: calc(var(--bubble-spacing) / 2 * ($max-items - 1));
-    $item-total-height: calc((1lh + var(--bubble-spacing)) * $max-items);
+    $padding-total-height: calc(theme.$bubble-spacing / 2 * ($max-items - 1));
+    $item-total-height: calc((1lh + theme.$bubble-spacing) * $max-items);
 
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: calc(var(--bubble-spacing) / 2);
+    gap: calc(theme.$bubble-spacing / 2);
 
     max-height: calc($item-total-height + $padding-total-height);
     overflow-y: auto;
 }
 
 .file-chip {
+    @include theme.container;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: calc(var(--bubble-spacing) / 2);
+    gap: calc(theme.$bubble-spacing / 2);
 
-    border-radius: 1em;
-    padding: calc(var(--bubble-spacing) / 2);
-    background-color: var(--hover-color);
+    padding: calc(theme.$bubble-spacing / 2) theme.$bubble-spacing;
     cursor: default;
 }
 a.file-chip {
+    @include theme.reactive-container;
+
     cursor: pointer;
-    color: var(--text-color);
+    color: theme.$c-text;
 }

@@ -1,24 +1,29 @@
 // @ts-ignore
-import * as binForage from "https://debutter.dev/x/js/binforage.js";
+import * as tbForage from "../../tbForage.ts";
 import {
 	Client,
 	generateKeyPair,
 	errorCodes,
-	ClientError
+	ClientError,
+	Homeserver
 } from "../../lib/client.ts";
 import type { MessageOptions } from "../../lib/roomManager.ts";
 import { appendMessage } from "./views/room.ts";
 import { updateRoomsTabs } from "./views/rooms.ts";
-import { appendBreadcrumb } from "./breadcrumbs.ts";
-import { switchView } from "./views.ts";
-import { getExploreView } from "./views/explore.ts";
+import { KeyPair } from "../../lib/cryption.ts";
 
-const _username = await binForage.get("username");
-const token = await binForage.get("token");
-let keyPair = await binForage.get("keyPair");
-const homeserver = await binForage.get("homeserver");
+// NOTE: all of these values can be null but are caught by the /login/ redirect
+const _username = <string>await tbForage.get("username");
+const token = <string>await tbForage.get("token");
+let keyPair = <KeyPair>await tbForage.get("keyPair");
+const homeserver = <Homeserver>await tbForage.get("homeserver");
 
-if (homeserver === null) {
+if (
+	_username === null ||
+	token === null ||
+	keyPair === null ||
+	homeserver === null
+) {
 	location.href = "/login/";
 }
 
@@ -26,7 +31,7 @@ if (homeserver === null) {
 if (!keyPair) {
 	keyPair = await generateKeyPair(_username);
 
-	await binForage.set("keyPair", keyPair);
+	await tbForage.set("keyPair", keyPair);
 }
 
 // Initialize the client

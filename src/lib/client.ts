@@ -21,6 +21,11 @@ export interface BaseUrl {
 	ws: string;
 }
 
+export interface Homeserver {
+	namespace: string;
+	baseUrl: BaseUrl;
+}
+
 export class Client extends EventEmitter {
 	#baseUrl: BaseUrl;
 	#token: string;
@@ -253,7 +258,7 @@ export async function locateHomeserver(domain: string) {
 		const { namespace } = baseRes.data;
 
 		// Check if the namespace matches the domain
-		if (namespace !== domain) return null; // TODO: resolve namespace conflict
+		if (typeof namespace !== "string" || namespace !== domain) return null; // TODO: resolve namespace conflict
 
 		// Return the namespace and base URL
 		const url = new URL(base_url);

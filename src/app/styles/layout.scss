@@ -1,21 +1,22 @@
 @use "../../main.scss";
+@use "../../theme.scss";
 
 #root {
     display: flex;
     flex-direction: row-reverse;
-    gap: 1.5rem;
+    gap: theme.$bubble-spacing;
 
-    padding: 1.5rem;
+    padding: theme.$bubble-spacing;
 
     /* Mobile design */
-    @media screen and (max-width: main.$mobile-threshold) {
+    @media screen and (max-width: theme.$mobile-threshold) {
         flex-direction: column;
     }
 }
 
 .hide-on-mobile {
     /* Mobile design */
-    @media screen and (max-width: main.$mobile-threshold) {
+    @media screen and (max-width: theme.$mobile-threshold) {
         display: none !important;
     }
 }
@@ -33,27 +34,24 @@
 .vertical-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: theme.$bubble-spacing;
 
-    max-height: calc(100vh - 1.5rem * 2);
+    max-height: calc(100vh - theme.$bubble-spacing * 2);
 
     // Mobile design
-    @media screen and (max-width: main.$mobile-threshold) {
-        max-height: calc(100vh - 1.5rem * 5);
+    @media screen and (max-width: theme.$mobile-threshold) {
+        max-height: calc(100vh - theme.$bubble-spacing * 5);
     }
 }
 
 .content-wrapper {
+    @include theme.bubble;
+
     display: flex;
-    gap: 1.5rem;
+    gap: theme.$bubble-spacing;
     flex-direction: column;
 
-    padding: 1.5rem;
-    background-color: var(--dark-container-color);
-    border: 1px solid var(--container-color);
-    border-radius: 1.5rem;
     flex: 1;
-    max-height: calc(100% - 4.5rem);
     overflow: hidden;
 
     .content {
@@ -74,7 +72,7 @@
         width: 1.5rem;
     }
     span {
-        color: var(--primary-color);
+        color: theme.$c-primary;
     }
 }
 
@@ -82,7 +80,7 @@
     display: flex;
     gap: 0.75rem;
 
-    color: var(--secondary-text-color);
+    color: theme.$c-text-secondary;
     font-size: 0.875rem;
 
     .separator {
@@ -94,7 +92,7 @@
 
         &:hover,
         &.active {
-            color: var(--text-color);
+            color: theme.$c-text;
         }
     }
 }
@@ -132,7 +130,7 @@
 
             > .description {
                 font-size: 0.8rem;
-                color: var(--secondary-text-color);
+                color: theme.$c-text-secondary;
             }
         }
 
@@ -147,21 +145,20 @@
     }
     .content {
         display: flex;
-        // grid-column: 2;
         flex-direction: column;
-        gap: calc(var(--bubble-spacing) / 2);
+        gap: calc(theme.$bubble-spacing / 2);
 
         flex: 1;
         overflow-y: auto;
     }
     .footer {
         /* Mobile design */
-        @media screen and (max-width: main.$mobile-threshold) {
+        @media screen and (max-width: theme.$mobile-threshold) {
             &:not(.hidden) + .navigator {
                 display: none;
             }
             &.hidden + .navigator {
-                margin-top: var(--bubble-spacing);
+                margin-top: theme.$bubble-spacing;
                 margin-right: 0px;
             }
         }

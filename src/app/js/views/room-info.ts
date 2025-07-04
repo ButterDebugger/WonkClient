@@ -67,6 +67,8 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 		updateMembersList(); // TODO: only remove user from members list, instead of refreshing
 	});
 
+	updateMembersList();
+
 	// Add header tab buttons
 	function switchInfoTab(name: string) {
 		view.header.findAll(".tab").removeClass("active");

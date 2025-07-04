@@ -1,4 +1,5 @@
 @use "../main.scss";
+@use "../theme.scss";
 
 html {
 	height: 100%;
@@ -51,22 +52,22 @@ main {
 	margin: 0px;
 	font-weight: normal;
 	line-height: 1.25lh;
-	color: var(--secondary-text-color);
+	color: theme.$c-text-secondary;
 }
 #error-message {
-	color: var(--warning-color);
+	color: theme.$c-warning;
 }
 #error-message:empty {
 	display: none;
 }
 #username {
 	font-weight: bold;
-	color: var(--text-color);
+	color: theme.$c-text;
 }
 
 /* Form styles */
 .container {
-	@include main.bubble;
+	@include theme.bubble;
 
 	flex-direction: column;
 	min-width: 30vw;

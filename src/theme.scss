@@ -1,0 +1,103 @@
+// Units
+
+$mobile-threshold: 1024px;
+$bubble-roundness: 1.5rem;
+$bubble-spacing: 1rem;
+
+// Colors
+
+$c-primary: #5841f7;
+$c-primary-muted: #7c7dff;
+$c-secondary: #f74185;
+$c-warning: #d93025;
+$c-valid: #35c76d;
+
+$c-text: light-dark(#0e0d11, #ffffff); // #ffffff;
+$c-text-secondary: light-dark(#474455, #bbbbc3);
+
+$c-bg: light-dark(#ffdea1, hsl(250, 25%, 9%));
+$c-container: light-dark(#ffa2f7, hsla(250, 10%, 17%, 60%));
+$c-container-hover: light-dark(#bba2ff, hsla(250, 17%, 27%, 60%));
+$c-container-active: light-dark(#a2a2ff, hsla(250, 24%, 32%, 60%));
+$c-container-dark: light-dark(#ffa2c1, hsla(250, 27%, 6%, 60%));
+$c-container-dark-hover: light-dark(#a2fcff, hsla(250, 25%, 9%, 60%));
+$c-container-dark-active: light-dark(#a2caff, hsla(250, 31%, 13%, 60%));
+
+$c-border: light-dark(#3fff3f, hsla(250, 75%, 98%, 20%));
+$c-border-hover: $c-primary-muted;
+
+$c-popover: #47484d;
+
+// Mixins
+
+@mixin container($dark: false) {
+    display: flex;
+
+    @if $dark == true {
+        background-color: $c-container-dark;
+    } @else {
+        background-color: $c-container;
+    }
+
+    border-radius: $bubble-roundness;
+    border: 1px solid $c-border;
+    backdrop-filter: blur(10px);
+}
+
+@mixin reactive-container($dark: false) {
+    @include container($dark);
+
+    transition:
+        background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out,
+        opacity 0.15s ease-in-out;
+
+    &:hover,
+    &.active {
+        @if $dark == true {
+            background-color: $c-container-dark-hover;
+        } @else {
+            background-color: $c-container-hover;
+        }
+
+        border-color: $c-border-hover;
+    }
+    &:active {
+        @if $dark == true {
+            background-color: $c-container-dark-active;
+        } @else {
+            background-color: $c-container-active;
+        }
+
+        border-color: $c-border-hover;
+    }
+    &:disabled {
+        @if $dark == true {
+            background-color: $c-container-dark;
+        } @else {
+            background-color: $c-container;
+        }
+
+        border-color: $c-border;
+        opacity: 50%;
+        cursor: not-allowed;
+    }
+}
+
+/* Bubble styles */
+@mixin bubble() {
+    @include container(false);
+
+    padding: $bubble-spacing;
+    min-height: calc($bubble-spacing * 2 + 1lh);
+
+    // border-radius: var(--bubble-roundness);
+    // border: 1px solid $c-border;
+    // backdrop-filter: blur(10px);
+
+    // @if $secondary == true {
+    //     background-color: $c-container-light;
+    // } @else {
+    //     background-color: $c-container-dark;
+    // }
+}

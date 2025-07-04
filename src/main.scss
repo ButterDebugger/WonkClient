@@ -1,29 +1,8 @@
+@use "theme.scss";
+
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&display=swap");
 @import url("https://debutter.dev/x/css/simple.css");
 @import "tippy.js/dist/tippy.css";
-
-$mobile-threshold: 1024px;
-
-:root {
-	--text-color: #ffffff;
-	--secondary-text-color: #bbbbc3;
-	--background-color: #0e0d11;
-	--container-color: #23222b;
-	--dark-container-color: #17171c;
-	--hover-color: rgba(127, 127, 127, 0.2);
-	--active-color: rgba(127, 127, 127, 0.4);
-	--input-background-color: rgba(0, 0, 0, 0.35);
-	--input-border-color: #35343b;
-	--button-background-color: rgba(32, 32, 36, 0.5);
-	--button-border-color: #545559;
-	--tippy-color: #47484d;
-	--primary-color: #5841f7;
-	--secondary-color: #f74185;
-	--warning-color: #d93025;
-	--valid-color: #35c76d;
-	--bubble-roundness: 24px;
-	--bubble-spacing: 16px;
-}
 
 html,
 body {
@@ -31,8 +10,9 @@ body {
 	margin: 0px;
 }
 body {
-	background-color: var(--background-color);
-	color: var(--text-color);
+	color-scheme: dark light;
+	background-color: theme.$c-bg;
+	color: theme.$c-text;
 	letter-spacing: 0.25px;
 	font-family:
 		system-ui,
@@ -49,7 +29,7 @@ body {
 }
 
 a {
-	color: var(--primary-color);
+	color: theme.$c-primary;
 	text-decoration: inherit;
 }
 a:hover {
@@ -62,10 +42,10 @@ a:hover {
 
 /* Tippy styles; NOTE: This is not the correct way to do this but it works */
 .tippy-box {
-	background-color: var(--tippy-color);
+	background-color: theme.$c-popover;
 }
 .tippy-arrow {
-	color: var(--tippy-color);
+	color: theme.$c-popover;
 }
 
 /* Scrollbar styles */
@@ -85,16 +65,15 @@ input[type="text"],
 input[type="password"],
 input[type="email"],
 textarea {
-	background-color: var(--input-background-color);
-	border: 2px solid var(--input-border-color);
-	color: var(--text-color);
+	@include theme.reactive-container(true);
+
+	color: theme.$c-text;
 	outline: none;
-	padding: 8px 12px;
-	border-radius: 8px;
-	transition: filter 0.15s ease-in-out;
+	padding: calc(theme.$bubble-spacing * 0.75) theme.$bubble-spacing;
+	border-radius: calc(theme.$bubble-roundness / 2);
 
 	&:invalid {
-		border-color: var(--warning-color);
+		border-color: theme.$c-warning;
 		border-style: dashed;
 
 		&:focus {
@@ -107,71 +86,31 @@ input:disabled {
 }
 button,
 a.button {
+	@include theme.reactive-container;
+
+	justify-content: center;
+
 	cursor: pointer;
-	border: 2px solid var(--button-border-color);
-	padding: 8px 24px;
-	background-color: var(--button-background-color);
-	color: var(--text-color);
+	padding: calc(theme.$bubble-spacing * 0.75) theme.$bubble-spacing;
+	color: theme.$c-text;
+	font-size: 0.875rem;
 	outline: none;
-	border-radius: 9999px;
-	transition:
-		transform 0.1s ease,
-		border-color 0.15s ease-in-out,
-		opacity 0.15s ease-in-out;
-}
-button.highlight,
-a.button.highlight {
-	border-color: var(--secondary-color);
-}
-button:hover,
-a.button:hover {
-	border-color: var(--primary-color);
-}
-button:active,
-a.button:active {
-	transform: scale(0.95);
-}
-button:disabled,
-a.button:disabled {
-	border-color: var(--button-border-color);
-	opacity: 0.5;
-	transform: none;
-	cursor: not-allowed;
+
+	&.highlight {
+		border-color: theme.$c-secondary;
+	}
 }
 a.button {
 	text-decoration: none;
 }
 select {
-	background-color: var(--input-background-color);
-	border: 2px solid var(--input-border-color);
-	color: var(--text-color);
+	@include theme.reactive-container(true);
+
+	padding: calc(theme.$bubble-spacing * 0.75) theme.$bubble-spacing;
 	outline: none;
-	padding: 6px 12px;
-	border-radius: 8px;
+	cursor: pointer;
 }
 option {
-	background-color: var(--container-color);
-	color: var(--text-color);
-}
-input:focus,
-button:focus,
-a.button:focus,
-select:focus,
-textarea:focus {
-	border-color: var(--primary-color);
-}
-
-/* Bubble styles */
-@mixin bubble($dark: false) {
-	display: flex;
-
-	padding: var(--bubble-spacing);
-	min-height: calc(var(--bubble-spacing) * 2 + 1lh);
-	border-radius: var(--bubble-roundness);
-
-	@if $dark == true {
-		background-color: var(--dark-container-color);
-	} @else {
-		background-color: var(--container-color);
-	}
+	background-color: theme.$c-container;
+	color: theme.$c-text;
 }

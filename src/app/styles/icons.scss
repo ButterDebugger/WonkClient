@@ -1,7 +1,11 @@
+@use "../../main.scss";
+@use "../../theme.scss";
+
 :root {
 	--ic-large: 2em;
 	--ic-normal: 1.5em;
 	--ic-small: 1.25em;
+	--ic-padding: 0.5em;
 }
 
 /* Icons */
@@ -13,7 +17,7 @@
 	@if $colored {
 		background-image: var(--ic-url);
 	} @else {
-		background-color: var(--text-color);
+		background-color: theme.$c-text;
 		-webkit-mask-image: var(--ic-url);
 		mask-image: var(--ic-url);
 		-webkit-mask-repeat: no-repeat;
@@ -173,23 +177,19 @@
 .ic-normal-container,
 .ic-small-container,
 .ic-text-size-container {
+	@include theme.reactive-container;
+
 	display: flex;
 	justify-content: center;
 	align-items: center;
 
 	border-radius: 9999px;
-	padding: 8px;
-	background-color: var(--hover-color);
-	width: calc(var(--ic-container-size) + 16px);
-	height: calc(var(--ic-container-size) + 16px);
+	padding: var(--ic-padding);
+
+	width: calc(var(--ic-container-size) + var(--ic-padding) * 2);
+	height: calc(var(--ic-container-size) + var(--ic-padding) * 2);
 	cursor: pointer;
 
-	&:hover {
-		background-color: var(--hover-color);
-	}
-	&:active {
-		background-color: var(--active-color);
-	}
 	&.ic-inset {
 		margin: -8px;
 	}

@@ -1,4 +1,5 @@
 @use "../index.scss";
+@use "../theme.scss";
 
 p,
 li {
@@ -6,13 +7,13 @@ li {
 }
 
 .page-content {
-	gap: var(--bubble-spacing);
+	gap: theme.$bubble-spacing;
 }
 
 .terms-container {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: var(--bubble-spacing);
+	gap: theme.$bubble-spacing;
 	justify-items: center;
 }
 .terms-container > p {
@@ -26,5 +27,5 @@ li {
 }
 
 .term-content {
-	color: var(--secondary-text-color);
+	color: theme.$c-text-secondary;
 }

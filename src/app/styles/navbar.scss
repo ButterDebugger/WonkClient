@@ -1,119 +1,80 @@
 @use "../../main.scss";
+@use "../../theme.scss";
 
 #navbar {
     display: flex;
     justify-content: space-evenly;
     flex-direction: row;
+    gap: theme.$bubble-spacing;
 
     position: relative;
 
     /* Desktop design */
-    @media screen and (min-width: main.$mobile-threshold) {
+    @media screen and (min-width: theme.$mobile-threshold) {
         flex-direction: column;
         justify-content: flex-start;
-        gap: calc(var(--bubble-spacing) / 2);
-    }
-}
-#navbar > .nav-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-
-    z-index: 1;
-    flex: 1;
-    border-radius: 9999px;
-    padding: calc(var(--bubble-spacing) / 2) var(--bubble-spacing);
-    cursor: pointer;
-
-    /* Desktop design */
-    @media screen and (min-width: main.$mobile-threshold) {
-        justify-content: flex-start;
-        flex: 0;
+        gap: calc(theme.$bubble-spacing / 2);
     }
 
-    > .nav-icon {
-        width: var(--ic-normal);
-        height: var(--ic-normal);
-        background-color: var(--secondary-text-color);
-        transition: background-color 0.2s ease-in-out;
+    & > .nav-item {
+        @include theme.reactive-container;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        z-index: 1;
+        flex: 1;
+        padding: calc(theme.$bubble-spacing / 2) theme.$bubble-spacing;
+        cursor: pointer;
 
         /* Desktop design */
-        @media screen and (min-width: main.$mobile-threshold) {
-            width: var(--ic-small);
-            height: var(--ic-small);
-            background-color: var(--text-color);
+        @media screen and (min-width: theme.$mobile-threshold) {
+            justify-content: flex-start;
+            flex: 0;
         }
-    }
-    > .nav-text {
-        font-size: 0.75rem;
-        color: var(--secondary-text-color);
-        display: none;
-        margin-left: 1ch;
-        white-space: nowrap;
-        overflow: hidden;
 
-        /* Desktop design */
-        @media screen and (min-width: main.$mobile-threshold) {
-            font-size: 0.875rem;
-            color: var(--text-color);
+        > .nav-icon {
+            width: var(--ic-normal);
+            height: var(--ic-normal);
+            background-color: theme.$c-text-secondary;
+            transition: background-color 0.2s ease-in-out;
+
+            /* Desktop design */
+            @media screen and (min-width: theme.$mobile-threshold) {
+                width: var(--ic-small);
+                height: var(--ic-small);
+                background-color: theme.$c-text;
+            }
+        }
+        > .nav-text {
+            font-size: 0.75rem;
+            color: theme.$c-text-secondary;
+            display: none;
+            margin-left: 1ch;
+            white-space: nowrap;
+            overflow: hidden;
+
+            /* Desktop design */
+            @media screen and (min-width: theme.$mobile-threshold) {
+                font-size: 0.875rem;
+                color: theme.$c-text;
+                display: initial;
+            }
+        }
+
+        &.active,
+        &:hover {
+            > .nav-icon {
+                background-color: theme.$c-text;
+            }
+            > .nav-text {
+                color: theme.$c-text;
+            }
+        }
+        &.active > .nav-text {
             display: initial;
         }
     }
-}
-
-#navbar > .nav-item.active,
-#navbar > .nav-item:hover {
-    > .nav-icon {
-        background-color: var(--text-color);
-    }
-    > .nav-text {
-        color: var(--text-color);
-    }
-
-    /* Desktop design */
-    @media screen and (min-width: main.$mobile-threshold) {
-        background-color: var(--hover-color);
-    }
-}
-#navbar > .nav-item.active > .nav-text {
-    display: initial;
-}
-#navbar > .nav-item:active {
-    /* Desktop design */
-    @media screen and (min-width: main.$mobile-threshold) {
-        background-color: var(--active-color);
-    }
-}
-
-#nav-lavalamp {
-    position: absolute;
-    height: calc(var(--ic-normal) + var(--bubble-spacing));
-    width: 25%;
-    // top: var(--bubble-spacing);
-    z-index: 0;
-    transition: all 0.35s ease 0s;
-    border-radius: 9999px;
-
-    /* Desktop design */
-    @media screen and (min-width: main.$mobile-threshold) {
-        display: none;
-    }
-}
-
-#nav-explore.active ~ #nav-lavalamp {
-    left: 0%;
-    background-color: var(--hover-color);
-}
-#nav-rooms.active ~ #nav-lavalamp {
-    left: 25%;
-    background-color: var(--hover-color);
-}
-#nav-messages.active ~ #nav-lavalamp {
-    left: 50%;
-    background-color: var(--hover-color);
-}
-#nav-you.active ~ #nav-lavalamp {
-    left: 75%;
-    background-color: var(--hover-color);
 }
