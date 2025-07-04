@@ -25,21 +25,15 @@
         justify-content: center;
 
         z-index: 1;
-        flex: 1;
+        transition: flex 0.3s ease;
         padding: calc(theme.$bubble-spacing / 2) theme.$bubble-spacing;
         cursor: pointer;
-
-        /* Desktop design */
-        @media screen and (min-width: theme.$mobile-threshold) {
-            justify-content: flex-start;
-            flex: 0;
-        }
 
         > .nav-icon {
             width: var(--ic-normal);
             height: var(--ic-normal);
             background-color: theme.$c-text-secondary;
-            transition: background-color 0.2s ease-in-out;
+            transition: background-color 0.15s ease-in-out;
 
             /* Desktop design */
             @media screen and (min-width: theme.$mobile-threshold) {
@@ -64,6 +58,9 @@
             }
         }
 
+        &.active {
+            flex: 1;
+        }
         &.active,
         &:hover {
             > .nav-icon {
