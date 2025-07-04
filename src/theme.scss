@@ -12,18 +12,18 @@ $c-secondary: #f74185;
 $c-warning: #d93025;
 $c-valid: #35c76d;
 
-$c-text: light-dark(#0e0d11, #ffffff); // #ffffff;
+$c-text: light-dark(#0e0d11, #ffffff);
 $c-text-secondary: light-dark(#474455, #bbbbc3);
 
-$c-bg: light-dark(#ffdea1, hsl(250, 25%, 9%));
-$c-container: light-dark(#ffa2f7, hsla(250, 10%, 17%, 60%));
-$c-container-hover: light-dark(#bba2ff, hsla(250, 17%, 27%, 60%));
-$c-container-active: light-dark(#a2a2ff, hsla(250, 24%, 32%, 60%));
-$c-container-dark: light-dark(#ffa2c1, hsla(250, 27%, 6%, 60%));
-$c-container-dark-hover: light-dark(#a2fcff, hsla(250, 25%, 9%, 60%));
-$c-container-dark-active: light-dark(#a2caff, hsla(250, 31%, 13%, 60%));
+$c-bg: light-dark(hsl(250, 75%, 91%), hsl(250, 25%, 9%));
+$c-container: light-dark(hsla(250, 60%, 83%, 60%), hsla(250, 10%, 17%, 60%));
+$c-container-hover: light-dark(hsla(250, 67%, 73%, 60%), hsla(250, 17%, 27%, 60%));
+$c-container-active: light-dark(hsla(250, 74%, 68%, 60%), hsla(250, 24%, 32%, 60%));
+$c-container-dark: light-dark(hsla(250, 77%, 94%, 60%), hsla(250, 27%, 6%, 60%));
+$c-container-dark-hover: light-dark(hsla(250, 75%, 91%, 60%), hsla(250, 25%, 9%, 60%));
+$c-container-dark-active: light-dark(hsla(250, 81%, 87%, 60%), hsla(250, 31%, 13%, 60%));
 
-$c-border: light-dark(#3fff3f, hsla(250, 75%, 98%, 20%));
+$c-border: light-dark(hsla(250, 75%, 2%, 20%), hsla(250, 75%, 98%, 20%));
 $c-border-hover: $c-primary-muted;
 
 $c-popover: #47484d;
