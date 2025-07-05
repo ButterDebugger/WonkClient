@@ -1,4 +1,4 @@
-import { dom, type DomContext, html } from "@debutter/dom";
+import { dom, type DomContext, html } from "@debutter/dough";
 import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
 import { hideModal, showModal } from "../modal.ts";
 import { client, joinOrCreateRoom } from "../main.ts";

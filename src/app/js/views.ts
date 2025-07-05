@@ -1,4 +1,4 @@
-import { dom, html, type DomContext } from "@debutter/dom";
+import { dom, html, type DomContext } from "@debutter/dough";
 
 export type SwitchFunction = (() => void) | null;
 

@@ -1,4 +1,4 @@
-import { dom, type DomContext, html } from "@debutter/dom";
+import { dom, type DomContext, html } from "@debutter/dough";
 import { lockModal, showModal, unlockModal } from "./modal.ts";
 import { client } from "./main.ts";
 import type { Attachment } from "../../lib/attachmentManager.ts";

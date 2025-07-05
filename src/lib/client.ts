@@ -5,14 +5,7 @@ import RoomManager, { Room } from "./roomManager.ts";
 import UserManager, { User } from "./userManager.ts";
 import { ClientError, errorCodes } from "./builtinErrors.ts";
 import AttachmentManager from "./attachmentManager.ts";
-import {
-	type MessageBody,
-	parseStreamData,
-	type PingBody,
-	StreamManager,
-	type UpdateMemberBody,
-	type UpdateUserBody
-} from "./dataStream.ts";
+import { StreamManager } from "./dataStream.ts";
 
 export { generateKeyPair, ClientError, errorCodes };
 

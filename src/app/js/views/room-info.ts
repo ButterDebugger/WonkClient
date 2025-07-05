@@ -1,4 +1,4 @@
-import { dom, html } from "@debutter/dom";
+import { dom, html } from "@debutter/dough";
 import { switchNav } from "../navigator.ts";
 import { leaveRoom } from "../main.ts";
 import { createUserChip } from "../components.ts";

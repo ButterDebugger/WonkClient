@@ -1,4 +1,4 @@
-import { dom, html } from "@debutter/dom";
+import { dom, html } from "@debutter/dough";
 import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
 import { switchNav } from "../navigator.ts";
 import { appendBreadcrumb } from "../breadcrumbs.ts";

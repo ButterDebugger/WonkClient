@@ -18,6 +18,8 @@ const token = <string>await tbForage.get("token");
 let keyPair = <KeyPair>await tbForage.get("keyPair");
 const homeserver = <Homeserver>await tbForage.get("homeserver");
 
+console.log(_username, " : ", token, " : ", keyPair, " : ", homeserver);
+
 if (
 	_username === null ||
 	token === null ||

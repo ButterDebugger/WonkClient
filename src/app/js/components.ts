@@ -1,6 +1,6 @@
 import tippy from "tippy.js";
 import moment from "moment";
-import { dom, type DomContext, html, parse } from "@debutter/dom";
+import { dom, type DomContext, html, parse } from "@debutter/dough";
 import { client } from "./main.ts";
 import type { RoomMessage } from "../../lib/client.ts";
 import { Marked } from "marked";

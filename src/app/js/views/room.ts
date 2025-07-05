@@ -1,4 +1,4 @@
-import { dom, html } from "@debutter/dom";
+import { dom, html } from "@debutter/dough";
 import type { Room } from "../../../lib/roomManager.ts";
 import {
 	clearRoomAttachments,

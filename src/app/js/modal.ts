@@ -1,4 +1,4 @@
-import { $, dom, type DomContext, html } from "@debutter/dom";
+import { $, dom, type DomContext, html } from "@debutter/dough";
 
 const $background = dom(html`<div id="modal-background" class="hidden"></div>`);
 const modalQueue: Modal[] = [];
