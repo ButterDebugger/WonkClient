@@ -1,31 +1,36 @@
 import tippy from "tippy.js";
 import axios from "axios";
-import { locateHomeserver } from "../lib/client.ts";
+import { isHomeserver, locateHomeserver } from "../lib/client.ts";
 import * as tbForage from "../tbForage.ts";
 
-const errorMessageEle = document.getElementById("error-message");
-const homeserverEle = document.getElementById("homeserver");
-const homeserverLabelEle = document.querySelector("label[for=homeserver]");
-const authBtn = document.getElementById("auth-btn");
-const continueBtn = document.getElementById("continue-btn");
-const logoutBtn = document.getElementById("logout-btn");
-const accessStage = document.getElementById("access-stage");
-const loginStage = document.getElementById("login-stage");
-const continueStage = document.getElementById("continue-stage");
-const usernameEle = document.getElementById("username");
+const errorMessageEle = <HTMLHeadingElement>(
+	document.getElementById("error-message")
+);
+const homeserverEle = <HTMLInputElement>document.getElementById("homeserver");
+const homeserverLabelEle = <HTMLLabelElement>(
+	document.querySelector("label[for=homeserver]")
+);
+const authBtn = <HTMLButtonElement>document.getElementById("auth-btn");
+const continueBtn = <HTMLButtonElement>document.getElementById("continue-btn");
+const logoutBtn = <HTMLButtonElement>document.getElementById("logout-btn");
+const accessStage = <HTMLDivElement>document.getElementById("access-stage");
+const loginStage = <HTMLDivElement>document.getElementById("login-stage");
+const continueStage = <HTMLDivElement>document.getElementById("continue-stage");
+const usernameEle = <HTMLSpanElement>document.getElementById("username");
 
 const ogAuthBtnText = authBtn.innerText;
 const params = new URLSearchParams(location.search);
 
+// @ts-ignore
 tippy([homeserverEle, homeserverLabelEle], {
 	content:
 		'<p style="text-align: center; margin: 0px;">The server you will be connected to<br>(also where your data will be stored)</p>',
 	allowHTML: true,
-	delay: [500, 0],
+	delay: [500, 0]
 });
 
 /** @returns The array of bytes converted to base64url */
-function encodeBase64Url(arr) {
+function encodeBase64Url(arr: Uint8Array) {
 	// Convert the array to a string
 	let str = "";
 	for (const val of arr) {
@@ -107,7 +112,7 @@ authBtn.addEventListener("click", async () => {
 	const params = new URLSearchParams({
 		callback: encodeURIComponent(`${location.origin}${location.pathname}`),
 		state: state,
-		challenge: challenge,
+		challenge: challenge
 	});
 
 	location.href = `${homeserver.baseUrl.http}/oauth/login/?${params}`;
@@ -128,6 +133,13 @@ async function access() {
 	const verifier = await tbForage.get("verifier");
 	const homeserver = await tbForage.get("homeserver");
 
+	if (!isHomeserver(homeserver)) {
+		errorMessageEle.innerText = "Invalid homeserver";
+		accessStage.classList.add("hidden");
+		loginStage.classList.remove("hidden");
+		return;
+	}
+
 	// Check if the state matches
 	if (params.get("state") !== (await tbForage.get("state"))) {
 		errorMessageEle.innerText = "Invalid state";
@@ -139,7 +151,7 @@ async function access() {
 	// Retrieve the access token
 	axios
 		.post(`${homeserver.baseUrl.http}/oauth/token`, {
-			verifier: verifier,
+			verifier: verifier
 		})
 		.then(async (res) => {
 			const { token } = res.data;
@@ -161,16 +173,18 @@ async function whoAmI() {
 	const token = await tbForage.get("token");
 	const homeserver = await tbForage.get("homeserver");
 
+	if (!isHomeserver(homeserver)) return; // TODO: Properly handle this
+
 	axios({
 		method: "GET",
 		url: `${homeserver.baseUrl.http}/me/info`,
 		headers: {
-			Authorization: `Bearer ${token}`,
-		},
+			Authorization: `Bearer ${token}`
+		}
 	})
 		.then(async (res) => {
 			const {
-				you: { username },
+				you: { username }
 			} = res.data;
 
 			await tbForage.set("username", username);
@@ -178,5 +192,7 @@ async function whoAmI() {
 			usernameEle.innerText = `@${username}:${homeserver.namespace}`;
 			continueBtn.disabled = false;
 		})
-		.catch((err) => {});
+		.catch((err) => {
+			// TODO: Properly handle this error
+		});
 }

@@ -6,18 +6,10 @@ import UserManager, { User } from "./userManager.ts";
 import { ClientError, errorCodes } from "./builtinErrors.ts";
 import AttachmentManager from "./attachmentManager.ts";
 import { StreamManager } from "./dataStream.ts";
+import { BaseUrl } from "./types.ts";
 
+export * from "./types.ts";
 export { generateKeyPair, ClientError, errorCodes };
-
-export interface BaseUrl {
-	http: string;
-	ws: string;
-}
-
-export interface Homeserver {
-	namespace: string;
-	baseUrl: BaseUrl;
-}
 
 export class Client extends EventEmitter {
 	#baseUrl: BaseUrl;
