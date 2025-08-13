@@ -3,9 +3,9 @@ import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
 import { switchNav } from "../navigator.ts";
 import { appendBreadcrumb } from "../breadcrumbs.ts";
 
-export function getMessagesView(): ViewWrapper {
+export function getChatsView(): ViewWrapper {
 	// Return existing view
-	const existingView = getView("messages");
+	const existingView = getView("chats");
 	if (existingView) return existingView;
 
 	// Create new view
@@ -13,7 +13,7 @@ export function getMessagesView(): ViewWrapper {
 		header: dom(
 			html`<div class="header">
 				<div class="center">
-					<span class="title">Messages</span>
+					<span class="title">Chats</span>
 				</div>
 
 				<div class="right">
@@ -45,13 +45,13 @@ export function getMessagesView(): ViewWrapper {
 		footer: dom(html`<div class="footer hidden"></div>`),
 		switchAction: () => {
 			// Update navigation
-			switchNav("messages");
+			switchNav("chats");
 
 			// Append breadcrumb
 			appendBreadcrumb(
-				"Messages",
+				"Chats",
 				() => {
-					switchView(getMessagesView());
+					switchView(getChatsView());
 				},
 				"Home"
 			);
@@ -59,7 +59,7 @@ export function getMessagesView(): ViewWrapper {
 	};
 
 	// Save and return the view
-	setView("messages", view);
+	setView("chats", view);
 
 	return view;
 }
