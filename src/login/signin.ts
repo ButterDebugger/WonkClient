@@ -115,7 +115,7 @@ authBtn.addEventListener("click", async () => {
 		challenge: challenge
 	});
 
-	location.href = `${homeserver.baseUrl.http}/oauth/login/?${params}`;
+	location.href = `${homeserver.baseUrl.http}/auth/login/?${params}`;
 });
 
 continueBtn.addEventListener("click", () => {
@@ -150,7 +150,7 @@ async function access() {
 
 	// Retrieve the access token
 	axios
-		.post(`${homeserver.baseUrl.http}/oauth/token`, {
+		.post(`${homeserver.baseUrl.http}/auth/token`, {
 			verifier: verifier
 		})
 		.then(async (res) => {
