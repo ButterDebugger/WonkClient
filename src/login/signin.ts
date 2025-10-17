@@ -110,7 +110,7 @@ authBtn.addEventListener("click", async () => {
 	await tbForage.set("homeserver", homeserver);
 
 	const params = new URLSearchParams({
-		callback: encodeURIComponent(`${location.origin}${location.pathname}`),
+		callback: `${location.origin}${location.pathname}`,
 		state: state,
 		challenge: challenge
 	});
