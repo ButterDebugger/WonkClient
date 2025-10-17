@@ -133,6 +133,8 @@ async function access() {
 	const verifier = await tbForage.get("verifier");
 	const homeserver = await tbForage.get("homeserver");
 
+	const code = params.get("code");
+
 	if (!isHomeserver(homeserver)) {
 		errorMessageEle.innerText = "Invalid homeserver";
 		accessStage.classList.add("hidden");
@@ -151,7 +153,8 @@ async function access() {
 	// Retrieve the access token
 	axios
 		.post(`${homeserver.baseUrl.http}/auth/token`, {
-			verifier: verifier
+			verifier: verifier,
+			code: code
 		})
 		.then(async (res) => {
 			const { token } = res.data;
