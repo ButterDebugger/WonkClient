@@ -232,7 +232,7 @@ export async function locateHomeserver(domain: string) {
 	try {
 		// Get the base URL of the homeserver
 		const wellKnownRes = await axios.get(
-			`https://${domain}/.well-known/wonk`
+			`http://${domain}/.well-known/wonk`
 		);
 		const {
 			homeserver: { base_url }
