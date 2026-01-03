@@ -256,7 +256,7 @@ export async function locateHomeserver(domain: string) {
 	try {
 		// Get the base URL of the homeserver
 		const wellKnownRes = await axios.get(
-			`http://${domain}/.well-known/wonk`
+			`${location.protocol === "https:" ? "https" : "http"}://${domain}/.well-known/wonk`
 		);
 		const {
 			homeserver: { base_url }
