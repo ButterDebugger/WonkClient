@@ -130,13 +130,13 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 	return view;
 }
 
-export function appendMessage(message: RoomMessage) {
-	const view = getOrCreateRoomView(message.room);
+export async function appendMessage(message: RoomMessage) {
+	const view = getOrCreateRoomView(await message.getRoom());
 	const canScroll =
 		view.content.element.scrollHeight -
 		Math.ceil(view.content.element.scrollTop) <=
 		view.content.element.clientHeight;
-	const messageEle = createMessage(message);
+	const messageEle = await createMessage(message);
 	view.content.append(messageEle);
 
 	if (canScroll) {

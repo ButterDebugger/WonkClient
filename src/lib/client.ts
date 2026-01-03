@@ -313,10 +313,10 @@ export class RoomMessage {
 		this.timestamp = timestamp;
 	}
 
-	get room(): Room {
-		return <Room>this.client.rooms.cache.get(this.#roomId);
+	async getRoom(): Promise<Room> {
+		return this.client.rooms.fetch(this.#roomId);
 	}
-	get author(): User {
-		return <User>this.client.users.cache.get(this.#userId);
+	async getAuthor(): Promise<User> {
+		return this.client.users.fetch(this.#userId);
 	}
 }

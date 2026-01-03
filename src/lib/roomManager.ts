@@ -128,7 +128,33 @@ export default class RoomManager {
 		});
 	}
 
-	fetch(roomName: string, ignoreCache = false) { }
+	fetch(roomId: string, ignoreCache = false): Promise<Room> {
+		return new Promise((resolve, reject) => {
+			const existingRoom = this.cache.get(roomId);
+			if (!ignoreCache && existingRoom) return resolve(existingRoom);
+
+			this.client
+				.request({
+					method: "get",
+					url: `/room/${roomId}/info`
+				})
+				.then(async (res) => {
+					const { id, name, description, key, members } = res.data;
+
+					const room = new Room(this.client, id, name, description, key, members);
+					this.cache.set(id, room);
+
+					resolve(room);
+				})
+				.catch((err) =>
+					reject(
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
+							: err
+					)
+				);
+		});
+	}
 }
 
 export interface MessageOptions {
@@ -142,6 +168,7 @@ export class Room {
 	name: string;
 	description: string;
 	publicKey: string;
+	/** Set of user ids */
 	members: Set<string>;
 
 	constructor(
@@ -232,6 +259,7 @@ export class Room {
 					this.description = res.data.description;
 					this.publicKey = res.data.key;
 					this.members = new Set(res.data.members);
+
 					resolve(true);
 				})
 				.catch((err) =>

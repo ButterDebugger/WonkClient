@@ -26,6 +26,7 @@ export default class UserManager {
 			cachedUser.color = userData.color;
 			cachedUser.offline = userData.offline;
 			cachedUser.username = userData.username;
+			cachedUser.cacheTime = timestamp;
 		} else {
 			this.cache.set(
 				userId,
@@ -41,23 +42,23 @@ export default class UserManager {
 		}
 	}
 
-	fetch(username: string, ignoreCache = false): Promise<User> {
+	fetch(userId: string, ignoreCache = false): Promise<User> {
 		return new Promise((resolve, reject) => {
-			const existingUser = this.cache.get(username);
+			const existingUser = this.cache.get(userId);
 			if (!ignoreCache && existingUser) return resolve(existingUser);
 
 			this.client
 				.request({
 					method: "get",
-					url: `/user/${username}/fetch`
+					url: `/user/${userId}/fetch`
 				})
 				.then(async (res) => {
-					const { username, data } = res.data;
+					const { id, data } = res.data;
 
 					// Update cache for the user
-					this.update(username, data, Date.now());
+					this.update(id, data, Date.now());
 
-					resolve(<User>this.cache.get(username));
+					resolve(<User>this.cache.get(id));
 				})
 				.catch((err) =>
 					reject(

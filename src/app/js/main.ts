@@ -69,9 +69,9 @@ client.on("roomMemberJoin", (userId, roomName, timestamp) => {
 	console.log("yippee member joined", userId, roomName, timestamp);
 });
 
-client.on("roomMemberMessage", (message) => {
+client.on("roomMemberMessage", async (message) => {
 	console.log("message", message);
-	appendMessage(message);
+	await appendMessage(message);
 });
 
 export async function joinRoom(roomName: string) {

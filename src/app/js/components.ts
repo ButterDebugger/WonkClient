@@ -57,14 +57,13 @@ export function createUserChip(name: string, color: string, online = true) {
 	if (!online) tagEle.classList.add("offline");
 
 	return dom(html`<div class="user-chip"></div>`).append(
-		`<span class="ic-text-size ic-${
-			online ? "green" : "gray"
+		`<span class="ic-text-size ic-${online ? "green" : "gray"
 		}-dot"></span>`,
 		tagEle
 	);
 }
 
-export function createMessage(message: RoomMessage) {
+export async function createMessage(message: RoomMessage) {
 	// Create timestamp element with tippy
 	const timestampEle = dom(
 		html`<span class="message-timestamp"></span>`
@@ -96,9 +95,11 @@ export function createMessage(message: RoomMessage) {
 	);
 
 	// Return full component
+	const author = await message.getAuthor();
+
 	return dom(html`<div class="message"></div>`).append(
 		dom(html`<div class="message-header"></div>`).append(
-			createUserTag(message.author.username, message.author.color),
+			createUserTag(author.username, author.color),
 			timestampEle
 		),
 		dom(html`<div class="message-content"></div>`).append(
