@@ -1,7 +1,7 @@
 import { dom, type DomContext, html } from "@debutter/dough";
 import { getView, setView, switchView, type ViewWrapper } from "../views.ts";
 import { hideModal, showModal } from "../modal.ts";
-import { client, joinOrCreateRoom } from "../main.ts";
+import { client, joinOrCreateRoom, joinRoomWithInvite } from "../main.ts";
 import { createRoomTab } from "../components.ts";
 import { getOrCreateRoomView } from "./room.ts";
 import { switchNav } from "../navigator.ts";
@@ -29,11 +29,58 @@ export function getRoomsView(): ViewWrapper {
 							);
 							const $input = dom(
 								html`<input
-									type="text"
-									placeholder="Name"
-									required
-									minlength="3"
-								/>`
+										type="text"
+										placeholder="Name"
+										required
+										minlength="3"
+									/>`
+							);
+							const inputEle = <HTMLInputElement>$input.element;
+							const $createBtn = dom(
+								html`<button disabled>Create</button>`
+							);
+
+							$input.on("input", () => {
+								if (inputEle.validity.valid) {
+									$createBtn.prop("disabled", false);
+								} else {
+									$createBtn.prop("disabled", true);
+								}
+							});
+
+							$container.append($input, $createBtn);
+
+							$createBtn.on("click", async () => {
+								$createBtn.prop("disabled", true);
+
+								if (
+									await joinOrCreateRoom(
+										<string>$input.prop("value")
+									)
+								) {
+									hideModal();
+								}
+
+								$createBtn.prop("disabled", false);
+							});
+
+							showModal("Create Room", $container);
+						}}
+					>
+						<span class="ic-small ic-plus"></span>
+					</div>
+					<div
+						class="ic-small-container"
+						onclick=${() => {
+							const $container = dom(
+								html`<div class="container flex-row"></div>`
+							);
+							const $input = dom(
+								html`<input
+										type="text"
+										placeholder="Invite Code"
+										required
+									/>`
 							);
 							const inputEle = <HTMLInputElement>$input.element;
 							const $joinBtn = dom(
@@ -54,7 +101,7 @@ export function getRoomsView(): ViewWrapper {
 								$joinBtn.prop("disabled", true);
 
 								if (
-									await joinOrCreateRoom(
+									await joinRoomWithInvite(
 										<string>$input.prop("value")
 									)
 								) {
@@ -67,7 +114,7 @@ export function getRoomsView(): ViewWrapper {
 							showModal("Join Room", $container);
 						}}
 					>
-						<span class="ic-small ic-plus"></span>
+						<span class="ic-small ic-ticket"></span>
 					</div>
 				</div>
 			</div>`

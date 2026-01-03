@@ -12,6 +12,7 @@ import {
 } from "../views.ts";
 import { getRoomsView } from "./rooms.ts";
 import { appendBreadcrumb } from "../breadcrumbs.ts";
+import { showModal } from "../modal.ts";
 
 export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 	// Return existing view
@@ -105,17 +106,29 @@ export function getOrCreateRoomInfoView(room: Room): ViewWrapper {
 		dom(html`<div class="info-container" for="general">
 			<button
 				onclick=${async () => {
-					const success = await leaveRoom(room.name);
+				const success = await leaveRoom(room.id);
 
-					if (success) {
-						switchNav("rooms");
-						switchView(getRoomsView());
-					} else {
-						console.error("Failed to leave room"); // TODO: make fancier
-					}
-				}}
+				if (success) {
+					switchNav("rooms");
+					switchView(getRoomsView());
+				} else {
+					console.error("Failed to leave room"); // TODO: make fancier
+				}
+			}}
 			>
 				Leave
+			</button>
+			<button onclick=${async () => {
+				const invite = await room.client.rooms.cache.get(room.id)?.createInvite()
+
+				if (!invite) {
+					console.error("Failed to create invite"); // TODO: make fancier
+					return;
+				}
+
+				showModal("Invite Code", dom(html`<input type="text" value="${invite}" readonly />`));
+			}}>
+				Create Invite
 			</button>
 		</div>`),
 		// Add members area

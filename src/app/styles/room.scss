@@ -124,6 +124,10 @@
 	/* Room info content */
 	.content.room-info {
 		.info-container {
+			display: flex;
+			flex-direction: column;
+			gap: theme.$bubble-spacing;
+
 			flex: 1;
 
 			.members-list {

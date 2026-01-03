@@ -38,38 +38,34 @@ export class StreamManager {
 					this.client.emit("ping", pingData.ping);
 					break;
 				}
-				case "updateMember": {
-					const updateMemberData = <UpdateMemberBody>data;
+				case "roomMemberJoin": {
+					const roomMemberJoinData = <RoomMemberJoinBody>data;
 
-					switch (updateMemberData.state) {
-						case "join":
-							this.client.emit(
-								"roomMemberJoin",
-								updateMemberData.username,
-								updateMemberData.room,
-								updateMemberData.timestamp
-							);
-							break;
-						case "leave":
-							this.client.emit(
-								"roomMemberLeave",
-								updateMemberData.username,
-								updateMemberData.room,
-								updateMemberData.timestamp
-							);
-							break;
-						default:
-							// TODO: Throw out of date client error
-							break;
-					}
+					this.client.emit(
+						"roomMemberJoin",
+						roomMemberJoinData.username,
+						roomMemberJoinData.roomId,
+						roomMemberJoinData.timestamp
+					);
 					break;
 				}
-				case "updateUser": {
-					const updateUserData = <UpdateUserBody>data;
+				case "roomMemberLeave": {
+					const roomMemberLeaveData = <RoomMemberLeaveBody>data;
+
+					this.client.emit(
+						"roomMemberLeave",
+						roomMemberLeaveData.username,
+						roomMemberLeaveData.roomId,
+						roomMemberLeaveData.timestamp
+					);
+					break;
+				}
+				case "userUpdate": {
+					const updateUserData = <UserUpdateBody>data;
 
 					this.client.emit(
 						"userUpdate",
-						updateUserData.username,
+						updateUserData.id,
 						updateUserData.data,
 						updateUserData.timestamp
 					);
@@ -79,6 +75,7 @@ export class StreamManager {
 					const messageData = <MessageBody>data;
 
 					const authorData = {
+						id: messageData.author.id,
 						color: messageData.author.color,
 						offline: messageData.author.offline,
 						username: messageData.author.username,
@@ -86,13 +83,14 @@ export class StreamManager {
 					};
 					this.client.users.update(
 						messageData.author.username,
-						authorData
+						authorData,
+						Date.now()
 					);
 
 					const message = new RoomMessage(
 						this.client,
-						messageData.author.username,
-						messageData.room,
+						messageData.author.id,
+						messageData.roomId,
 						messageData.content,
 						messageData.attachments,
 						messageData.timestamp
@@ -129,7 +127,12 @@ export class StreamManager {
  */
 
 export interface StreamBody {
-	event: "connect" | "message" | "ping" | "updateMember" | "updateUser";
+	event: "connect"
+	| "message"
+	| "ping"
+	| "roomMemberJoin"
+	| "roomMemberLeave"
+	| "userUpdate";
 }
 function isStreamBody(body: unknown): body is StreamBody {
 	return typeof body === "object" && body !== null && "event" in body;
@@ -147,23 +150,28 @@ export interface PingBody extends StreamBody {
 	event: "ping";
 	ping: number;
 }
-export interface UpdateMemberBody extends StreamBody {
-	event: "updateMember";
-	state: "join" | "leave";
+export interface RoomMemberJoinBody extends StreamBody {
+	event: "roomMemberJoin";
 	username: string;
-	room: string;
+	roomId: string;
 	timestamp: number;
 }
-export interface UpdateUserBody extends StreamBody {
-	event: "updateUser";
+export interface RoomMemberLeaveBody extends StreamBody {
+	event: "roomMemberLeave";
 	username: string;
+	roomId: string;
+	timestamp: number;
+}
+export interface UserUpdateBody extends StreamBody {
+	event: "userUpdate";
+	id: string;
 	data: UserData;
 	timestamp: number;
 }
 export interface MessageBody extends StreamBody {
 	event: "message";
 	author: UserData;
-	room: string;
+	roomId: string;
 	content: string;
 	attachments: string[];
 	timestamp: number;
@@ -174,10 +182,10 @@ export interface MessageBody extends StreamBody {
  */
 
 export interface UserData {
+	id: string;
 	username: string;
 	color: string;
 	offline: boolean;
-	timestamp: number;
 }
 
 /**
@@ -208,10 +216,12 @@ export async function parseStreamData<Body extends StreamBody>(
 		switch (data.event) {
 			case "message":
 				return data as Body & MessageBody;
-			case "updateMember":
-				return data as Body & UpdateMemberBody;
-			case "updateUser":
-				return data as Body & UpdateUserBody;
+			case "roomMemberJoin":
+				return data as Body & RoomMemberJoinBody;
+			case "roomMemberLeave":
+				return data as Body & RoomMemberLeaveBody;
+			case "userUpdate":
+				return data as Body & UserUpdateBody;
 			case "ping":
 				return data as Body & PingBody;
 			case "connect":

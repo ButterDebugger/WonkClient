@@ -12,29 +12,30 @@ export default class UserManager {
 
 		this.cache = new Map();
 
-		this.client.on("userUpdate", (username, data) =>
-			this.update(username, data)
+		this.client.on("userUpdate", (userId, userData, timestamp) =>
+			this.update(userId, userData, timestamp)
 		);
 	}
 
-	update(username: string, data: UserData) {
-		const cachedUser = this.cache.get(username);
+	update(userId: string, userData: UserData, timestamp: number) {
+		const cachedUser = this.cache.get(userId);
 
 		if (cachedUser) {
-			if (cachedUser.cacheTime >= data.timestamp) return; // Don't cache
+			if (cachedUser.cacheTime >= timestamp) return; // Don't cache
 
-			cachedUser.color = data.color;
-			cachedUser.offline = data.offline;
-			cachedUser.username = data.username;
+			cachedUser.color = userData.color;
+			cachedUser.offline = userData.offline;
+			cachedUser.username = userData.username;
 		} else {
 			this.cache.set(
-				username,
+				userId,
 				new User(
 					this.client,
-					data.username,
-					data.color,
-					data.offline,
-					data.timestamp
+					userData.id,
+					userData.username,
+					userData.color,
+					userData.offline,
+					timestamp
 				)
 			);
 		}
@@ -54,7 +55,7 @@ export default class UserManager {
 					const { username, data } = res.data;
 
 					// Update cache for the user
-					this.update(username, data);
+					this.update(username, data, Date.now());
 
 					resolve(<User>this.cache.get(username));
 				})
@@ -71,6 +72,7 @@ export default class UserManager {
 
 export class User {
 	client: Client;
+	id: string;
 	username: string;
 	color: string;
 	offline: boolean;
@@ -78,6 +80,7 @@ export class User {
 
 	constructor(
 		client: Client,
+		id: string,
 		username: string,
 		color: string,
 		offline: boolean,
@@ -85,6 +88,7 @@ export class User {
 	) {
 		this.client = client;
 
+		this.id = id;
 		this.username = username;
 		this.color = color;
 		this.offline = offline;

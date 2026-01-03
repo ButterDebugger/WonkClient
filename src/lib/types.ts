@@ -1,3 +1,6 @@
+import { RoomMessage } from "./client.ts";
+import { UserData } from "./dataStream.ts";
+
 export interface BaseUrl {
 	http: string;
 	ws: string;
@@ -20,4 +23,14 @@ export function isHomeserver(server: unknown): server is Homeserver {
 		"baseUrl" in server &&
 		isBaseUrl(server.baseUrl)
 	);
+}
+
+export interface ClientEvents {
+	ready: () => void;
+	ping: (int: number) => void;
+	disconnect: () => void;
+	userUpdate: (userId: string, user: UserData, timestamp: number) => void;
+	roomMemberJoin: (username: string, roomId: string, timestamp: number) => void;
+	roomMemberLeave: (username: string, roomId: string, timestamp: number) => void;
+	roomMemberMessage: (message: RoomMessage) => void;
 }

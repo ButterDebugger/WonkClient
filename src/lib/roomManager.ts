@@ -13,32 +13,32 @@ export default class RoomManager {
 
 		this.cache = new Map();
 
-		client.on("roomMemberJoin", (username, roomName) => {
-			const room = this.cache.get(roomName);
+		client.on("roomMemberJoin", (username, roomId) => {
+			const room = this.cache.get(roomId);
 			if (!room) return;
 
 			room.members.add(username);
 		});
-		client.on("roomMemberLeave", (username, roomName) => {
-			const room = this.cache.get(roomName);
+		client.on("roomMemberLeave", (username, roomId) => {
+			const room = this.cache.get(roomId);
 			if (!room) return;
 
 			room.members.delete(username);
 		});
 	}
 
-	join(roomName: string): Promise<Room> {
+	join(roomId: string): Promise<Room> {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
 					method: "post",
-					url: `/room/${roomName}/join`,
+					url: `/room/${roomId}/join`,
 				})
 				.then(async (res) => {
-					const { name, description, key, members } = res.data;
+					const { id, name, description, key, members } = res.data;
 
-					const room = new Room(this.client, name, description, key, members);
-					this.cache.set(name, room);
+					const room = new Room(this.client, id, name, description, key, members);
+					this.cache.set(id, room);
 
 					resolve(room);
 				})
@@ -51,17 +51,46 @@ export default class RoomManager {
 				);
 		});
 	}
-	leave(roomName: string): Promise<boolean> {
+
+	joinWithInvite(inviteCode: string): Promise<Room> {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
 					method: "post",
-					url: `/room/${roomName}/leave`,
+					url: `/room/use-invite`,
+					data: {
+						code: inviteCode,
+					},
+				})
+				.then(async (res) => {
+					const { id, name, description, key, members } = res.data;
+
+					const room = new Room(this.client, id, name, description, key, members);
+					this.cache.set(id, room);
+
+					resolve(room);
+				})
+				.catch((err) =>
+					reject(
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
+							: err,
+					),
+				);
+		});
+	}
+
+	leave(roomId: string): Promise<boolean> {
+		return new Promise((resolve, reject) => {
+			this.client
+				.request({
+					method: "post",
+					url: `/room/${roomId}/leave`,
 				})
 				.then((res) => {
 					if (!res.data.success) return resolve(false);
 
-					this.cache.delete(roomName);
+					this.cache.delete(roomId);
 					resolve(true);
 				})
 				.catch((err) =>
@@ -73,12 +102,18 @@ export default class RoomManager {
 				);
 		});
 	}
-	create(roomName: string) {
+
+	create(roomName: string): Promise<{
+		roomId: string;
+	}> {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
 					method: "post",
-					url: `/room/${roomName}/create`,
+					url: `/room/create`,
+					data: {
+						name: roomName,
+					},
 				})
 				.then((res) => {
 					resolve(res.data);
@@ -93,7 +128,7 @@ export default class RoomManager {
 		});
 	}
 
-	fetch(roomName: string, ignoreCache = false) {}
+	fetch(roomName: string, ignoreCache = false) { }
 }
 
 export interface MessageOptions {
@@ -103,6 +138,7 @@ export interface MessageOptions {
 
 export class Room {
 	client: Client;
+	id: string;
 	name: string;
 	description: string;
 	publicKey: string;
@@ -110,6 +146,7 @@ export class Room {
 
 	constructor(
 		client: Client,
+		id: string,
 		name: string,
 		description: string,
 		key: string,
@@ -117,6 +154,7 @@ export class Room {
 	) {
 		this.client = client;
 
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.publicKey = key;
@@ -140,7 +178,7 @@ export class Room {
 			this.client
 				.request({
 					method: "post",
-					url: `/room/${this.name}/message`,
+					url: `/room/${this.id}/message`,
 					data: {
 						message: encryptedMessage,
 					},
@@ -158,12 +196,35 @@ export class Room {
 		});
 	}
 
+	async createInvite(): Promise<string | null> {
+		return new Promise((resolve, reject) => {
+			this.client
+				.request({
+					method: "post",
+					url: `/room/${this.id}/create-invite`,
+				})
+				.then((res) => {
+					const { code, success } = res.data;
+					if (!success || !code) return resolve(null);
+
+					resolve(code);
+				})
+				.catch((err) =>
+					reject(
+						err instanceof AxiosError
+							? new ClientError(err?.response?.data, err)
+							: err,
+					),
+				);
+		});
+	}
+
 	refresh() {
 		return new Promise((resolve, reject) => {
 			this.client
 				.request({
 					method: "get",
-					url: `/room/${this.name}/info`,
+					url: `/room/${this.id}/info`,
 				})
 				.then((res) => {
 					if (!res.data.success) return resolve(false);

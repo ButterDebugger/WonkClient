@@ -73,7 +73,7 @@ export function getOrCreateRoomView(room: Room): ViewWrapper {
 
 		if (value.length === 0) return;
 
-		const result = await sendMessage(room.name, {
+		const result = await sendMessage(room.id, {
 			text: value,
 			attachments: getRoomAttachments(room.name)
 		});
@@ -134,7 +134,7 @@ export function appendMessage(message: RoomMessage) {
 	const view = getOrCreateRoomView(message.room);
 	const canScroll =
 		view.content.element.scrollHeight -
-			Math.ceil(view.content.element.scrollTop) <=
+		Math.ceil(view.content.element.scrollTop) <=
 		view.content.element.clientHeight;
 	const messageEle = createMessage(message);
 	view.content.append(messageEle);

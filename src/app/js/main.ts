@@ -52,7 +52,7 @@ export const client = (await Client.login(
 client.once("ready", async () => {
 	console.log(`Logged in as ${client.user.username}!`);
 
-	await joinRoom("wonk");
+	// await joinRoom("wonk");
 
 	updateRoomsTabs();
 });
@@ -77,6 +77,8 @@ client.on("roomMemberMessage", (message) => {
 export async function joinRoom(roomName: string) {
 	try {
 		await client.rooms.join(roomName);
+
+		updateRoomsTabs();
 	} catch (error) {
 		console.warn(error);
 		return false;
@@ -93,8 +95,10 @@ export async function joinOrCreateRoom(roomName: string): Promise<boolean> {
 
 			if (clientError.code === errorCodes.RoomDoesNotExist) {
 				try {
-					await client.rooms.create(roomName);
-					await client.rooms.join(roomName); // NOTE: I shouldn't need to join a room that I created
+					const { roomId } = await client.rooms.create(roomName);
+					await client.rooms.join(roomId);
+					// NOTE: I shouldn't need to join a room that I created
+
 					updateRoomsTabs();
 				} catch (error) {
 					console.warn(error);
@@ -110,9 +114,21 @@ export async function joinOrCreateRoom(roomName: string): Promise<boolean> {
 	return true;
 }
 
-export async function leaveRoom(roomName: string) {
+export async function joinRoomWithInvite(inviteCode: string) {
 	try {
-		const success = await client.rooms.leave(roomName);
+		await client.rooms.joinWithInvite(inviteCode);
+
+		updateRoomsTabs();
+	} catch (error) {
+		console.warn(error);
+		return false;
+	}
+	return true;
+}
+
+export async function leaveRoom(roomId: string) {
+	try {
+		const success = await client.rooms.leave(roomId);
 		if (!success) return false;
 	} catch (error) {
 		console.warn(error);
@@ -123,9 +139,9 @@ export async function leaveRoom(roomName: string) {
 	return true;
 }
 
-export async function sendMessage(roomName: string, options: MessageOptions) {
+export async function sendMessage(roomId: string, options: MessageOptions) {
 	try {
-		const room = client.rooms.cache.get(roomName);
+		const room = client.rooms.cache.get(roomId);
 		if (!room) return false;
 
 		await room.send(options);

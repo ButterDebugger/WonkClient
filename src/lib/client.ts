@@ -6,12 +6,12 @@ import UserManager, { User } from "./userManager.ts";
 import { ClientError, errorCodes } from "./builtinErrors.ts";
 import AttachmentManager from "./attachmentManager.ts";
 import { StreamManager } from "./dataStream.ts";
-import { BaseUrl } from "./types.ts";
+import { BaseUrl, ClientEvents } from "./types.ts";
 
 export * from "./types.ts";
 export { generateKeyPair, ClientError, errorCodes };
 
-export class Client extends EventEmitter {
+export class Client extends EventEmitter<ClientEvents> {
 	#baseUrl: BaseUrl;
 	#token: string;
 	#keyPair: KeyPair;
@@ -130,21 +130,43 @@ export class Client extends EventEmitter {
 				url: "/me/info"
 			})
 				.then(async (res) => {
-					const { rooms, users, you } = res.data;
+					const { rooms, users, you } = res.data as {
+						rooms: {
+							id: string;
+							name: string;
+							description: string;
+							key: string;
+							members: string[]
+						}[];
+						users: {
+							id: string;
+							username: string;
+							color: string;
+							offline: boolean
+						}[];
+						you: {
+							id: string;
+							username: string;
+							color: string;
+							offline: boolean
+						};
+					};
 
 					// Update the rooms cache
 					for (const room of rooms) {
-						const cachedRoom = this.rooms.cache.get(room.name);
+						const cachedRoom = this.rooms.cache.get(room.id);
 
 						if (cachedRoom) {
+							cachedRoom.name = room.name;
 							cachedRoom.description = room.description;
 							cachedRoom.publicKey = room.key;
 							cachedRoom.members = new Set(room.members);
 						} else {
 							this.rooms.cache.set(
-								room.name,
+								room.id,
 								new Room(
 									this,
+									room.id,
 									room.name,
 									room.description,
 									room.key,
@@ -156,7 +178,7 @@ export class Client extends EventEmitter {
 
 					// Update the users cache
 					for (const user of users) {
-						const cachedUser = this.users.cache.get(user.username);
+						const cachedUser = this.users.cache.get(user.id);
 
 						if (cachedUser) {
 							cachedUser.username = user.username;
@@ -164,9 +186,10 @@ export class Client extends EventEmitter {
 							cachedUser.offline = user.offline;
 						} else {
 							this.users.cache.set(
-								user.username,
+								user.id,
 								new User(
 									this,
+									user.id,
 									user.username,
 									user.color,
 									user.offline
@@ -179,11 +202,12 @@ export class Client extends EventEmitter {
 					if (typeof this.user === "undefined") {
 						this.user = new User(
 							this,
+							you.id,
 							you.username,
 							you.color,
 							you.offline
 						);
-						this.users.cache.set(you.username, this.user);
+						this.users.cache.set(you.id, this.user);
 					} else {
 						this.user.username = you.username;
 						this.user.color = you.color;
@@ -263,8 +287,8 @@ export async function locateHomeserver(domain: string) {
 }
 
 export class RoomMessage {
-	#username: string;
-	#roomName: string;
+	#userId: string;
+	#roomId: string;
 
 	client: Client;
 	content: string;
@@ -273,16 +297,16 @@ export class RoomMessage {
 
 	constructor(
 		client: Client,
-		username: string,
-		roomName: string,
+		userId: string,
+		roomId: string,
 		content: string,
 		attachments: string[],
 		timestamp: number
 	) {
 		this.client = client;
 
-		this.#username = username;
-		this.#roomName = roomName;
+		this.#userId = userId;
+		this.#roomId = roomId;
 
 		this.content = content;
 		this.attachments = attachments;
@@ -290,9 +314,9 @@ export class RoomMessage {
 	}
 
 	get room(): Room {
-		return <Room>this.client.rooms.cache.get(this.#roomName);
+		return <Room>this.client.rooms.cache.get(this.#roomId);
 	}
 	get author(): User {
-		return <User>this.client.users.cache.get(this.#username);
+		return <User>this.client.users.cache.get(this.#userId);
 	}
 }

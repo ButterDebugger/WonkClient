@@ -109,6 +109,11 @@
 
 	--ic-url: url("@fa/svgs/solid/spinner.svg");
 }
+.ic-ticket {
+	@include icon(false);
+
+	--ic-url: url("@fa/svgs/solid/ticket.svg");
+}
 .ic-blue-dot {
 	@include icon(true);
 
