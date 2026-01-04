@@ -1,7 +1,7 @@
 import { dom, type DomContext, html } from "@debutter/dough";
 import { lockModal, showModal, unlockModal } from "./modal.ts";
 import { client } from "./main.ts";
-import type { Attachment } from "../../lib/attachmentManager.ts";
+import type { Attachment } from "../../lib/mediaManager.ts";
 import { setAttachmentAnimation } from "./views/room.ts";
 
 /** Room names mapped to file input elements */

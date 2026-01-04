@@ -4,7 +4,7 @@ import { generateKeyPair, type KeyPair, signText } from "./cryption.ts";
 import RoomManager, { Room } from "./roomManager.ts";
 import UserManager, { User } from "./userManager.ts";
 import { ClientError, errorCodes } from "./builtinErrors.ts";
-import AttachmentManager from "./attachmentManager.ts";
+import AttachmentManager from "./mediaManager.ts";
 import { StreamManager } from "./dataStream.ts";
 import { BaseUrl, ClientEvents } from "./types.ts";
 

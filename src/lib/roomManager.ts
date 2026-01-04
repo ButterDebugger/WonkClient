@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import { ClientError } from "./builtinErrors.ts";
 import type { Client } from "./client.ts";
 import { encryptText } from "./cryption.ts";
-import type { Attachment } from "./attachmentManager.ts";
+import type { Attachment } from "./mediaManager.ts";
 
 export default class RoomManager {
 	client: Client;
