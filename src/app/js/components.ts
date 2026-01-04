@@ -117,5 +117,6 @@ function createAttachment(attachmentLink: string) {
 
 	return dom(html`<a class="file-chip"></a>`)
 		.prop("href", attachmentLink)
+		.prop("target", "_blank")
 		.text(fileName);
 }
