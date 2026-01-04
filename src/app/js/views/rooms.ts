@@ -33,6 +33,7 @@ export function getRoomsView(): ViewWrapper {
 										placeholder="Name"
 										required
 										minlength="3"
+										maxlength="100"
 									/>`
 							);
 							const inputEle = <HTMLInputElement>$input.element;
