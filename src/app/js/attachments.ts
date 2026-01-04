@@ -67,18 +67,26 @@ export function showAttachmentModal(roomName: string) {
 
 async function uploadAttachments(roomName: string) {
 	const files = getRoomFiles(roomName);
-	const attachments: Attachment[] = [];
 
+	// Cancel if there are no files
 	if (files === null) {
 		roomAttachments.set(roomName, []);
 		return;
 	}
 
+	// Collect the attachments
+	const attachments: Attachment[] = [];
+
 	for (const file of files) {
 		attachments.push(client.attachments.create(file));
 	}
 
-	if (attachments.length > 0) await client.attachments.upload(attachments);
+	// Upload the attachments
+	for (const attachment of attachments) {
+		await attachment.upload();
+	}
+
+	// Store the attachments
 	roomAttachments.set(roomName, attachments);
 }
 

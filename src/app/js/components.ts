@@ -111,11 +111,11 @@ export async function createMessage(message: RoomMessage) {
 	).element;
 }
 
-function createAttachment(attachmentPath: string) {
-	const slashIndex = attachmentPath.lastIndexOf("/");
-	const fileName = attachmentPath.substring(slashIndex + 1);
+function createAttachment(attachmentLink: string) {
+	const slashIndex = attachmentLink.lastIndexOf("/");
+	const fileName = attachmentLink.substring(slashIndex + 1);
 
 	return dom(html`<a class="file-chip"></a>`)
-		.prop("href", `${client.baseUrl.http}/${attachmentPath}`)
+		.prop("href", attachmentLink)
 		.text(fileName);
 }
