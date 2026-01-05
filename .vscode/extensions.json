@@ -1,7 +1,6 @@
 {
     "recommendations": [
-        "mrmlnc.vscode-scss",
-        "sibiraj-s.vscode-scss-formatter",
-        "esbenp.prettier-vscode"
+        "bradlc.vscode-tailwindcss",
+        "oven.bun-vscode"
     ]
 }
