@@ -1,5 +1,5 @@
 import { RoomMessage } from "./client.ts";
-import { UserData } from "./dataStream.ts";
+import type { UserData } from "./dataStream.ts";
 
 export interface BaseUrl {
 	http: string;

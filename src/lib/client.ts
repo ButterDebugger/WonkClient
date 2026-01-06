@@ -6,7 +6,7 @@ import UserManager, { User } from "./userManager.ts";
 import { ClientError, errorCodes } from "./builtinErrors.ts";
 import AttachmentManager from "./mediaManager.ts";
 import { StreamManager } from "./dataStream.ts";
-import { BaseUrl, ClientEvents } from "./types.ts";
+import type { BaseUrl, ClientEvents } from "./types.ts";
 
 export * from "./types.ts";
 export { generateKeyPair, ClientError, errorCodes };
