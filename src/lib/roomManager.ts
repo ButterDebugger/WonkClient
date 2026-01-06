@@ -44,9 +44,7 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err,
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
 					),
 				);
 		});
@@ -72,9 +70,7 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err,
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
 					),
 				);
 		});
@@ -95,9 +91,7 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err,
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
 					),
 				);
 		});
@@ -120,9 +114,7 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err,
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
 					),
 				);
 		});
@@ -136,7 +128,7 @@ export default class RoomManager {
 			this.client
 				.request({
 					method: "get",
-					url: `/room/${roomId}/info`
+					url: `/room/${roomId}/info`,
 				})
 				.then(async (res) => {
 					const { id, name, description, key, members } = res.data;
@@ -148,10 +140,8 @@ export default class RoomManager {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err
-					)
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
+					),
 				);
 		});
 	}
@@ -215,9 +205,7 @@ export class Room {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err,
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
 					),
 				);
 		});
@@ -238,9 +226,7 @@ export class Room {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err,
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
 					),
 				);
 		});
@@ -264,9 +250,7 @@ export class Room {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err,
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
 					),
 				);
 		});

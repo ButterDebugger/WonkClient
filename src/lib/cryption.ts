@@ -9,16 +9,13 @@ export interface KeyPair {
  * Binary message functions
  */
 
-export async function decryptData(
-	message: Uint8Array,
-	privateKey: string
-): Promise<Uint8Array> {
+export async function decryptData(message: Uint8Array, privateKey: string): Promise<Uint8Array> {
 	const { data: decrypted } = await openpgp.decrypt({
 		message: await openpgp.readMessage({ binaryMessage: message }),
 		decryptionKeys: await openpgp.readPrivateKey({
-			armoredKey: privateKey
+			armoredKey: privateKey,
 		}),
-		format: "binary"
+		format: "binary",
 	});
 
 	return decrypted;
@@ -58,13 +55,10 @@ export async function decryptData(
  * @param publicKey The public key to encrypt the message with
  * @returns The encrypted message as an PGP armored message
  */
-export async function encryptText(
-	message: string,
-	publicKey: string
-): Promise<string> {
+export async function encryptText(message: string, publicKey: string): Promise<string> {
 	return await openpgp.encrypt({
 		message: await openpgp.createMessage({ text: message }),
-		encryptionKeys: await openpgp.readKey({ armoredKey: publicKey })
+		encryptionKeys: await openpgp.readKey({ armoredKey: publicKey }),
 	});
 }
 
@@ -75,13 +69,10 @@ export async function encryptText(
  * @param privateKey The private key to sign the message with
  * @returns The signed message
  */
-export async function signText(
-	message: string,
-	privateKey: string
-): Promise<string> {
+export async function signText(message: string, privateKey: string): Promise<string> {
 	return await openpgp.sign({
 		message: await openpgp.createMessage({ text: message }),
-		signingKeys: await openpgp.readPrivateKey({ armoredKey: privateKey })
+		signingKeys: await openpgp.readPrivateKey({ armoredKey: privateKey }),
 	});
 }
 
@@ -96,13 +87,13 @@ export async function generateKeyPair(name: string): Promise<KeyPair> {
 		type: "curve25519",
 		userIDs: [
 			{
-				name: name
-			}
-		]
+				name: name,
+			},
+		],
 	});
 
 	return {
 		publicKey: publicKey,
-		privateKey: privateKey
+		privateKey: privateKey,
 	};
 }

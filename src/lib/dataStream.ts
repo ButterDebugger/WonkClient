@@ -16,7 +16,7 @@ export class StreamManager {
 		// Connect to event stream
 		this.#socket = new WebSocket(`${this.client.baseUrl.ws}/stream`, [
 			"Authorization",
-			this.client.token
+			this.client.token,
 		]);
 		this.#socket.binaryType = "arraybuffer";
 
@@ -25,10 +25,7 @@ export class StreamManager {
 			this.client.emit("ready");
 		});
 		this.#socket.addEventListener("message", async (event) => {
-			const data = await parseStreamData(
-				event.data,
-				this.client.privateKey
-			);
+			const data = await parseStreamData(event.data, this.client.privateKey);
 			if (data === null) return;
 
 			switch (data.event) {
@@ -45,7 +42,7 @@ export class StreamManager {
 						"roomMemberJoin",
 						roomMemberJoinData.username,
 						roomMemberJoinData.roomId,
-						roomMemberJoinData.timestamp
+						roomMemberJoinData.timestamp,
 					);
 					break;
 				}
@@ -56,7 +53,7 @@ export class StreamManager {
 						"roomMemberLeave",
 						roomMemberLeaveData.username,
 						roomMemberLeaveData.roomId,
-						roomMemberLeaveData.timestamp
+						roomMemberLeaveData.timestamp,
 					);
 					break;
 				}
@@ -67,7 +64,7 @@ export class StreamManager {
 						"userUpdate",
 						updateUserData.id,
 						updateUserData.data,
-						updateUserData.timestamp
+						updateUserData.timestamp,
 					);
 					break;
 				}
@@ -79,13 +76,9 @@ export class StreamManager {
 						color: messageData.author.color,
 						offline: messageData.author.offline,
 						username: messageData.author.username,
-						timestamp: messageData.timestamp
+						timestamp: messageData.timestamp,
 					};
-					this.client.users.update(
-						messageData.author.username,
-						authorData,
-						Date.now()
-					);
+					this.client.users.update(messageData.author.username, authorData, Date.now());
 
 					const message = new RoomMessage(
 						this.client,
@@ -93,7 +86,7 @@ export class StreamManager {
 						messageData.roomId,
 						messageData.content,
 						messageData.attachments,
-						messageData.timestamp
+						messageData.timestamp,
 					);
 
 					this.client.emit("roomMemberMessage", message);
@@ -116,8 +109,8 @@ export class StreamManager {
 		this.#socket.send(
 			TruffleByte.encode({
 				event: "listen",
-				subscriptions: subscriptions
-			})
+				subscriptions: subscriptions,
+			}),
 		);
 	}
 }
@@ -127,12 +120,7 @@ export class StreamManager {
  */
 
 export interface StreamBody {
-	event: "connect"
-	| "message"
-	| "ping"
-	| "roomMemberJoin"
-	| "roomMemberLeave"
-	| "userUpdate";
+	event: "connect" | "message" | "ping" | "roomMemberJoin" | "roomMemberLeave" | "userUpdate";
 }
 function isStreamBody(body: unknown): body is StreamBody {
 	return typeof body === "object" && body !== null && "event" in body;
@@ -198,14 +186,11 @@ export interface UserData {
  */
 export async function parseStreamData<Body extends StreamBody>(
 	input: ArrayBuffer,
-	privateKey: string
+	privateKey: string,
 ): Promise<Body | null> {
 	try {
 		const bufferData = new Uint8Array(input);
-		const encodedData: Uint8Array = await decryptData(
-			bufferData,
-			privateKey
-		);
+		const encodedData: Uint8Array = await decryptData(bufferData, privateKey);
 		const data: unknown = TruffleByte.decode(encodedData);
 
 		if (!isStreamBody(data)) {

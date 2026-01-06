@@ -1,10 +1,4 @@
 {
 	"editor.formatOnSave": true,
-	"cSpell.words": [
-		"fontawesome",
-		"fortawesome",
-		"homeserver",
-		"openpgp",
-		"svgs"
-	]
+	"cSpell.words": ["fontawesome", "fortawesome", "homeserver", "openpgp", "svgs"]
 }

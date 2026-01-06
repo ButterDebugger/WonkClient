@@ -13,7 +13,7 @@ export default class UserManager {
 		this.cache = new Map();
 
 		this.client.on("userUpdate", (userId, userData, timestamp) =>
-			this.update(userId, userData, timestamp)
+			this.update(userId, userData, timestamp),
 		);
 	}
 
@@ -36,8 +36,8 @@ export default class UserManager {
 					userData.username,
 					userData.color,
 					userData.offline,
-					timestamp
-				)
+					timestamp,
+				),
 			);
 		}
 	}
@@ -50,7 +50,7 @@ export default class UserManager {
 			this.client
 				.request({
 					method: "get",
-					url: `/user/${userId}/fetch`
+					url: `/user/${userId}/fetch`,
 				})
 				.then(async (res) => {
 					const { id, data } = res.data;
@@ -62,10 +62,8 @@ export default class UserManager {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err
-					)
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
+					),
 				);
 		});
 	}
@@ -85,7 +83,7 @@ export class User {
 		username: string,
 		color: string,
 		offline: boolean,
-		timestamp = Date.now()
+		timestamp = Date.now(),
 	) {
 		this.client = client;
 

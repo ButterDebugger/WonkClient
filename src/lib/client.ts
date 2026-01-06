@@ -22,12 +22,7 @@ export class Client extends EventEmitter<ClientEvents> {
 	users: UserManager;
 	attachments: AttachmentManager;
 
-	constructor(
-		token: string,
-		publicKey: string,
-		privateKey: string,
-		baseUrl: BaseUrl
-	) {
+	constructor(token: string, publicKey: string, privateKey: string, baseUrl: BaseUrl) {
 		super();
 
 		this.stream = new StreamManager(this);
@@ -39,7 +34,7 @@ export class Client extends EventEmitter<ClientEvents> {
 		this.#token = token;
 		this.#keyPair = {
 			publicKey,
-			privateKey
+			privateKey,
 		};
 
 		this.#init();
@@ -66,24 +61,17 @@ export class Client extends EventEmitter<ClientEvents> {
 			.create({
 				baseURL: this.baseUrl.http,
 				headers: {
-					Authorization: `Bearer ${this.token}`
-				}
+					Authorization: `Bearer ${this.token}`,
+				},
 			})
 			.request(options);
 	}
 
-	static regularRequest(
-		baseUrl: BaseUrl,
-		options: AxiosRequestConfig,
-		token?: string
-	) {
+	static regularRequest(baseUrl: BaseUrl, options: AxiosRequestConfig, token?: string) {
 		return axios
 			.create({
 				baseURL: baseUrl.http,
-				headers:
-					typeof token === "string"
-						? { Authorization: `Bearer ${token}` }
-						: {}
+				headers: typeof token === "string" ? { Authorization: `Bearer ${token}` } : {},
 			})
 			.request(options);
 	}
@@ -96,19 +84,14 @@ export class Client extends EventEmitter<ClientEvents> {
 				url: `/me/publickey`,
 				data: {
 					publicKey: this.#keyPair.publicKey,
-					signature: await signText(
-						this.#keyPair.publicKey,
-						this.#keyPair.privateKey
-					)
-				}
+					signature: await signText(this.#keyPair.publicKey, this.#keyPair.privateKey),
+				},
 			})
 				.then(async () => resolve(true))
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err
-					)
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
+					),
 				);
 		});
 	}
@@ -118,7 +101,7 @@ export class Client extends EventEmitter<ClientEvents> {
 		token: string,
 		publicKey: string,
 		privateKey: string,
-		baseUrl: BaseUrl
+		baseUrl: BaseUrl,
 	): Promise<Client> {
 		return new Client(token, publicKey, privateKey, baseUrl);
 	}
@@ -127,7 +110,7 @@ export class Client extends EventEmitter<ClientEvents> {
 		return new Promise((resolve, reject) => {
 			this.request({
 				method: "get",
-				url: "/me/info"
+				url: "/me/info",
 			})
 				.then(async (res) => {
 					const { rooms, users, you } = res.data as {
@@ -136,19 +119,19 @@ export class Client extends EventEmitter<ClientEvents> {
 							name: string;
 							description: string;
 							key: string;
-							members: string[]
+							members: string[];
 						}[];
 						users: {
 							id: string;
 							username: string;
 							color: string;
-							offline: boolean
+							offline: boolean;
 						}[];
 						you: {
 							id: string;
 							username: string;
 							color: string;
-							offline: boolean
+							offline: boolean;
 						};
 					};
 
@@ -170,8 +153,8 @@ export class Client extends EventEmitter<ClientEvents> {
 									room.name,
 									room.description,
 									room.key,
-									room.members
-								)
+									room.members,
+								),
 							);
 						}
 					}
@@ -187,26 +170,14 @@ export class Client extends EventEmitter<ClientEvents> {
 						} else {
 							this.users.cache.set(
 								user.id,
-								new User(
-									this,
-									user.id,
-									user.username,
-									user.color,
-									user.offline
-								)
+								new User(this, user.id, user.username, user.color, user.offline),
 							);
 						}
 					}
 
 					// Update the client users cache
 					if (typeof this.user === "undefined") {
-						this.user = new User(
-							this,
-							you.id,
-							you.username,
-							you.color,
-							you.offline
-						);
+						this.user = new User(this, you.id, you.username, you.color, you.offline);
 						this.users.cache.set(you.id, this.user);
 					} else {
 						this.user.username = you.username;
@@ -218,10 +189,8 @@ export class Client extends EventEmitter<ClientEvents> {
 				})
 				.catch((err) =>
 					reject(
-						err instanceof AxiosError
-							? new ClientError(err?.response?.data, err)
-							: err
-					)
+						err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err,
+					),
 				);
 		});
 	}
@@ -256,10 +225,10 @@ export async function locateHomeserver(domain: string) {
 	try {
 		// Get the base URL of the homeserver
 		const wellKnownRes = await axios.get(
-			`${location.protocol === "https:" ? "https" : "http"}://${domain}/.well-known/wonk`
+			`${location.protocol === "https:" ? "https" : "http"}://${domain}/.well-known/wonk`,
 		);
 		const {
-			homeserver: { base_url }
+			homeserver: { base_url },
 		} = wellKnownRes.data;
 
 		// Get the namespace of the homeserver
@@ -278,8 +247,8 @@ export async function locateHomeserver(domain: string) {
 			namespace,
 			baseUrl: {
 				http: `${url.origin}${pathname}`,
-				ws: `${wsProtocol}${url.host}${pathname}`
-			}
+				ws: `${wsProtocol}${url.host}${pathname}`,
+			},
 		};
 	} catch {
 		return null;
@@ -301,7 +270,7 @@ export class RoomMessage {
 		roomId: string,
 		content: string,
 		attachments: string[],
-		timestamp: number
+		timestamp: number,
 	) {
 		this.client = client;
 

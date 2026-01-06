@@ -6,9 +6,7 @@ export interface BaseUrl {
 	ws: string;
 }
 export function isBaseUrl(url: unknown): url is BaseUrl {
-	return (
-		typeof url === "object" && url !== null && "http" in url && "ws" in url
-	);
+	return typeof url === "object" && url !== null && "http" in url && "ws" in url;
 }
 
 export interface Homeserver {

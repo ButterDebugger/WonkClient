@@ -15,17 +15,19 @@ export default class AttachmentManager {
 	}
 
 	async getUploadInfo(): Promise<{ maxChunkSize: number }> {
-		if (this.#maxChunkSize !== null) return {
-			maxChunkSize: this.#maxChunkSize,
-		};
+		if (this.#maxChunkSize !== null)
+			return {
+				maxChunkSize: this.#maxChunkSize,
+			};
 
-		return this.client.request({
-			method: "get",
-			url: "/media/upload/info",
-		})
+		return this.client
+			.request({
+				method: "get",
+				url: "/media/upload/info",
+			})
 			.then((res) => {
 				const { maxChunkSize } = res.data as {
-					maxChunkSize: number
+					maxChunkSize: number;
 				};
 
 				// Update the cached value
@@ -36,9 +38,7 @@ export default class AttachmentManager {
 				};
 			})
 			.catch((err: unknown) => {
-				throw err instanceof AxiosError
-					? new ClientError(err?.response?.data, err)
-					: err;
+				throw err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err;
 			});
 	}
 }
@@ -51,8 +51,7 @@ export class Attachment {
 	constructor(client: Client, content: File) {
 		this.client = client;
 
-		if (!(content instanceof File))
-			throw new TypeError("Attachment must be a file.");
+		if (!(content instanceof File)) throw new TypeError("Attachment must be a file.");
 
 		this.file = content;
 		this.path = null;
@@ -68,7 +67,7 @@ export class Attachment {
 		// Hash the whole file
 		const checksumBuffer = await crypto.subtle.digest("SHA-256", await this.file.arrayBuffer());
 		const checksum = [...new Uint8Array(checksumBuffer)]
-			.map(b => b.toString(16).padStart(2, "0"))
+			.map((b) => b.toString(16).padStart(2, "0"))
 			.join("");
 
 		// Split the file into chunks and hash each one
@@ -80,7 +79,7 @@ export class Attachment {
 
 			const hashBuffer = await crypto.subtle.digest("SHA-256", await chunk.arrayBuffer());
 			const hash = [...new Uint8Array(hashBuffer)]
-				.map(b => b.toString(16).padStart(2, "0"))
+				.map((b) => b.toString(16).padStart(2, "0"))
 				.join("");
 
 			chunks.push(chunk);
@@ -92,7 +91,7 @@ export class Attachment {
 			this.file.name,
 			this.file.size,
 			this.file.type,
-			hashes
+			hashes,
 		);
 
 		// Upload the chunks
@@ -118,23 +117,24 @@ export class Attachment {
 		filename: string,
 		size: number,
 		mimeType: string,
-		hashes: string[]
+		hashes: string[],
 	): Promise<{
-		uploadId: string
+		uploadId: string;
 	}> {
-		return this.client.request({
-			method: "post",
-			url: "/media/upload/init",
-			data: {
-				name: filename,
-				size,
-				mimeType,
-				hashes,
-			},
-		})
+		return this.client
+			.request({
+				method: "post",
+				url: "/media/upload/init",
+				data: {
+					name: filename,
+					size,
+					mimeType,
+					hashes,
+				},
+			})
 			.then((res) => {
 				const { uploadId } = res.data as {
-					uploadId: string
+					uploadId: string;
 				};
 
 				return {
@@ -142,9 +142,7 @@ export class Attachment {
 				};
 			})
 			.catch((err: unknown) => {
-				throw err instanceof AxiosError
-					? new ClientError(err?.response?.data, err)
-					: err;
+				throw err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err;
 			});
 	}
 
@@ -152,47 +150,45 @@ export class Attachment {
 		const formData = new FormData();
 		formData.append("file", chunk);
 
-		return this.client.request({
-			method: "patch",
-			url: `/media/upload/${uploadId}`,
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-			data: formData,
-		})
+		return this.client
+			.request({
+				method: "patch",
+				url: `/media/upload/${uploadId}`,
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+				data: formData,
+			})
 			.then((res) => {
 				const { success } = res.data as {
-					success: boolean
+					success: boolean;
 				};
 
 				return success;
 			})
 			.catch((err: unknown) => {
-				throw err instanceof AxiosError
-					? new ClientError(err?.response?.data, err)
-					: err;
+				throw err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err;
 			});
 	}
 
 	private async completeUpload(uploadId: string, checksum: string) {
-		return this.client.request({
-			method: "post",
-			url: `/media/upload/${uploadId}/complete`,
-			data: {
-				checksum,
-			},
-		})
+		return this.client
+			.request({
+				method: "post",
+				url: `/media/upload/${uploadId}/complete`,
+				data: {
+					checksum,
+				},
+			})
 			.then((res) => {
 				const { success } = res.data as {
-					success: boolean
+					success: boolean;
 				};
 
 				return success;
 			})
 			.catch((err: unknown) => {
-				throw err instanceof AxiosError
-					? new ClientError(err?.response?.data, err)
-					: err;
+				throw err instanceof AxiosError ? new ClientError(err?.response?.data, err) : err;
 			});
 	}
 }
