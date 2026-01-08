@@ -1,0 +1,38 @@
+export function Button({ children }: { children: React.ReactNode }) {
+	return (
+		<div
+			className="
+				flex flex-col gap-4 pt-3 pb-3 pl-4 pr-4
+				bg-container dark:bg-container-dark
+				hover:bg-container-hover dark:hover:bg-container-hover-dark
+				active:bg-container-active dark:active:bg-container-active-dark
+				border rounded-3xl
+				border-border dark:border-border-dark hover:border-border-hover
+				transition-colors
+				cursor-pointer
+			"
+		>
+			{children}
+		</div>
+	);
+}
+
+export function LinkButton({ children, href }: { children: React.ReactNode; href: string }) {
+	return (
+		<a
+			className="
+				flex flex-col gap-4 pt-3 pb-3 pl-4 pr-4
+				bg-container dark:bg-container-dark
+				hover:bg-container-hover dark:hover:bg-container-hover-dark
+				active:bg-container-active dark:active:bg-container-active-dark
+				border rounded-3xl
+				border-border dark:border-border-dark hover:border-border-hover
+				transition-colors
+				cursor-pointer
+			"
+			href={href}
+		>
+			{children}
+		</a>
+	);
+}

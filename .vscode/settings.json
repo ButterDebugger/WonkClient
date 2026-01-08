@@ -8,5 +8,8 @@
 		"openpgp",
 		"svgs",
 		"trufflebyte"
-	]
+	],
+	"files.associations": {
+		"*.css": "tailwindcss"
+	}
 }
