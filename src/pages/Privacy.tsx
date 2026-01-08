@@ -1,9 +1,9 @@
 import { LinkText, MutedText } from "../components/Texts";
-import { Front } from "../layouts/FrontLayout";
+import { Article } from "../layouts/ArticleLayout";
 
 export default function Privacy() {
 	return (
-		<Front>
+		<Article>
 			<div className="text-center">
 				<h1 className="text-6xl/[4rem] font-bold font-title mt-10 mb-10">Privacy Policy</h1>
 				<p className="text-xl/normal text-center mt-5 mb-5">
@@ -58,6 +58,6 @@ export default function Privacy() {
 			<p className="text-xl/normal text-center mt-5 mb-5">
 				By using Wonk Chat, you agree to the terms of this privacy policy.
 			</p>
-		</Front>
+		</Article>
 	);
 }

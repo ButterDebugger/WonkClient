@@ -2,9 +2,8 @@ import { LinkButton } from "../components/Button";
 import { HorizontalContainer, VerticalContainer } from "../components/Containers";
 import { Logo } from "../components/Icon";
 import { MutedText, LinkText } from "../components/Texts";
-import { ArticleWrapper } from "../components/Wrappers";
 
-export function Front({
+export function Article({
 	children,
 	backHref = "/",
 	backText = "Back Home",
@@ -14,7 +13,7 @@ export function Front({
 	backText?: string;
 }) {
 	return (
-		<ArticleWrapper>
+		<div className="p-4 min-h-full flex flex-col gap-4 flex-1 max-w-237 ml-auto mr-auto">
 			{/* Header */}
 			<HorizontalContainer className="items-center">
 				<Logo />
@@ -61,6 +60,6 @@ export function Front({
 					</div>
 				</div>
 			</VerticalContainer>
-		</ArticleWrapper>
+		</div>
 	);
 }
