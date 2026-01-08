@@ -37,8 +37,7 @@ export function Front({
 							All Rights Reserved.
 						</MutedText>
 						<MutedText>
-							Icons used from
-							<br />
+							Icons used from&nbsp;
 							<LinkText href="https://fontawesome.com/">Font Awesome</LinkText>.
 						</MutedText>
 					</div>
@@ -57,7 +56,7 @@ export function Front({
 				<div className="flex flex-col items-center">
 					<div className="flex flex-col gap-2">
 						<span className="font-bold text-lg">POLICIES</span>
-						<LinkText href="/#">Terms of Service</LinkText>
+						{/* <LinkText href="/#">Terms of Service</LinkText> */}
 						<LinkText href="/privacy/">Privacy Policy</LinkText>
 					</div>
 				</div>
