@@ -10,11 +10,26 @@ import type { Homeserver } from "../lib/types";
 import { useSearchParams } from "react-router-dom";
 import { Input } from "../components/Input.tsx";
 
+// Keep a cache of promises to avoid recomputation
+const cache = new Map<string, Promise<unknown>>();
+
+function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+	if (!cache.has(key)) {
+		cache.set(key, fn());
+	}
+	return cache.get(key) as Promise<T>;
+}
+
 export default function Login() {
 	const [searchParams] = useSearchParams();
 
 	const code = "123456"; // searchParams.get("code");
 	const state = searchParams.get("state");
+
+	const storedStatePromise = cached("state", () => tbForage.get<string>("state"));
+	const verifierPromise = cached("verifier", () => tbForage.get<string>("verifier"));
+	const homeserverPromise = cached("homeserver", () => tbForage.get<Homeserver>("homeserver"));
+	const tokenPromise = cached("token", () => tbForage.get<string>("token"));
 
 	return (
 		<Centered>
@@ -24,14 +39,14 @@ export default function Login() {
 						<OauthStep
 							code={code}
 							state={state}
-							storedStatePromise={tbForage.get<string>("state")}
-							verifierPromise={tbForage.get<string>("verifier")}
-							homeserverPromise={tbForage.get<Homeserver>("homeserver")}
+							storedStatePromise={storedStatePromise}
+							verifierPromise={verifierPromise}
+							homeserverPromise={homeserverPromise}
 						/>
 					) : (
 						<InitCard
-							tokenPromise={tbForage.get<string>("token")}
-							homeserverPromise={tbForage.get<Homeserver>("homeserver")}
+							tokenPromise={tokenPromise}
+							homeserverPromise={homeserverPromise}
 						/>
 					)}
 				</Suspense>
@@ -47,6 +62,9 @@ function ErrorCard({ message }: { message: string }) {
 			<p>{message}</p>
 			<Button
 				onClick={() => {
+					cache.clear();
+
+					// TODO: avoid reload
 					location.href = "/login";
 				}}
 			>
@@ -75,11 +93,13 @@ function InitCard({
 	const token = use(tokenPromise);
 	const homeserver = use(homeserverPromise);
 
-	return token === null || homeserver === null ? (
-		<Unauthorized />
-	) : (
-		<Authorized loggedInPromise={whoAmI(homeserver, token)} />
-	);
+	if (token === null || homeserver === null) {
+		return <Unauthorized />;
+	}
+
+	const loggedInPromise = cached(`whoami-${token}`, () => whoAmI(homeserver, token));
+
+	return <Authorized loggedInPromise={loggedInPromise} />;
 }
 
 function OauthStep({
@@ -103,12 +123,12 @@ function OauthStep({
 		return <ErrorCard message="Failed to finish login" />;
 	}
 
-	return (
-		<AccessStep
-			homeserver={homeserver}
-			accessPromise={access(homeserver, { verifier, state: storedState }, { code, state })}
-		/>
+	const accessPromise = cached(`access-${code}`, () =>
+		// NOTE: the code might not be a good key to cache here
+		access(homeserver, { verifier, state: storedState }, { code, state }),
 	);
+
+	return <AccessStep homeserver={homeserver} accessPromise={accessPromise} />;
 }
 
 function AccessStep({
@@ -126,12 +146,17 @@ function AccessStep({
 
 	const { token } = accessPayload;
 
+	const saveTokenPromise = cached(`save-token-${token}`, () => tbForage.set("token", token));
+	const saveHomeserverPromise = cached(`save-hs-${homeserver.namespace}`, () =>
+		tbForage.set("homeserver", homeserver),
+	);
+
 	return (
 		<SaveLoginStep
 			token={token}
 			homeserver={homeserver}
-			saveTokenPromise={tbForage.set("token", token)}
-			saveHomeserverPromise={tbForage.set("homeserver", homeserver)}
+			saveTokenPromise={saveTokenPromise}
+			saveHomeserverPromise={saveHomeserverPromise}
 		/>
 	);
 }
@@ -150,7 +175,9 @@ function SaveLoginStep({
 	use(saveTokenPromise);
 	use(saveHomeserverPromise);
 
-	return <Authorized loggedInPromise={whoAmI(homeserver, token)} />;
+	const loggedInPromise = cached(`whoami-${token}`, () => whoAmI(homeserver, token));
+
+	return <Authorized loggedInPromise={loggedInPromise} />;
 }
 
 function Authorized({
@@ -167,10 +194,22 @@ function Authorized({
 			<h1 className="text-3xl font-bold">Continue As</h1>
 			<p>
 				<MutedText>You are logged in as</MutedText>{" "}
-				<span className="font-bold">@{"example:debutter.dev"}</span>
+				<span className="font-bold">@{isLoggedIn.username + ":debutter.dev"}</span>
 			</p>
 			<Button>Open App</Button>
-			<Button>Logout</Button>
+			<Button
+				onClick={async () => {
+					await tbForage.remove("state");
+					await tbForage.remove("verifier");
+					await tbForage.remove("homeserver");
+					await tbForage.remove("token");
+
+					// TODO: avoid reload
+					location.href = "/login";
+				}}
+			>
+				Logout
+			</Button>
 		</VerticalContainer>
 	);
 }
