@@ -1,10 +1,7 @@
-// import { useState } from 'react'
 import { MutedText } from "../components/Texts";
 import { Article } from "../layouts/ArticleLayout";
 
 export default function Home() {
-	// const [count, setCount] = useState(0)
-
 	return (
 		<Article backHref="/app" backText="Open App">
 			<div className="text-center">

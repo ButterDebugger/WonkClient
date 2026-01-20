@@ -11,6 +11,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@debutter/helper": "npm:@jsr/debutter__helper",
 		"@debutter/trufflebyte": "npm:@jsr/debutter__trufflebyte",
 		"@fortawesome/fontawesome-svg-core": "^7.1.0",
 		"@fortawesome/free-solid-svg-icons": "^7.1.0",
@@ -18,6 +19,7 @@
 		"axios": "^1.13.2",
 		"eventemitter3": "^5.0.1",
 		"hono": "^4.11.3",
+		"localforage": "^1.10.0",
 		"openpgp": "^6.3.0",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",

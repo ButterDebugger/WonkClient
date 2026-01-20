@@ -1,4 +1,7 @@
-export function Button({ children }: { children: React.ReactNode }) {
+export function Button({
+	children,
+	...props
+}: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
 	return (
 		<div
 			className="
@@ -11,6 +14,7 @@ export function Button({ children }: { children: React.ReactNode }) {
 				transition-colors
 				cursor-pointer
 			"
+			{...props}
 		>
 			{children}
 		</div>

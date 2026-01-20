@@ -6,9 +6,10 @@ import UserManager, { User } from "./userManager.ts";
 import { ClientError, errorCodes } from "./builtinErrors.ts";
 import AttachmentManager from "./mediaManager.ts";
 import { StreamManager } from "./dataStream.ts";
-import type { BaseUrl, ClientEvents } from "./types.ts";
+import type { BaseUrl, ClientEvents, Homeserver } from "./types.ts";
 
 export * from "./types.ts";
+export * from "./authorizer.ts";
 export { generateKeyPair, ClientError, errorCodes };
 
 export class Client extends EventEmitter<ClientEvents> {
@@ -221,7 +222,7 @@ export class Client extends EventEmitter<ClientEvents> {
 	}
 }
 
-export async function locateHomeserver(domain: string) {
+export async function locateHomeserver(domain: string): Promise<Homeserver | null> {
 	try {
 		// Get the base URL of the homeserver
 		const wellKnownRes = await axios.get(
