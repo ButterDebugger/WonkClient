@@ -13,6 +13,11 @@ export class StreamManager {
 	}
 
 	connect() {
+		if (this.#socket) {
+			console.warn("Already connected to event stream");
+			return;
+		}
+
 		// Connect to event stream
 		this.#socket = new WebSocket(`${this.client.baseUrl.ws}/stream`, [
 			"Authorization",
@@ -100,6 +105,16 @@ export class StreamManager {
 		this.#socket.addEventListener("error", () => {
 			this.client.emit("disconnect");
 		});
+	}
+
+	disconnect() {
+		if (!this.#socket) {
+			console.warn("Already disconnected from event stream");
+			return;
+		}
+
+		this.#socket.close();
+		this.#socket = null;
 	}
 
 	subscribe(subscriptions: string[]) {

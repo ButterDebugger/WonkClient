@@ -213,11 +213,11 @@ export class Client extends EventEmitter<ClientEvents> {
 		this.on("disconnect", () => {
 			console.log("Disconnected from event stream");
 
-			setTimeout(() => {
-				console.log("Reconnecting to event stream...");
+			// setTimeout(() => {
+			// 	console.log("Reconnecting to event stream...");
 
-				this.stream.connect();
-			}, 5000);
+			// 	this.stream.connect();
+			// }, 5000);
 		});
 	}
 }

@@ -1,3 +1,5 @@
+import { NavLink, type NavLinkProps } from "react-router-dom";
+
 export function Button({
 	children,
 	...props
@@ -21,9 +23,9 @@ export function Button({
 	);
 }
 
-export function LinkButton({ children, href }: { children: React.ReactNode; href: string }) {
+export function LinkButton({ children, ...props }: { children: React.ReactNode } & NavLinkProps) {
 	return (
-		<a
+		<NavLink
 			className="
 				flex flex-col gap-4 pt-3 pb-3 pl-4 pr-4
 				bg-container dark:bg-container-dark
@@ -34,9 +36,9 @@ export function LinkButton({ children, href }: { children: React.ReactNode; href
 				transition-colors
 				cursor-pointer
 			"
-			href={href}
+			{...props}
 		>
 			{children}
-		</a>
+		</NavLink>
 	);
 }

@@ -1,3 +1,5 @@
+import { NavLink, type NavLinkProps } from "react-router-dom";
+
 export function MutedText({
 	children,
 	className,
@@ -19,19 +21,18 @@ export function MutedText({
 
 export function LinkText({
 	children,
-	href,
 	className,
+	...props
 }: {
 	children: React.ReactNode;
-	href: string;
 	className?: string;
-}) {
+} & NavLinkProps) {
 	return (
-		<a
+		<NavLink
 			className={"text-primary hover:underline" + (className ? " " + className : "")}
-			href={href}
+			{...props}
 		>
 			{children}
-		</a>
+		</NavLink>
 	);
 }

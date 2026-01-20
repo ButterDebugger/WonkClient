@@ -1,7 +1,7 @@
 import { Suspense, use, useState } from "react";
 import { VerticalContainer } from "../components/Containers";
 import { Centered } from "../layouts/CenterLayout";
-import { Button } from "../components/Button";
+import { Button, LinkButton } from "../components/Button";
 import { MutedText } from "../components/Texts";
 import { ErrorBoundary } from "react-error-boundary";
 import * as tbForage from "../lib/tbForage.ts";
@@ -60,16 +60,14 @@ function ErrorCard({ message }: { message: string }) {
 		<VerticalContainer className="min-w-75 text-center">
 			<h1 className="text-3xl font-bold">Error</h1>
 			<p>{message}</p>
-			<Button
+			<LinkButton
+				to="/login"
 				onClick={() => {
 					cache.clear();
-
-					// TODO: avoid reload
-					location.href = "/login";
 				}}
 			>
 				Retry
-			</Button>
+			</LinkButton>
 		</VerticalContainer>
 	);
 }
@@ -187,6 +185,8 @@ function Authorized({
 }) {
 	const isLoggedIn = use(loggedInPromise);
 
+	// TODO: clear url params
+
 	return isLoggedIn === null ? (
 		<Unauthorized />
 	) : (
@@ -196,20 +196,18 @@ function Authorized({
 				<MutedText>You are logged in as</MutedText>{" "}
 				<span className="font-bold">@{isLoggedIn.username + ":debutter.dev"}</span>
 			</p>
-			<Button>Open App</Button>
-			<Button
+			<LinkButton to="/app">Open App</LinkButton>
+			<LinkButton
+				to="/login"
 				onClick={async () => {
 					await tbForage.remove("state");
 					await tbForage.remove("verifier");
 					await tbForage.remove("homeserver");
 					await tbForage.remove("token");
-
-					// TODO: avoid reload
-					location.href = "/login";
 				}}
 			>
 				Logout
-			</Button>
+			</LinkButton>
 		</VerticalContainer>
 	);
 }
