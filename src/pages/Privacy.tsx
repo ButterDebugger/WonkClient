@@ -21,7 +21,7 @@ export default function Privacy() {
 					<MutedText>
 						We do not collect any of your personal information. We only collect friendly
 						statistics about our site provided by&nbsp;
-						<LinkText href="https://www.cloudflare.com/web-analytics/">
+						<LinkText to="https://www.cloudflare.com/web-analytics/">
 							CloudFlare's web analytics
 						</LinkText>
 						.
@@ -50,8 +50,7 @@ export default function Privacy() {
 					<MutedText>
 						If you have any questions or concerns about our privacy policy or the way we
 						handle your information, please feel free to contact us at&nbsp;
-						<LinkText href="mailto:contact@debutter.dev">contact@debutter.dev</LinkText>
-						.
+						<LinkText to="mailto:contact@debutter.dev">contact@debutter.dev</LinkText>.
 					</MutedText>
 				</div>
 			</div>

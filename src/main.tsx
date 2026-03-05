@@ -5,7 +5,7 @@ import Home from "./pages/Home.tsx";
 import { BrowserRouter, Routes, Route } from "react-router";
 import Privacy from "./pages/Privacy.tsx";
 import Login from "./pages/Login.tsx";
-import App from "./pages/App.tsx";
+import App from "./pages/app/App.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 createRoot(document.getElementById("root")!).render(
@@ -14,10 +14,10 @@ createRoot(document.getElementById("root")!).render(
 			<Routes>
 				<Route path="*" element={<NotFound />} />
 				{/* Public routes */}
-				<Route path="/" element={<Home />} />
-				<Route path="/privacy" element={<Privacy />} />
-				<Route path="/login" element={<Login />} />
-				<Route path="/app" element={<App />} />
+				<Route index element={<Home />} />
+				<Route path="privacy" element={<Privacy />} />
+				<Route path="login" element={<Login />} />
+				<Route path="app/*" element={<App />} />
 			</Routes>
 		</BrowserRouter>
 	</StrictMode>,
